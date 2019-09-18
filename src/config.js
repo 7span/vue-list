@@ -11,6 +11,16 @@ const defaultConfig = {
   }
 };
 
+const colsConfig = {
+  _index: {
+    width: "50px",
+    label: "#"
+  },
+  _drag: {
+    width: "24px"
+  }
+};
+
 const gridTableConfig = {};
 
 const masnoryConfig = {
@@ -45,4 +55,10 @@ const paginationConfig = {
   ]
 };
 
-export { defaultConfig, gridTableConfig, masnoryConfig, paginationConfig };
+export {
+  defaultConfig,
+  colsConfig,
+  gridTableConfig,
+  masnoryConfig,
+  paginationConfig
+};

@@ -1,36 +1,45 @@
 <template>
-  <div class="list" :class="{'list--loading':loading}">
+  <div
+    class="list"
+    :class="{'loader loader--dark loader--xl overlay overlay--light':loading && !initial}"
+  >
     <!-- HEADER -->
     <list-header @per-page="paginationConfig.perPage = $event" :paginationConfig="paginationConfig"></list-header>
 
     <!-- CONTENT -->
     <section class="list__content">
-      <!-- CUSTOM LAYOUT -->
-      <div v-if="layoutConfig.name=='custom'" class="list__custom">
-        <slot :items="data || items"></slot>
+      <div v-if="loading && initial" class="list-loader">
+        <div v-for="n in 10" class="list-loader__item" :key="`loader-item--${n}`"></div>
       </div>
 
-      <!-- LAYOUT -->
-      <component
-        v-else
-        class="list__layout"
-        :class="'list__layout--'+layoutConfig.name"
-        :is="'layout-'+layoutConfig.name"
-        :items.sync="items"
-        :layoutConfig="layoutConfig"
-        :paginationConfig="paginationConfig"
-        @sort="sort"
-      >
-        <!-- PARENT SLOTS -->
-        <!-- Inherits the slots from the parent -->
-        <template v-for="(slot,name) in $scopedSlots" v-slot:[name]="scope">
-          <slot :name="name" v-bind="scope" />
-        </template>
-      </component>
+      <template v-else>
+        <!-- CUSTOM LAYOUT -->
+        <div v-if="layoutConfig.name=='custom'" class="list__custom">
+          <slot :items="data || items"></slot>
+        </div>
+
+        <!-- LAYOUT -->
+        <component
+          v-else
+          class="list__layout"
+          :class="'list__layout--'+layoutConfig.name"
+          :is="'layout-'+layoutConfig.name"
+          :items.sync="items"
+          :layoutConfig="layoutConfig"
+          :paginationConfig="paginationConfig"
+          @sort="sort"
+        >
+          <!-- PARENT SLOTS -->
+          <!-- Inherits the slots from the parent -->
+          <template v-for="(slot,name) in $scopedSlots" v-slot:[name]="scope">
+            <slot :name="name" v-bind="scope" />
+          </template>
+        </component>
+      </template>
     </section>
 
     <!-- FOOTER -->
-    <footer class="list__footer">
+    <footer v-if="!initial" class="list__footer">
       <pagination
         v-if="paginationConfig.perPage > 0"
         v-model.number="paginationConfig.page"
@@ -68,7 +77,8 @@ export default {
   provide() {
     return {
       AXIOS: this.options.axios,
-      DRAGGABLE: this.options.vueDraggable
+      DRAGGABLE: this.options.vueDraggable,
+      COLS: this.options.cols
     };
   },
   props: {
@@ -77,7 +87,10 @@ export default {
     params: Object,
     data: Array,
     layout: [String, Object],
-    pagination: [Boolean, Object]
+    pagination: {
+      type: [Boolean, Object],
+      default: true
+    }
   },
 
   data() {
@@ -89,7 +102,8 @@ export default {
       //user provided config and may change as user interfacts
       localConfig: null,
       paginationConfig: null,
-      layoutConfig: null
+      layoutConfig: null,
+      initial: true
     };
   },
 
@@ -115,6 +129,7 @@ export default {
   },
 
   created() {
+    this.initial = true;
     //Create a clone of config to make overridable configs
     //This helps to use v-model as config
     this.setLocalConfig();
@@ -253,11 +268,11 @@ export default {
               }
             });
           }
-          this.loading = false;
+          this.loading = this.initial = false;
         })
         .catch(err => {
           console.error(err);
-          this.loading = false;
+          this.loading = this.initial = false;
         });
     },
 
@@ -283,8 +298,30 @@ export default {
 </script>
 
 <style lang="scss">
+@keyframes shine {
+  to {
+    background-position: -200% 0;
+  }
+}
+.list-loader__item {
+  height: 40px;
+  opacity: 0.5;
+  background: linear-gradient(
+    90deg,
+    --color(grey, lightest),
+    --color(grey, lighter),
+    --color(grey, lightest)
+  );
+  margin-top: 10px;
+  position: relative;
+  border-radius: --border-radius(sm);
+  animation: shine 1.5s infinite;
+  background-size: 200%;
+}
 .list {
   position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 .list--loading {
   min-height: 100px;
@@ -304,33 +341,7 @@ export default {
     border-radius: 5px;
   }
 }
-.list__content {
-  margin-bottom: 24px;
-}
-
-.list__header {
-  --height: 30px;
-  --spacer: 10px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.list__settings {
-  display: flex;
-}
-.list__limit,
-.list__columns {
-  position: relative;
-  height: var(--height);
-  margin-bottom: var(--spacer);
-  width: 150px;
-  color: $md-grey-700;
-  text-transform: uppercase;
-  font-size: 13px;
-  .ss-select {
-    height: 100%;
-  }
-}
-.list__columns {
+.list__footer {
+  margin-top: 24px;
 }
 </style>

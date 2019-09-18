@@ -1,4 +1,9 @@
+var merge = require("lodash/merge");
+import { colsConfig } from "../config";
+
 export default {
+  inject: ["DRAGGABLE", "COLS"],
+
   props: {
     items: {
       type: Array,
@@ -15,21 +20,26 @@ export default {
   },
 
   computed: {
-    cols() {
+    localCols() {
+      let localCols;
       if (Array.isArray(this.layoutConfig.cols)) {
-        let cols = {};
         this.layoutConfig.cols.forEach(item => {
-          cols[item] = {
+          localCols[item] = {
             label: item
           };
         });
-        return cols;
       } else if (typeof this.layoutConfig.cols == "object") {
-        return this.layoutConfig.cols;
+        localCols = this.layoutConfig.cols;
       } else {
-        console.error("Invalid data for: cols");
-        return {};
+        localCols = {};
       }
+      return localCols;
+    },
+
+    mergedCols() {
+      //Merge with global configuration
+      console.log(colsConfig);
+      return merge(colsConfig, this.COLS, this.localCols);
     }
   }
 };

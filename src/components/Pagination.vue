@@ -1,26 +1,41 @@
 <template>
-  <ul class="list-pagination" v-if="count > paginationConfig.perPage">
-    <!-- PREV -->
-    <li v-if="isPrev">
-      <button type="button" @click="changePage(page-1)"><</button>
-    </li>
+  <div class="list-pagination" v-if="count > paginationConfig.perPage">
+    <s-buttons class="space space--xs">
+      <!-- PREV -->
+      <s-button
+        v-if="isPrev"
+        icon="chevron-left"
+        color="primary"
+        shape="square"
+        @click.native="changePage(page-1)"
+      ></s-button>
 
-    <!-- PAGES -->
-    <li v-for="n in paginationButtonCount" :class="{ active : n==page }" :key="`page--${n}`">
-      <button type="button" @click="changePage(n)">{{n}}</button>
-    </li>
+      <!-- PAGES -->
+      <s-button
+        v-for="n in paginationButtonCount"
+        color="primary"
+        shape="square"
+        :class="{ active : n==page }"
+        :key="`page--${n}`"
+        @click.native="changePage(n)"
+      >{{n}}</s-button>
 
-    <li v-if="totalPages > this.paginationConfig.maxPagingLinks">
+      <!-- NEXT -->
+      <s-button
+        v-if="isNext"
+        icon="chevron-right"
+        color="primary"
+        shape="square"
+        @click.native="changePage(page+1)"
+      ></s-button>
+    </s-buttons>
+
+    <template v-if="totalPages > this.paginationConfig.maxPagingLinks">
       <select @change="changePage($event.target.value)" :value="value">
         <option v-for="n in totalPages" :value="n" :key="`paging-link--${n}`">{{n}}</option>
       </select>
-    </li>
-
-    <!-- NEXT -->
-    <li v-if="isNext">
-      <button type="button" @click="changePage(page+1)">></button>
-    </li>
-  </ul>
+    </template>
+  </div>
 </template>
 
 <script>

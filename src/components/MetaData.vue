@@ -34,9 +34,10 @@ export default {
 
 <style lang="scss">
 .list-meta__results {
-  margin: 0;
+  margin-top: 16px;
   text-align: center;
   font-size: 12px;
+  color: --color(grey);
 }
 
 .list-meta__empty {
@@ -52,7 +53,7 @@ export default {
     margin: 0;
     max-width: 300px;
     text-align: center;
-    color: $md-grey-500;
+    color: --color(grey);
     margin-top: 25px;
   }
 }

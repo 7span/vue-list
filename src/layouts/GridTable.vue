@@ -3,7 +3,7 @@
     <!-- HEADER -->
     <header class="grid-table__header">
       <article class="grid-table__row">
-        <p v-for="(col,key) in cols" :key="`header--${key}`">{{col.label}}</p>
+        <p v-for="(col,key) in localCols" :key="`header--${key}`">{{mergedCols[key].label}}</p>
       </article>
     </header>
 
@@ -20,7 +20,7 @@
         <slot name="before-row" :item="row" />
 
         <!-- LOOP COLUMNS : STARTS  -->
-        <template v-for="(col,key) in cols">
+        <template v-for="(col,key) in localCols">
           <!-- INBUILT COL: INDEX -->
           <p v-if="key=='_index'" :class="colClasses(key)" :key="colKey(key,index)">
             <slot name="_index" :item="row">
@@ -31,7 +31,8 @@
           <!-- INBUILT COL: DRAG HANDLE -->
           <p v-else-if="key=='_drag'" :class="colClasses(key)" :key="colKey(key,index)">
             <slot name="_drag" :item="row">
-              <button title="Drag to Sort">DRAG</button>
+              <s-icon title="Drag to Sort" name="drag"></s-icon>
+              <!-- <s-button title="Drag to Sort" icon="drag" color="grey" style_="trn" shape="square"></s-button> -->
             </slot>
           </p>
 
@@ -60,7 +61,6 @@
 <script>
 export default {
   name: "layout-grid-table",
-  inject: ["DRAGGABLE"],
   mixins: [require("../mixins/layouts").default],
 
   computed: {
@@ -72,7 +72,7 @@ export default {
     },
     //Number of Columns
     totalCols() {
-      let total = Object.keys(this.cols).length;
+      let total = Object.keys(this.localCols).length;
       return total;
     },
     dataClone: {
@@ -84,8 +84,10 @@ export default {
       }
     },
     colTemplate() {
-      let template = Object.keys(this.cols).map(
-        item => this.cols[item].width || "1fr"
+      //LocalCols are used for keeping the order same as provided in configuration
+      //Merged Cols changes the sequence of keys due to merge by lodash
+      let template = Object.keys(this.localCols).map(
+        item => this.mergedCols[item].width || "1fr"
       );
       return template.join(" ");
     }
@@ -139,42 +141,40 @@ export default {
 .grid-table__header {
   font-weight: bold;
   text-transform: uppercase;
-  color: $md-grey-500;
+  color: --color(grey);
   font-size: 13px;
-  .grid-table__row {
-    border-bottom: 2px solid $md-grey-300;
+  > .grid-table__row {
+    border-bottom: 2px solid --color(grey, lighter);
   }
 }
+
 .grid-table__header,
 .grid-table__body {
   display: grid;
   gap: 0px;
-  > .grid-table__row {
-    grid-template-columns: var(--cols-template);
-    gap: var(--gap);
-    display: grid;
-    width: 100%;
-    padding: 0px 10px;
-    border-bottom: 1px solid $md-grey-300;
-    > p {
-      margin: 0;
-      padding: 10px 0;
-      // &:first-child {
-      //   padding-left: 10px;
-      // }
-      // &:last-child {
-      //   padding-right: 10px;
-      // }
-    }
+}
+
+.grid-table__row {
+  grid-template-columns: var(--cols-template);
+  gap: var(--gap);
+  display: grid;
+  width: 100%;
+  padding: 0px 10px;
+  border-bottom: 1px solid --color(grey, lighter);
+  > p {
+    margin: 0;
+    padding: 10px 0;
   }
 }
+
 .grid-table__body {
   > .grid-table__row {
     &:hover {
-      background-color: $md-grey-100;
+      background-color: --color(grey, lightest);
     }
   }
 }
+
 .grid-table {
   .col-drag {
     button {

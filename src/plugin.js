@@ -1,4 +1,12 @@
+import { SButtons, SButton, SIcon, SSelect, SField } from "@7span/shilp-vue";
+
 const install = (Vue, options = {}) => {
+  Vue.component("SButtons", SButtons);
+  Vue.component("SButton", SButton);
+  Vue.component("SIcon", SIcon);
+  Vue.component("SSelect", SSelect);
+  Vue.component("SField", SField);
+
   Vue.component(
     "VList",
     Vue.extend({
@@ -10,6 +18,16 @@ const install = (Vue, options = {}) => {
       }
     })
   );
+
+  Vue.component(
+    "chevron-right",
+    require("vue-material-design-icons/ChevronRight").default
+  );
+  Vue.component(
+    "chevron-left",
+    require("vue-material-design-icons/ChevronLeft").default
+  );
+  Vue.component("drag", require("vue-material-design-icons/Drag").default);
 };
 
 const plugin = {

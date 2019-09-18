@@ -3,15 +3,18 @@
     <div class="list__title"></div>
     <div class="list__settings">
       <!-- LIMIT, PER PAGE RESULTS -->
-      <div v-if="paginationConfig.perPageOptions.length > 0" class="list__limit">
-        <select @change="$emit('per-page',$event.target.value)" :value="paginationConfig.perPage">
-          <option
-            v-for="(item,index) in paginationConfig.perPageOptions"
-            :value="item.value"
-            :key="`per-page-option--${index}`"
-          >{{item.label}}</option>
-        </select>
-      </div>
+      <s-field
+        v-if="paginationConfig.perPageOptions.length > 0"
+        class="list__limit m--0"
+        label="Per Page"
+        size="sm"
+      >
+        <s-select
+          :value="paginationConfig.perPage"
+          @input="$emit('per-page',$event.target.value)"
+          :options="paginationConfig.perPageOptions"
+        ></s-select>
+      </s-field>
     </div>
   </header>
 </template>
@@ -25,3 +28,15 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.list__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: --space(sm);
+}
+
+.list__settings {
+  display: flex;
+}
+</style>
