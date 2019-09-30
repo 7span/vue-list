@@ -1,13 +1,14 @@
 {
   "name": "@7span/vue-list",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue-list src/plugin.js",
     "lint": "vue-cli-service lint",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@7span/shilp": "0.1.0-beta.3",
