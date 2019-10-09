@@ -1,6 +1,9 @@
 {
   "name": "@7span/vue-list",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.6",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue-list src/plugin.js",
@@ -38,5 +41,12 @@
     "prettier": "^1.18.2",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.6.10"
-  }
+  },
+  "main": "dist/vue-list.common.js",
+  "jsdelivr": "dist/vue-list.umd.min.js",
+  "unpkg": "dist/vue-list.umd.min.js",
+  "files": [
+    "dist",
+    "src"
+  ]
 }

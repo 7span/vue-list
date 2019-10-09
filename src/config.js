@@ -21,7 +21,9 @@ const colsConfig = {
   }
 };
 
-const gridTableConfig = {};
+const gridTableConfig = {
+  rowLink: false
+};
 
 const masnoryConfig = {
   size: 5

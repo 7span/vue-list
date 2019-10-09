@@ -16,7 +16,13 @@
       v-model="dataClone"
     >
       <!-- LOOP ROWS -->
-      <article class="grid-table__row" v-for="(row,index) in dataClone" :key="`row--${index}`">
+      <component
+        v-for="(row,index) in dataClone"
+        :key="`row--${index}`"
+        :is="layoutConfig.rowLink?'router-link':'article'"
+        :to="layoutConfig.rowLink?layoutConfig.rowLink(row):false"
+        class="grid-table__row"
+      >
         <slot name="before-row" :item="row" />
 
         <!-- LOOP COLUMNS : STARTS  -->
@@ -53,7 +59,7 @@
         <!-- LOOP COLUMNS : ENDS -->
 
         <slot name="after-row" :item="row"></slot>
-      </article>
+      </component>
     </component>
   </div>
 </template>
@@ -161,6 +167,7 @@ export default {
   width: 100%;
   padding: 0px 10px;
   border-bottom: 1px solid --color(grey, lighter);
+  text-decoration: none !important;
   > p {
     margin: 0;
     padding: 10px 0;

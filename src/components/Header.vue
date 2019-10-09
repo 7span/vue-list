@@ -11,7 +11,7 @@
       >
         <s-select
           :value="paginationConfig.perPage"
-          @input="$emit('per-page',$event.target.value)"
+          @input="$emit('per-page',$event)"
           :options="paginationConfig.perPageOptions"
         ></s-select>
       </s-field>
