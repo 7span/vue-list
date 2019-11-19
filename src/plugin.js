@@ -1,11 +1,11 @@
-import { SButtons, SButton, SIcon, SSelect, SField } from "@7span/shilp-vue";
+// import { SButtons, SButton, SIcon, SSelect, SField } from "@7span/shilp-vue";
 
 const install = (Vue, options = {}) => {
-  Vue.component("SButtons", SButtons);
-  Vue.component("SButton", SButton);
-  Vue.component("SIcon", SIcon);
-  Vue.component("SSelect", SSelect);
-  Vue.component("SField", SField);
+  // Vue.component("SButtons", SButtons);
+  // Vue.component("SButton", SButton);
+  // Vue.component("SIcon", SIcon);
+  // Vue.component("SSelect", SSelect);
+  // Vue.component("SField", SField);
 
   Vue.component(
     "VList",

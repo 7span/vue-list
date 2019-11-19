@@ -297,7 +297,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @keyframes shine {
   to {
     background-position: -200% 0;
