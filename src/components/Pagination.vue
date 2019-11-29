@@ -1,6 +1,6 @@
 <template>
-  <div class="list-pagination" v-if="count > paginationConfig.perPage">
-    <s-buttons class="space space--xs">
+  <div class="list-pagination" v-if="count >perPage">
+    <s-list group>
       <!-- PREV -->
       <s-button
         v-if="isPrev"
@@ -28,10 +28,10 @@
         shape="square"
         @click.native="changePage(page+1)"
       ></s-button>
-    </s-buttons>
+    </s-list>
 
-    <template v-if="totalPages > this.paginationConfig.maxPagingLinks">
-      <select @change="changePage($event.target.value)" :value="value">
+    <template v-if="totalPages > this.maxPagingLinks">
+      <select @change="changePage($event.target.value)" :value="page">
         <option v-for="n in totalPages" :value="n" :key="`paging-link--${n}`">{{n}}</option>
       </select>
     </template>
@@ -41,14 +41,13 @@
 <script>
 export default {
   props: {
-    value: {
-      default: 1
-    },
+    page: Number,
+    perPage: Number,
     count: {
       type: Number,
       default: 0
     },
-    paginationConfig: Object
+    maxPagingLinks: Number
   },
   watch: {
     // value(newValue) {
@@ -57,26 +56,23 @@ export default {
   },
   computed: {
     paginationButtonCount() {
-      return this.totalPages >= this.paginationConfig.maxPagingLinks
-        ? this.paginationConfig.maxPagingLinks
+      return this.totalPages >= this.maxPagingLinks
+        ? this.maxPagingLinks
         : this.totalPages;
     },
-    page() {
-      return parseInt(this.value);
-    },
     isNext() {
-      return this.value * this.paginationConfig.perPage < this.count;
+      return this.page * this.perPage < this.count;
     },
     isPrev() {
-      return this.value != 1;
+      return this.page != 1;
     },
     totalPages() {
-      return Math.ceil(this.count / this.paginationConfig.perPage);
+      return Math.ceil(this.count / this.perPage);
     }
   },
   methods: {
-    changePage(page) {
-      this.$emit("change", page);
+    changePage(number) {
+      this.$emit("change", number);
     }
   }
 };

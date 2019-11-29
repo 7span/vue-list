@@ -10,7 +10,7 @@
     <!-- BODY -->
     <component
       class="grid-table__body"
-      :is="layoutConfig.sortable?DRAGGABLE:'div'"
+      :is="sortable?'draggable':'div'"
       @end="$emit('sort',dataClone)"
       handle=".grid-table__col--_drag"
       v-model="dataClone"
@@ -19,8 +19,8 @@
       <component
         v-for="(row,index) in dataClone"
         :key="`row--${index}`"
-        :is="layoutConfig.rowLink?'router-link':'article'"
-        :to="layoutConfig.rowLink?layoutConfig.rowLink(row):false"
+        :is="itemLink?'router-link':'article'"
+        :to="itemLink?itemLink(row):false"
         class="grid-table__row"
       >
         <slot name="before-row" :item="row" />
@@ -43,12 +43,8 @@
           </p>
 
           <!-- GLOBAL SLOT -->
-          <p
-            v-else-if="layoutConfig.slots && layoutConfig.slots[key]"
-            :class="colClasses(key)"
-            :key="colKey(key,index)"
-          >
-            <component :item="row" :is="layoutConfig.slots[key]" />
+          <p v-else-if="slots && slots[key]" :class="colClasses(key)" :key="colKey(key,index)">
+            <component :item="row" :is="slots[key]" />
           </p>
 
           <!-- DEFAULT SLOT -->
@@ -65,11 +61,61 @@
 </template>
 
 <script>
+var merge = require("lodash/merge");
+
+const defaultItemProps = {
+  _index: {
+    width: "50px",
+    label: "#"
+  },
+  _drag: {
+    width: "24px"
+  }
+};
+
 export default {
-  name: "layout-grid-table",
-  mixins: [require("../mixins/layouts").default],
+  name: "grid-table",
+  inject: ["OPTIONS"],
+
+  props: {
+    itemProps: Object,
+    itemLink: Function,
+    slots: Object,
+    sortable: {
+      type: Boolean,
+      default: false
+    }
+  },
 
   computed: {
+    items() {
+      return this.$parent.items;
+    },
+    pagination() {
+      return this.$parent.paginationConfig;
+    },
+
+    localCols() {
+      let localCols;
+      if (Array.isArray(this.itemProps)) {
+        this.itemProps.forEach(item => {
+          localCols[item] = {
+            label: item
+          };
+        });
+      } else if (typeof this.itemProps == "object") {
+        localCols = this.itemProps;
+      } else {
+        localCols = {};
+      }
+      return localCols;
+    },
+
+    mergedCols() {
+      //Merge with global configuration
+      return merge(defaultItemProps, this.OPTIONS.itemProps, this.localCols);
+    },
+
     _style() {
       return {
         "--cols": this.totalCols,
@@ -108,15 +154,9 @@ export default {
     },
 
     rowIndex(index) {
-      if (this.paginationConfig.perPage) {
-        return (
-          this.paginationConfig.perPage * (this.paginationConfig.page - 1) +
-          index +
-          1
-        );
-      } else {
-        return index + 1;
-      }
+      return (
+        this.$parent.currentPerPage * (this.$parent.currentPage - 1) + index + 1
+      );
     }
   }
 };

@@ -7,17 +7,17 @@ const install = (Vue, options = {}) => {
   // Vue.component("SSelect", SSelect);
   // Vue.component("SField", SField);
 
-  Vue.component(
-    "VList",
-    Vue.extend({
-      extends: require("./components/List.vue").default,
-      data() {
-        return {
-          options
-        };
-      }
-    })
-  );
+  Vue.component("VList", {
+    extends: require("./components/List.vue").default,
+    provide: {
+      OPTIONS: options
+    },
+    data() {
+      return {
+        options
+      };
+    }
+  });
 
   Vue.component(
     "chevron-right",
@@ -36,6 +36,8 @@ const plugin = {
 };
 
 export default plugin;
+export const VListGridTable = require("./layouts/GridTable").default;
+export const VListMasnory = require("./layouts/Masnory").default;
 
 if (typeof window !== "undefined" && window.Vue) {
   window.Vue.use(plugin);
