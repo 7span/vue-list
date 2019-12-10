@@ -38,6 +38,7 @@ const plugin = {
 export default plugin;
 export const VListGridTable = require("./layouts/GridTable").default;
 export const VListMasnory = require("./layouts/Masnory").default;
+export const VListTable = require("./layouts/Table").default;
 
 if (typeof window !== "undefined" && window.Vue) {
   window.Vue.use(plugin);

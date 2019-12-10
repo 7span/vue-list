@@ -1,18 +1,27 @@
 <template>
   <div
     class="v-list"
-    :class="{'v-list--settings':isSettings}"
+    :class="{ 'v-list--settings': isSettings }"
     v-shilp-loader.overlay="loading && !initial"
   >
     <!-- HEADER -->
     <header class="v-list__header">
-      <div class="v-list__title">{{title}}</div>
+      <div class="v-list__title">{{ title }}</div>
       <!-- <div class="v-list__filters">
         <s-button size="sm" color="secondary" shape="pill" label>Active</s-button>
         <s-button size="sm" color="secondary" shape="pill" label>Pro Users</s-button>
       </div>-->
-      <s-nav class="v-list__actions" color="grey" size="sm" style_="trn" shape="square">
-        <s-nav-item icon="Settings" @click.native="isSettings=!isSettings"></s-nav-item>
+      <s-nav
+        class="v-list__actions"
+        color="grey"
+        size="sm"
+        style_="trn"
+        shape="square"
+      >
+        <s-nav-item
+          icon="Settings"
+          @click.native="isSettings = !isSettings"
+        ></s-nav-item>
         <slot name="actions"></slot>
       </s-nav>
     </header>
@@ -42,7 +51,7 @@
         :perPage="currentPerPage"
         :page="currentPage"
         :count="count"
-        @change="currentPage=$event"
+        @change="currentPage = $event"
       />
       <metadata :items="items" :count="count" />
     </footer>
@@ -137,6 +146,12 @@ export default {
     perPage(nv) {
       this.currentPerPage = nv;
     },
+    localSortBy() {
+      this.refresh();
+    },
+    localSortOrder() {
+      this.refresh();
+    },
 
     params: {
       handler(newValue) {
@@ -156,7 +171,7 @@ export default {
 
     //If data is provided explicitly, prevent the request
     if (!this.data) {
-      this.getData();
+      this.refresh();
     }
   },
 
@@ -168,7 +183,7 @@ export default {
       set(value) {
         this.localPage = value;
         this.$emit("update:page", value);
-        this.getData();
+        this.refresh();
       }
     },
     currentPerPage: {
@@ -186,7 +201,7 @@ export default {
   },
 
   methods: {
-    setData(key, value) {
+    set(key, value) {
       this[key] = value;
     },
 
@@ -200,10 +215,10 @@ export default {
     },
 
     refresh() {
-      this.getData();
+      this.getData(0);
     },
 
-    getData() {
+    getData(debounceValue = this.debounce) {
       const self = this;
       debounce(
         function(e) {
@@ -242,7 +257,7 @@ export default {
               this.loading = this.initial = false;
             });
         },
-        this.initial ? 0 : this.debounce
+        this.initial ? 0 : debounceValue
       ).call(self);
     },
 
@@ -322,6 +337,7 @@ export default {
 }
 
 .v-list__actions {
+  margin: 0;
   margin-left: auto;
 }
 

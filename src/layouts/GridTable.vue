@@ -3,39 +3,54 @@
     <!-- HEADER -->
     <header class="grid-table__header">
       <article class="grid-table__row">
-        <p v-for="(col,key) in localCols" :key="`header--${key}`">{{mergedCols[key].label}}</p>
+        <p
+          v-for="(col, key) in localCols"
+          :key="`header--${key}`"
+          @click="apply('localSortBy', key)"
+          :class="{ 'grid-table__sort-by': key == sortBy }"
+        >
+          {{ mergedCols[key].label }}
+        </p>
       </article>
     </header>
 
     <!-- BODY -->
     <component
       class="grid-table__body"
-      :is="sortable?'draggable':'div'"
-      @end="$emit('sort',dataClone)"
+      :is="sortable ? 'draggable' : 'div'"
+      @end="$emit('sort', dataClone)"
       handle=".grid-table__col--_drag"
       v-model="dataClone"
     >
       <!-- LOOP ROWS -->
       <component
-        v-for="(row,index) in dataClone"
+        v-for="(row, index) in dataClone"
         :key="`row--${index}`"
-        :is="itemLink?'router-link':'article'"
-        :to="itemLink?itemLink(row):false"
+        :is="itemLink ? 'router-link' : 'article'"
+        :to="itemLink ? itemLink(row) : false"
         class="grid-table__row"
       >
         <slot name="before-row" :item="row" />
 
         <!-- LOOP COLUMNS : STARTS  -->
-        <template v-for="(col,key) in localCols">
+        <template v-for="(col, key) in localCols">
           <!-- INBUILT COL: INDEX -->
-          <p v-if="key=='_index'" :class="colClasses(key)" :key="colKey(key,index)">
+          <p
+            v-if="key == '_index'"
+            :class="colClasses(key)"
+            :key="colKey(key, index)"
+          >
             <slot name="_index" :item="row">
-              <span>{{rowIndex(index)}}</span>
+              <span>{{ rowIndex(index) }}</span>
             </slot>
           </p>
 
           <!-- INBUILT COL: DRAG HANDLE -->
-          <p v-else-if="key=='_drag'" :class="colClasses(key)" :key="colKey(key,index)">
+          <p
+            v-else-if="key == '_drag'"
+            :class="colClasses(key)"
+            :key="colKey(key, index)"
+          >
             <slot name="_drag" :item="row">
               <s-icon title="Drag to Sort" name="drag"></s-icon>
               <!-- <s-button title="Drag to Sort" icon="drag" color="grey" style_="trn" shape="square"></s-button> -->
@@ -43,13 +58,22 @@
           </p>
 
           <!-- GLOBAL SLOT -->
-          <p v-else-if="slots && slots[key]" :class="colClasses(key)" :key="colKey(key,index)">
+          <p
+            v-else-if="slots && slots[key]"
+            :class="colClasses(key)"
+            :key="colKey(key, index)"
+          >
             <component :item="row" :is="slots[key]" />
           </p>
 
           <!-- DEFAULT SLOT -->
-          <p v-else class="grid-table__col" :class="colClasses(key)" :key="colKey(key,index)">
-            <slot :name="key" :item="row">{{row[key]}}</slot>
+          <p
+            v-else
+            class="grid-table__col"
+            :class="colClasses(key)"
+            :key="colKey(key, index)"
+          >
+            <slot :name="key" :item="row">{{ row[key] }}</slot>
           </p>
         </template>
         <!-- LOOP COLUMNS : ENDS -->
@@ -76,7 +100,7 @@ const defaultItemProps = {
 export default {
   name: "grid-table",
   inject: ["OPTIONS"],
-
+  mixins: [require("../mixins/layouts").default],
   props: {
     itemProps: Object,
     itemLink: Function,
