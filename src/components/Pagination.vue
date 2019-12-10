@@ -1,5 +1,5 @@
 <template>
-  <div class="list-pagination" v-if="count >perPage">
+  <div class="v-list__pagination" v-if="count >perPage">
     <s-list group>
       <!-- PREV -->
       <s-button
@@ -49,11 +49,6 @@ export default {
     },
     maxPagingLinks: Number
   },
-  watch: {
-    // value(newValue) {
-    //   document.querySelector(".page__content").scrollTop = 0;
-    // }
-  },
   computed: {
     paginationButtonCount() {
       return this.totalPages >= this.maxPagingLinks
@@ -79,7 +74,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.list-pagination {
+.v-list__pagination {
   list-style: none;
   margin: 0;
   padding: spacer();

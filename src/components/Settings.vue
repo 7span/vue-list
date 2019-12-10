@@ -1,7 +1,18 @@
 <template>
-  <header class="list__header">
-    <div class="list__title"></div>
-    <div class="list__settings">
+  <div class="v-list__settings">
+    <s-list gap="sm" stack>
+      <!-- SEARCH -->
+      <s-field size="sm" label="Search">
+        <s-textbox></s-textbox>
+      </s-field>
+
+      <!-- ITEM PROPS -->
+      <s-field size="sm" label="Columns">
+        <s-dropdown select placeholder="Columns">
+          <h1>Hello!</h1>
+        </s-dropdown>
+      </s-field>
+
       <!-- LIMIT, PER PAGE RESULTS -->
       <s-field
         v-if="currentPerPageOptions.length > 0"
@@ -15,8 +26,8 @@
           :options="currentPerPageOptions"
         ></s-select>
       </s-field>
-    </div>
-  </header>
+    </s-list>
+  </div>
 </template>
 
 <script>
@@ -30,16 +41,7 @@ export default {
 
   computed: {
     currentPerPageOptions() {
-      const options = this.perPageOptions.map(item => {
-        if (typeof item == "object") {
-          return item;
-        } else {
-          return {
-            value: item,
-            label: item
-          };
-        }
-      });
+      const options = this.perPageOptions;
       //If the limit is set to 0
       //Add "All" option to dropdown
       //Only if user has nnot provided blank array. This is to hide dropdown
@@ -66,13 +68,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.list__header {
+.v-list__settings {
   display: flex;
   justify-content: space-between;
-  margin-bottom: --space(sm);
-}
-
-.list__settings {
-  display: flex;
+  .field {
+    margin-bottom: 0;
+  }
+  .list {
+    grid-auto-rows: max-content;
+  }
 }
 </style>

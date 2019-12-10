@@ -1,14 +1,13 @@
 <template>
-  <div class="list-meta">
+  <div class="v-list__meta">
     <!-- SHOW COUNTS -->
-    <div class="list-meta__results" v-if="items.length > 0">
-      <p>Showing {{showing}} items out of {{count}}</p>
-    </div>
+    <p class="v-list__results" v-if="items.length > 0">Showing {{showing}} items out of {{count}}</p>
 
     <!-- NO RESULTS -->
-    <div class="list-meta__empty" v-else>
-      <p>No data found for given duration & filters. Try changing duration/filters.</p>
-    </div>
+    <p
+      class="v-list__empty"
+      v-else
+    >No data found for given duration & filters. Try changing duration/filters.</p>
   </div>
 </template>
 
@@ -33,14 +32,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.list-meta__results {
+.v-list__results {
   margin-top: 16px;
   text-align: center;
   font-size: 12px;
   color: --color(grey);
 }
 
-.list-meta__empty {
+.v-list__empty {
   display: flex;
   flex-direction: column;
   background-color: #fff;
