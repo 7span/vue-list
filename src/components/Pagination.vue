@@ -11,14 +11,23 @@
       ></s-button>
 
       <!-- PAGES -->
-      <s-button
-        v-for="n in paginationButtonCount"
-        color="primary"
-        shape="square"
-        :class="{ active : n==page }"
-        :key="`page--${n}`"
-        @click.native="changePage(n)"
-      >{{n}}</s-button>
+      <template v-for="n in paginationButtonCount">
+        <s-button
+          v-if="n==page"
+          color="primary"
+          shape="square"
+          class="button--active"
+          :key="`page--${n}`"
+          label
+        >{{n}}</s-button>
+        <s-button
+          v-else
+          color="primary"
+          shape="square"
+          :key="`page--${n}`"
+          @click.native="changePage(n)"
+        >{{n}}</s-button>
+      </template>
 
       <!-- NEXT -->
       <s-button
@@ -84,34 +93,10 @@ export default {
   flex-wrap: wrap;
   > li {
     margin: 0px 2px;
-    button,
-    select,
-    a,
-    button {
-      height: 30px;
-      min-width: 30px;
-      display: flex;
-      cursor: pointer;
-      justify-content: center;
-      align-items: center;
-      border-radius: 3px;
-      border: none;
-      text-decoration: none;
-      outline: 0 !important;
-      color: $md-grey-500;
-      font-size: 12px;
-      font-weight: bold;
-      &:hover {
-        background-color: $md-grey-200;
-      }
-    }
-    &.active {
-      button,
-      a {
-        background-color: color("primary");
-        color: #fff;
-      }
-    }
+  }
+  .button--active {
+    background-color: --color("primary", dark);
+    cursor: default;
   }
 }
 </style>

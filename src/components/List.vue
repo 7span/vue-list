@@ -11,17 +11,8 @@
         <s-button size="sm" color="secondary" shape="pill" label>Active</s-button>
         <s-button size="sm" color="secondary" shape="pill" label>Pro Users</s-button>
       </div>-->
-      <s-nav
-        class="v-list__actions"
-        color="grey"
-        size="sm"
-        style_="trn"
-        shape="square"
-      >
-        <s-nav-item
-          icon="Settings"
-          @click.native="isSettings = !isSettings"
-        ></s-nav-item>
+      <s-nav class="v-list__actions" color="grey" size="sm" style_="trn" shape="square">
+        <s-nav-item icon="Settings" @click.native="isSettings = !isSettings"></s-nav-item>
         <slot name="actions"></slot>
       </s-nav>
     </header>
@@ -146,12 +137,6 @@ export default {
     perPage(nv) {
       this.currentPerPage = nv;
     },
-    localSortBy() {
-      this.refresh();
-    },
-    localSortOrder() {
-      this.refresh();
-    },
 
     params: {
       handler(newValue) {
@@ -244,7 +229,11 @@ export default {
               this.count = res.count;
 
               //Set Page URL
-              if (this.$router && this.paginationMode == "querystring") {
+              if (
+                this.$router &&
+                this.paginationMode == "querystring" &&
+                this.$route.query.page != this.currentPage
+              ) {
                 this.$router.push({
                   query: {
                     page: this.currentPage
@@ -284,7 +273,7 @@ export default {
 .v-list {
   display: grid;
   grid-template-rows: auto auto auto;
-  grid-template-columns: auto 200px;
+  grid-template-columns: auto 240px;
 }
 
 .v-list--settings {

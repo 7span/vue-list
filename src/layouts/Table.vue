@@ -1,19 +1,22 @@
 <template>
-  <table
-    class="v-list-table"
-    :class="{ 'v-list-table--row-click': $listeners.rowClick }"
-  >
+  <table class="v-list-table" :class="{ 'v-list-table--row-click': $listeners.rowClick }">
     <!-- HEADER -->
     <thead>
       <tr>
         <th
-          v-for="(col, key) in localCols"
+          v-for="(col, key) in itemProps"
           :key="`v-list-table-header-${key}`"
-          @click="apply('localSortBy', key)"
           :class="{ 'v-list-table__sort': key == sortBy }"
-          :style="{ width: col.width || false }"
+          :style="{ width: mergedItems[key].width || false }"
+          @click="sortItemsBy(key)"
         >
-          {{ mergedCols[key].label }}
+          <div class="v-list__head">
+            <label>{{ mergedItems[key].label || startCase(key) }}</label>
+            <div v-if="key == sortBy" class="v-list__sort-icon">
+              <s-icon v-if="sortOrder=='asc'" name="ChevronUp"></s-icon>
+              <s-icon v-if="sortOrder=='desc'" name="ChevronDown"></s-icon>
+            </div>
+          </div>
         </th>
       </tr>
     </thead>
@@ -21,117 +24,91 @@
     <!-- BODY -->
     <component
       :is="sortable ? 'draggable' : 'tbody'"
-      @end="$emit('sort', dataClone)"
-      handle=".v-list-table__drag"
-      v-model="dataClone"
+      handle=".v-list-table__sort"
       tag="tbody"
+      v-model="listItems"
+      @change="change($event)"
     >
-      <!-- LOOP ROWS -->
+      <!-- Looping Rows -->
       <tr
-        v-for="(row, index) in dataClone"
+        v-for="(row, index) in listItems"
         :key="`v-list-table-row-${index}`"
         @click="$emit('rowClick', row)"
       >
-        <!-- LOOP COLUMNS : STARTS  -->
-        <td v-for="(col, key) in localCols" :key="`v-list-table-col-${key}`">
-          <!-- INBUILT COL: INDEX -->
-          <p v-if="key == '_index'">
-            <slot name="_index" :item="row">
-              <span>{{ rowIndex(index) }}</span>
-            </slot>
-          </p>
+        <!-- Looping Columns -->
+        <td v-for="(col, key) in itemProps" :key="`v-list-table-col-${key}`">
+          <!-- Override Slot -->
+          <slot v-if="$scopedSlots[key]" :name="key" :item="row">{{ row[key] }}</slot>
 
-          <!-- INBUILT COL: DRAG HANDLE -->
-          <p
-            data-test="hi"
-            class="v-list-table__drag"
-            v-else-if="key == '_drag'"
-          >
-            <slot name="_drag" :item="row">
+          <!-- Global Slot -->
+          <component
+            v-else-if="OPTIONS.slots && OPTIONS.slots[key]"
+            :item="row"
+            :is="OPTIONS.slots[key]"
+          />
+
+          <!-- Index -->
+          <slot v-else-if="key == '_index'" name="_index" :item="row">
+            <span>{{ itemIndex(index) }}</span>
+          </slot>
+
+          <!-- Drag Handle -->
+          <p v-else-if="key == '_sort'" class="v-list-table__sort">
+            <slot name="_sort" :item="row">
               <s-icon title="Drag to Sort" name="drag"></s-icon>
             </slot>
           </p>
 
-          <!-- GLOBAL SLOT -->
-          <p v-else-if="slots && slots[key]">
-            <component :item="row" :is="slots[key]" />
-          </p>
-
-          <!-- DEFAULT SLOT -->
-          <p v-else>
-            <slot :name="key" :item="row">{{ row[key] }}</slot>
-          </p>
+          <!-- Default Slot -->
+          <slot v-else :name="key" :item="row">{{ row[key] }}</slot>
         </td>
-        <!-- LOOP COLUMNS : ENDS -->
       </tr>
     </component>
   </table>
 </template>
 
 <script>
-var merge = require("lodash/merge");
+import { merge, startCase } from "lodash";
 
 const defaultItemProps = {
   _index: {
     width: "50px",
     label: "#"
   },
-  _drag: {
+  _sort: {
     width: "24px"
   }
 };
 
 export default {
   name: "v-list-table",
-  inject: ["OPTIONS"],
   mixins: [require("../mixins/layouts").default],
   props: {
-    itemProps: Object,
-    itemLink: Function,
-    slots: Object,
     sortable: {
       type: Boolean,
       default: false
     }
   },
 
+  data() {
+    return {
+      startCase
+    };
+  },
+
   computed: {
-    items() {
-      return this.$parent.items;
-    },
-    pagination() {
-      return this.$parent.paginationConfig;
-    },
-
-    localCols() {
-      let localCols;
-      if (Array.isArray(this.itemProps)) {
-        this.itemProps.forEach(item => {
-          localCols[item] = {
-            label: item
-          };
-        });
-      } else if (typeof this.itemProps == "object") {
-        localCols = this.itemProps;
-      } else {
-        localCols = {};
-      }
-      return localCols;
-    },
-
-    mergedCols() {
+    mergedItems() {
       //Merge with global configuration
-      return merge(defaultItemProps, this.OPTIONS.itemProps, this.localCols);
+      const mergedItems = merge(
+        defaultItemProps,
+        this.OPTIONS.itemProps,
+        this.itemProps
+      );
+      return mergedItems;
     },
-
-    //Number of Columns
-    totalCols() {
-      let total = Object.keys(this.localCols).length;
-      return total;
-    },
-    dataClone: {
+    listItems: {
       set(newValue) {
-        this.$emit("update:items", newValue);
+        //Update of items is done with API and refreshing the request so no need to update the UI
       },
       get() {
         return JSON.parse(JSON.stringify(this.items));
@@ -139,10 +116,8 @@ export default {
     }
   },
   methods: {
-    rowIndex(index) {
-      return (
-        this.$parent.currentPerPage * (this.$parent.currentPage - 1) + index + 1
-      );
+    change(data) {
+      this.$emit("sort", data);
     }
   }
 };
@@ -167,7 +142,6 @@ export default {
   th {
     border-bottom-width: 2px;
     font-weight: bold;
-    text-transform: uppercase;
     color: --color(grey);
     font-size: 13px;
   }
@@ -198,6 +172,15 @@ export default {
 
 .v-list-table--row-click {
   tr {
+    cursor: pointer;
+  }
+}
+
+.v-list__head {
+  display: flex;
+  align-items: center;
+  label {
+    flex: 0 0 auto;
     cursor: pointer;
   }
 }

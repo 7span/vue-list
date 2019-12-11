@@ -31,12 +31,6 @@ Vue.use(VList, {
     slots: {
       edit: require("@/components/DemoButton").default
     }
-  },
-  responseAdapter(res) {
-    return {
-      data: res.data,
-      count: res.meta.total
-    };
   }
 });
 

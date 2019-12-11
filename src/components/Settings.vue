@@ -1,17 +1,12 @@
 <template>
   <div class="v-list__settings">
-    <s-list gap="sm" stack>
-      <!-- SEARCH -->
-      <s-field size="sm" label="Search">
-        <s-textbox></s-textbox>
-      </s-field>
-
+    <s-list gap="sm" stack fluid>
       <!-- ITEM PROPS -->
-      <s-field size="sm" label="Columns">
+      <!-- <s-field size="sm" label="Columns">
         <s-dropdown select placeholder="Columns">
           <h1>Hello!</h1>
         </s-dropdown>
-      </s-field>
+      </s-field>-->
 
       <!-- LIMIT, PER PAGE RESULTS -->
       <s-field
