@@ -1,28 +1,26 @@
 <template>
-  <div class="v-list__settings">
-    <s-list gap="sm" stack fluid>
-      <!-- ITEM PROPS -->
-      <!-- <s-field size="sm" label="Columns">
+  <s-list gap="sm" stack fluid>
+    <!-- ITEM PROPS -->
+    <!-- <s-field size="sm" label="Columns">
         <s-dropdown select placeholder="Columns">
           <h1>Hello!</h1>
         </s-dropdown>
-      </s-field>-->
+    </s-field>-->
 
-      <!-- LIMIT, PER PAGE RESULTS -->
-      <s-field
-        v-if="currentPerPageOptions.length > 0"
-        class="list__limit m--0"
-        label="Per Page"
-        size="sm"
-      >
-        <s-select
-          :value="perPage"
-          @input="$emit('per-page',parseInt($event))"
-          :options="currentPerPageOptions"
-        ></s-select>
-      </s-field>
-    </s-list>
-  </div>
+    <!-- LIMIT, PER PAGE RESULTS -->
+    <s-field
+      v-if="currentPerPageOptions.length > 0"
+      class="list__limit m--0"
+      label="Per Page"
+      size="sm"
+    >
+      <s-select
+        :value="perPage"
+        @input="$emit('per-page', parseInt($event))"
+        :options="currentPerPageOptions"
+      ></s-select>
+    </s-field>
+  </s-list>
 </template>
 
 <script>
@@ -48,13 +46,13 @@ export default {
       }
 
       //If the limit provided is not in perLimitOptions
-      const perPageOptionValues = options.map(item => item.value);
-      if (!perPageOptionValues.includes(this.perPage)) {
-        options.push({
-          value: this.perPage,
-          label: this.perPage
-        });
-      }
+      // const perPageOptionValues = options.map(item => item.value);
+      // if (!perPageOptionValues.includes(this.perPage)) {
+      //   options.push({
+      //     value: this.perPage,
+      //     label: this.perPage
+      //   });
+      // }
 
       return options;
     }

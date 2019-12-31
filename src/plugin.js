@@ -1,8 +1,14 @@
+const defaultOptions = {
+  requestHandler() {},
+  itemProps: {},
+  typeAdapters: {}
+};
+
 const install = (Vue, options = {}) => {
   Vue.component("VList", {
     extends: require("./components/List.vue").default,
     provide: {
-      OPTIONS: options
+      OPTIONS: Object.assign(defaultOptions, options)
     },
     data() {
       return {

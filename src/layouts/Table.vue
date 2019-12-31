@@ -6,15 +6,18 @@
         <th
           v-for="(col, key) in itemProps"
           :key="`v-list-table-header-${key}`"
-          :class="{ 'v-list-table__sort': key == sortBy }"
+          :class="{
+            'v-list-table__sort': key == sortBy,
+            'v-list-table__fix': col.fix
+          }"
           :style="{ width: mergedItems[key].width || false }"
           @click="sortItemsBy(key)"
         >
           <div class="v-list__head">
             <label>{{ mergedItems[key].label || startCase(key) }}</label>
             <div v-if="key == sortBy" class="v-list__sort-icon">
-              <s-icon v-if="sortOrder=='asc'" name="ChevronUp"></s-icon>
-              <s-icon v-if="sortOrder=='desc'" name="ChevronDown"></s-icon>
+              <s-icon v-if="sortOrder == 'asc'" name="ChevronUp"></s-icon>
+              <s-icon v-if="sortOrder == 'desc'" name="ChevronDown"></s-icon>
             </div>
           </div>
         </th>
@@ -36,9 +39,19 @@
         @click="$emit('rowClick', row)"
       >
         <!-- Looping Columns -->
-        <td v-for="(col, key) in itemProps" :key="`v-list-table-col-${key}`">
+        <td
+          v-for="(col, key) in itemProps"
+          :key="`v-list-table-col-${key}`"
+          :class="{
+            'v-list-table__fix': col.fix
+          }"
+        >
           <!-- Override Slot -->
-          <slot v-if="$scopedSlots[key]" :name="key" :item="row">{{ row[key] }}</slot>
+          <slot v-if="$scopedSlots[key]" :name="key" :item="row">
+            {{
+            row[key]
+            }}
+          </slot>
 
           <!-- Global Slot -->
           <component
@@ -58,6 +71,20 @@
               <s-icon title="Drag to Sort" name="drag"></s-icon>
             </slot>
           </p>
+
+          <!-- If value is defined in valueMap-->
+          <slot
+            v-else-if="col.valueMap && col.valueMap[row[key]]"
+            :name="key"
+            :item="row"
+          >{{ col.valueMap[row[key]] }}</slot>
+
+          <!-- Type Adaptor -->
+          <slot
+            v-else-if="col.type && OPTIONS.typeAdapters[col.type]"
+            :name="key"
+            :item="row"
+          >{{ OPTIONS.typeAdapters[col.type](row[key], row) }}</slot>
 
           <!-- Default Slot -->
           <slot v-else :name="key" :item="row">{{ row[key] }}</slot>
@@ -145,9 +172,11 @@ export default {
     color: --color(grey);
     font-size: 13px;
   }
-  tr {
-    &:hover {
-      background-color: --color(grey, lightest);
+  tbody {
+    tr {
+      &:hover {
+        background-color: --color(grey, lightest);
+      }
     }
   }
   .col-drag {
@@ -183,5 +212,9 @@ export default {
     flex: 0 0 auto;
     cursor: pointer;
   }
+}
+.v-list-table__fix {
+  width: 1px;
+  white-space: nowrap;
 }
 </style>

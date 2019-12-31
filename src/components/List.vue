@@ -1,28 +1,36 @@
 <template>
   <div
     class="v-list"
-    :class="{ 'v-list--settings': isSettings }"
-    v-shilp-loader.overlay="loading && !initial"
+    :class="{ 'v-list--sidebar': sidebarContent }"
+    v-shilp-loader.overlay="loader && loading && !initial"
+    :loading="loading"
   >
     <!-- HEADER -->
-    <header class="v-list__header">
+    <header class="v-list__header" v-if="header">
       <div class="v-list__title">{{ title }}</div>
       <!-- <div class="v-list__filters">
         <s-button size="sm" color="secondary" shape="pill" label>Active</s-button>
         <s-button size="sm" color="secondary" shape="pill" label>Pro Users</s-button>
       </div>-->
       <s-nav class="v-list__actions" color="grey" size="sm" style_="trn" shape="square">
-        <s-nav-item icon="Settings" @click.native="isSettings = !isSettings"></s-nav-item>
+        <s-nav-item icon="Settings" @click.native="toggleSidebar('settings')"></s-nav-item>
+        <s-nav-item icon="FilterIcon" @click.native="toggleSidebar('filters')"></s-nav-item>
+        <s-nav-item icon="Refresh" @click.native="refresh()"></s-nav-item>
         <slot name="actions"></slot>
       </s-nav>
     </header>
 
     <!-- SETTINGS -->
-    <settings
-      @per-page="currentPerPage = $event"
-      :perPage="currentPerPage"
-      :perPageOptions="perPageOptions"
-    ></settings>
+    <div class="v-list__sidebar">
+      <settings
+        v-if="sidebarContent == 'settings'"
+        @per-page="currentPerPage = $event"
+        :perPage="currentPerPage"
+        :perPageOptions="perPageOptions"
+      ></settings>
+
+      <slot v-if="sidebarContent == 'filters'" name="filters"></slot>
+    </div>
 
     <!-- CONTENT -->
     <section class="v-list__content">
@@ -32,7 +40,7 @@
       </ul>
 
       <!-- ITEMS -->
-      <slot v-else :items="data || items"></slot>
+      <slot v-else :items="data || items" :loading="loading"></slot>
     </section>
 
     <!-- FOOTER -->
@@ -60,6 +68,10 @@ export default {
   },
 
   props: {
+    header: {
+      type: Boolean,
+      default: true
+    },
     endpoint: String,
     title: {
       default: ""
@@ -104,14 +116,18 @@ export default {
       default: 1000
     },
     sortBy: String,
-    sortOrder: String
+    sortOrder: String,
+    loader: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data() {
     const self = this;
 
     return {
-      isSettings: false,
+      sidebarContent: false,
       isFilters: false,
       items: [],
       count: 0,
@@ -188,6 +204,14 @@ export default {
   methods: {
     set(key, value) {
       this[key] = value;
+    },
+
+    toggleSidebar(content) {
+      if (this.sidebarContent == content) {
+        this.sidebarContent = false;
+      } else {
+        this.sidebarContent = content;
+      }
     },
 
     setPaginationConfig() {
@@ -276,11 +300,11 @@ export default {
   grid-template-columns: auto 240px;
 }
 
-.v-list--settings {
+.v-list--sidebar {
   .v-list__content {
     grid-column-start: 2;
   }
-  .v-list__settings {
+  .v-list__sidebar {
     display: block;
   }
 }
@@ -294,7 +318,7 @@ export default {
   background-color: --color(grey, lightest);
   padding: 8px;
 }
-.v-list__settings {
+.v-list__sidebar {
   display: none;
   grid-area: 2 / 3 / 3 / 2;
   border-left: 1px solid --color(grey, lightest);
@@ -303,6 +327,7 @@ export default {
 .v-list__content {
   grid-area: 2 / 3 / 3 / 1;
   padding: 24px;
+  overflow: auto;
 }
 .v-list__footer {
   grid-area: 3 / 3 / 4 / 1;
