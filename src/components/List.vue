@@ -12,12 +12,12 @@
         <s-button size="sm" color="secondary" shape="pill" label>Active</s-button>
         <s-button size="sm" color="secondary" shape="pill" label>Pro Users</s-button>
       </div>-->
-      <s-nav class="v-list__actions" color="grey" size="sm" style_="trn" shape="square">
-        <s-nav-item icon="Settings" @click.native="toggleSidebar('settings')"></s-nav-item>
-        <s-nav-item icon="FilterIcon" @click.native="toggleSidebar('filters')"></s-nav-item>
-        <s-nav-item icon="Refresh" @click.native="refresh()"></s-nav-item>
+      <s-button-group class="v-list__actions" color="grey" size="sm" theme="trn" shape="square">
+        <s-button icon="Settings" @click.native="toggleSidebar('settings')"></s-button>
+        <s-button icon="FilterIcon" @click.native="toggleSidebar('filters')"></s-button>
+        <s-button icon="Refresh" @click.native="refresh()"></s-button>
         <slot name="actions"></slot>
-      </s-nav>
+      </s-button-group>
     </header>
 
     <!-- SETTINGS -->
@@ -102,7 +102,10 @@ export default {
     },
     paginationMode: {
       type: String,
-      default: "querystring"
+      default: "querystring",
+      validator(value) {
+        return ["querystring", "internal", "infinite"].includes(value);
+      }
     },
     params: Object,
     data: Array,
@@ -228,7 +231,6 @@ export default {
     },
 
     getData(debounceValue = this.debounce) {
-      const self = this;
       debounce(
         function(e) {
           this.loading = true;
@@ -271,7 +273,7 @@ export default {
             });
         },
         this.initial ? 0 : debounceValue
-      ).call(self);
+      ).call(this);
     },
 
     sort(e) {
@@ -296,7 +298,7 @@ export default {
 <style lang="scss" scoped>
 .v-list {
   display: grid;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: min-content auto min-content;
   grid-template-columns: auto 240px;
 }
 
@@ -322,15 +324,15 @@ export default {
   display: none;
   grid-area: 2 / 3 / 3 / 2;
   border-left: 1px solid --color(grey, lightest);
-  padding: 24px;
+  padding: --space(3);
 }
 .v-list__content {
   grid-area: 2 / 3 / 3 / 1;
-  padding: 24px;
   overflow: auto;
 }
 .v-list__footer {
   grid-area: 3 / 3 / 4 / 1;
+  padding: --space(3);
 }
 
 .v-list__title {

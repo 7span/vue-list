@@ -1,97 +1,106 @@
 <template>
-  <table class="v-list-table" :class="{ 'v-list-table--row-click': $listeners.rowClick }">
-    <!-- HEADER -->
-    <thead>
-      <tr>
-        <th
-          v-for="(col, key) in itemProps"
-          :key="`v-list-table-header-${key}`"
-          :class="{
-            'v-list-table__sort': key == sortBy,
-            'v-list-table__fix': col.fix
-          }"
-          :style="{ width: mergedItems[key].width || false }"
-          @click="sortItemsBy(key)"
-        >
-          <div class="v-list__head">
-            <label>{{ mergedItems[key].label || startCase(key) }}</label>
-            <div v-if="key == sortBy" class="v-list__sort-icon">
-              <s-icon v-if="sortOrder == 'asc'" name="ChevronUp"></s-icon>
-              <s-icon v-if="sortOrder == 'desc'" name="ChevronDown"></s-icon>
-            </div>
-          </div>
-        </th>
-      </tr>
-    </thead>
-
-    <!-- BODY -->
-    <component
-      :is="sortable ? 'draggable' : 'tbody'"
-      handle=".v-list-table__sort"
-      tag="tbody"
-      v-model="listItems"
-      @change="change($event)"
+  <div class="v-list-table">
+    <table
+      class="v-list-table__table"
+      :class="{ 'v-list-table--row-click': $listeners.rowClick }"
     >
-      <!-- Looping Rows -->
-      <tr
-        v-for="(row, index) in listItems"
-        :key="`v-list-table-row-${index}`"
-        @click="$emit('rowClick', row)"
+      <!-- HEADER -->
+      <thead>
+        <tr>
+          <th
+            v-for="(col, key) in columns"
+            :key="`v-list-table-header-${key}`"
+            :class="{
+              'v-list-table__sort': key == sortBy,
+              'v-list-table__fix': col.fix
+            }"
+            :style="{
+              width: mergedItems[key] ? mergedItems[key].width : false
+            }"
+            @click="sortItemsBy(key)"
+          >
+            <div class="v-list__head">
+              <label>{{
+                mergedItems[key] ? mergedItems[key].label : startCase(key)
+              }}</label>
+              <div v-if="key == sortBy" class="v-list__sort-icon">
+                <s-icon v-if="sortOrder == 'asc'" name="ChevronUp"></s-icon>
+                <s-icon v-if="sortOrder == 'desc'" name="ChevronDown"></s-icon>
+              </div>
+            </div>
+          </th>
+        </tr>
+      </thead>
+
+      <!-- BODY -->
+      <component
+        :is="sortable ? 'draggable' : 'tbody'"
+        handle=".v-list-table__sort"
+        tag="tbody"
+        v-model="listItems"
+        @change="change($event)"
       >
-        <!-- Looping Columns -->
-        <td
-          v-for="(col, key) in itemProps"
-          :key="`v-list-table-col-${key}`"
-          :class="{
-            'v-list-table__fix': col.fix
-          }"
+        <!-- Looping Rows -->
+        <tr
+          v-for="(row, index) in listItems"
+          :key="`v-list-table-row-${index}`"
+          @click="$emit('rowClick', row)"
         >
-          <!-- Override Slot -->
-          <slot v-if="$scopedSlots[key]" :name="key" :item="row">
-            {{
-            row[key]
-            }}
-          </slot>
-
-          <!-- Global Slot -->
-          <component
-            v-else-if="OPTIONS.slots && OPTIONS.slots[key]"
-            :item="row"
-            :is="OPTIONS.slots[key]"
-          />
-
-          <!-- Index -->
-          <slot v-else-if="key == '_index'" name="_index" :item="row">
-            <span>{{ itemIndex(index) }}</span>
-          </slot>
-
-          <!-- Drag Handle -->
-          <p v-else-if="key == '_sort'" class="v-list-table__sort">
-            <slot name="_sort" :item="row">
-              <s-icon title="Drag to Sort" name="drag"></s-icon>
+          <!-- Looping Columns -->
+          <td
+            v-for="(col, key) in columns"
+            :key="`v-list-table-col-${key}`"
+            :class="{
+              'v-list-table__fix': col.fix
+            }"
+          >
+            <!-- Override Slot -->
+            <slot v-if="$scopedSlots[key]" :name="key" :item="row">
+              {{ row[key] }}
             </slot>
-          </p>
 
-          <!-- If value is defined in valueMap-->
-          <slot
-            v-else-if="col.valueMap && col.valueMap[row[key]]"
-            :name="key"
-            :item="row"
-          >{{ col.valueMap[row[key]] }}</slot>
+            <!-- Global Slot -->
+            <component
+              v-else-if="OPTIONS.slots && OPTIONS.slots[key]"
+              :item="row"
+              :is="OPTIONS.slots[key]"
+            />
 
-          <!-- Type Adaptor -->
-          <slot
-            v-else-if="col.type && OPTIONS.typeAdapters[col.type]"
-            :name="key"
-            :item="row"
-          >{{ OPTIONS.typeAdapters[col.type](row[key], row) }}</slot>
+            <!-- Index -->
+            <slot v-else-if="key == '_index'" name="_index" :item="row">
+              <span>{{ itemIndex(index) }}</span>
+            </slot>
 
-          <!-- Default Slot -->
-          <slot v-else :name="key" :item="row">{{ row[key] }}</slot>
-        </td>
-      </tr>
-    </component>
-  </table>
+            <!-- Drag Handle -->
+            <p v-else-if="key == '_sort'" class="v-list-table__sort">
+              <slot name="_sort" :item="row">
+                <s-icon title="Drag to Sort" name="drag"></s-icon>
+              </slot>
+            </p>
+
+            <!-- If value is defined in valueMap-->
+            <slot
+              v-else-if="col.valueMap && col.valueMap[row[key]]"
+              :name="key"
+              :item="row"
+              >{{ col.valueMap[row[key]] }}</slot
+            >
+
+            <!-- Type Adaptor -->
+            <slot
+              v-else-if="col.type && OPTIONS.typeAdapters[col.type]"
+              :name="key"
+              :item="row"
+              >{{ OPTIONS.typeAdapters[col.type](row[key], row) }}</slot
+            >
+
+            <!-- Default Slot -->
+            <slot v-else :name="key" :item="row">{{ row[key] }}</slot>
+          </td>
+        </tr>
+      </component>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -124,6 +133,22 @@ export default {
   },
 
   computed: {
+    //TODO : NOT WORKING IN FINAL BUILD!
+    columns() {
+      //If not itemProps configuration is provided, return all the items to show!
+      if (!this.itemProps || Object.keys(this.itemProps).length == 0) {
+        const columns = {};
+        //Get all the keys from response data
+        if (this.listItems[0]) {
+          Object.keys(this.listItems[0]).forEach(item => {
+            columns[item] = {};
+          });
+        }
+        return columns;
+      } else {
+        return this.itemProps;
+      }
+    },
     mergedItems() {
       //Merge with global configuration
       const mergedItems = merge(
@@ -152,19 +177,24 @@ export default {
 
 <style lang="scss" scoped>
 .v-list-table {
+  --v-list-table--border-color: #{--color(grey, lighter)};
+  padding: --space(3);
+}
+.v-list-table__table {
   width: 100%;
   border-collapse: collapse;
   border-style: hidden;
+  border-bottom: 2px solid var(--v-list-table--border-color);
   th,
   td {
     padding: 10px;
-    border-color: --color(grey, lighter);
+    border-color: var(--v-list-table--border-color);
     border-style: solid;
     border-bottom-width: 1px;
     border-top-width: 1px;
     border-left-width: 0px;
     border-right-width: 0px;
-    text-align: left;
+    text-align: start;
   }
   th {
     border-bottom-width: 2px;
