@@ -3,20 +3,24 @@
     <v-list
       :config="config"
       endpoint="v1/campaigns"
-      :layout="{name:'gridTable',sortable:true,cols:['_index','id','name','asin','created_at','edit','_drag']}"
-      :pagination="{mode:'internal'}"
+      :layout="{
+        name: 'gridTable',
+        sortable: true,
+        cols: ['_index', 'id', 'name', 'asin', 'created_at', 'edit', '_drag']
+      }"
+      :pagination="{ mode: 'internal' }"
     >
       <template>
         <h1>HELLO</h1>
       </template>
-      <template slot="edit">Hello</template>
+      <template slot="edit"
+        >Hello</template
+      >
     </v-list>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "app",
   components: {},
@@ -129,5 +133,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

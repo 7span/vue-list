@@ -12,9 +12,21 @@
         <s-button size="sm" color="secondary" shape="pill" label>Active</s-button>
         <s-button size="sm" color="secondary" shape="pill" label>Pro Users</s-button>
       </div>-->
-      <s-button-group class="v-list__actions" color="grey" size="sm" theme="trn" shape="square">
-        <s-button icon="Settings" @click.native="toggleSidebar('settings')"></s-button>
-        <s-button icon="FilterIcon" @click.native="toggleSidebar('filters')"></s-button>
+      <s-button-group
+        class="v-list__actions"
+        color="grey"
+        size="sm"
+        theme="trn"
+        shape="square"
+      >
+        <s-button
+          icon="Settings"
+          @click.native="toggleSidebar('settings')"
+        ></s-button>
+        <s-button
+          icon="FilterIcon"
+          @click.native="toggleSidebar('filters')"
+        ></s-button>
         <s-button icon="Refresh" @click.native="refresh()"></s-button>
         <slot name="actions"></slot>
       </s-button-group>
@@ -40,7 +52,20 @@
       </ul>
 
       <!-- ITEMS -->
-      <slot v-else :items="data || items" :loading="loading"></slot>
+      <slot
+        v-else
+        :items="data || items"
+        :loading="loading"
+        :isEmpty="isEmpty"
+      ></slot>
+
+      <!-- EMPTY -->
+      <slot name="empty">
+        <p v-if="isEmpty" class="v-list__empty">
+          No data found for given duration & filters. Try changing
+          duration/filters.
+        </p>
+      </slot>
     </section>
 
     <!-- FOOTER -->
@@ -167,7 +192,6 @@ export default {
   },
 
   created() {
-    this.$on("vlist", data => console.log(data));
     this.initial = true;
     //Create a clone of config to make overridable configs
     //This helps to use v-model as config
@@ -180,6 +204,11 @@ export default {
   },
 
   computed: {
+    isEmpty() {
+      if (this.data && this.data.length != 0) return false;
+      if (this.items && this.items.length != 0) return false;
+      return true;
+    },
     currentPage: {
       get() {
         return parseInt(this.localPage || this.page);
@@ -235,7 +264,6 @@ export default {
         function(e) {
           this.loading = true;
           const params = {
-            ...this.filters,
             ...(this.params || {}),
             [this.pageKey]: this.page || undefined,
             [this.perPageKey]: this.currentPerPage || undefined,
@@ -246,7 +274,8 @@ export default {
           const request = this.options.requestHandler({
             method: "get",
             endpoint: this.endpoint,
-            params
+            params,
+            filters: this.filters
           });
 
           request
@@ -365,7 +394,7 @@ export default {
 .v-list__loader {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: --space(3);
   li {
     height: 40px;
     opacity: 0.5;
@@ -381,5 +410,10 @@ export default {
     animation: shine 1.5s infinite;
     background-size: 200%;
   }
+}
+.v-list__empty {
+  padding: 50px;
+  text-align: center;
+  color: --color(grey);
 }
 </style>

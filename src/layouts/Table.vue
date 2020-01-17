@@ -8,21 +8,14 @@
       <thead>
         <tr>
           <th
-            v-for="(col, key) in columns"
+            v-for="key in columns"
             :key="`v-list-table-header-${key}`"
-            :class="{
-              'v-list-table__sort': key == sortBy,
-              'v-list-table__fix': col.fix
-            }"
-            :style="{
-              width: mergedItems[key] ? mergedItems[key].width : false
-            }"
+            :class="thClass(key)"
+            :style="thStyle(key)"
             @click="sortItemsBy(key)"
           >
             <div class="v-list__head">
-              <label>{{
-                mergedItems[key] ? mergedItems[key].label : startCase(key)
-              }}</label>
+              <label>{{ th(key) }} </label>
               <div v-if="key == sortBy" class="v-list__sort-icon">
                 <s-icon v-if="sortOrder == 'asc'" name="ChevronUp"></s-icon>
                 <s-icon v-if="sortOrder == 'desc'" name="ChevronDown"></s-icon>
@@ -37,22 +30,20 @@
         :is="sortable ? 'draggable' : 'tbody'"
         handle=".v-list-table__sort"
         tag="tbody"
-        v-model="listItems"
+        v-model="rows"
         @change="change($event)"
       >
         <!-- Looping Rows -->
         <tr
-          v-for="(row, index) in listItems"
+          v-for="(row, index) in rows"
           :key="`v-list-table-row-${index}`"
           @click="$emit('rowClick', row)"
         >
           <!-- Looping Columns -->
           <td
-            v-for="(col, key) in columns"
+            v-for="key in columns"
             :key="`v-list-table-col-${key}`"
-            :class="{
-              'v-list-table__fix': col.fix
-            }"
+            :class="tdClass(key)"
           >
             <!-- Override Slot -->
             <slot v-if="$scopedSlots[key]" :name="key" :item="row">
@@ -78,24 +69,8 @@
               </slot>
             </p>
 
-            <!-- If value is defined in valueMap-->
-            <slot
-              v-else-if="col.valueMap && col.valueMap[row[key]]"
-              :name="key"
-              :item="row"
-              >{{ col.valueMap[row[key]] }}</slot
-            >
-
-            <!-- Type Adaptor -->
-            <slot
-              v-else-if="col.type && OPTIONS.typeAdapters[col.type]"
-              :name="key"
-              :item="row"
-              >{{ OPTIONS.typeAdapters[col.type](row[key], row) }}</slot
-            >
-
             <!-- Default Slot -->
-            <slot v-else :name="key" :item="row">{{ row[key] }}</slot>
+            <slot v-else :name="key" :item="row">{{ td(key, row) }}</slot>
           </td>
         </tr>
       </component>
@@ -126,40 +101,30 @@ export default {
     }
   },
 
-  data() {
-    return {
-      startCase
-    };
-  },
-
   computed: {
-    //TODO : NOT WORKING IN FINAL BUILD!
     columns() {
       //If not itemProps configuration is provided, return all the items to show!
       if (!this.itemProps || Object.keys(this.itemProps).length == 0) {
-        const columns = {};
         //Get all the keys from response data
-        if (this.listItems[0]) {
-          Object.keys(this.listItems[0]).forEach(item => {
-            columns[item] = {};
-          });
+        if (this.rows[0]) {
+          return Object.keys(this.rows[0]);
         }
-        return columns;
+        return [];
       } else {
-        return this.itemProps;
+        return Object.keys(this.itemProps);
       }
     },
-    mergedItems() {
+    mergedProps() {
       //Merge with global configuration
-      const mergedItems = merge(
+      const mergedProps = merge(
         defaultItemProps,
         this.OPTIONS.itemProps,
         this.itemProps
       );
-      return mergedItems;
+      return mergedProps;
     },
-    listItems: {
-      set(newValue) {
+    rows: {
+      set() {
         //Update of items is done with API and refreshing the request so no need to update the UI
       },
       get() {
@@ -170,6 +135,60 @@ export default {
   methods: {
     change(data) {
       this.$emit("sort", data);
+    },
+    th(key) {
+      const props = this.mergedProps[key];
+      return (props && props.label) || startCase(key);
+    },
+    thClass(key) {
+      const props = this.mergedProps[key];
+      if (!props) return;
+      const classList = [];
+      if (key == this.sortBy) classList.push("v-list-table__sort");
+      if (props.fix) classList.push("v-list-table__fix");
+      return classList;
+    },
+    thStyle(key) {
+      const props = this.mergedProps[key];
+      if (!props) return;
+      const style = {};
+      if (props.width) style.width = props.width;
+      return style;
+    },
+    tdClass(key) {
+      const props = this.mergedProps[key];
+      if (!props) return;
+      const classList = [];
+      if (this.mergedProps[key].fix) classList.push("v-list-table__fix");
+      return classList;
+    },
+    td(key, row) {
+      const props = this.mergedProps[key];
+      if (!props) return row[key];
+
+      // valueMap: JSON
+      // User can define a key:value map for "enum values" to "human readable" form, from response.
+      if (props.valueMap) {
+        const value = row[key];
+        if (value && props.valueMap[value]) {
+          return props.valueMap[value];
+        }
+      }
+
+      // type: String
+      // If type is provided, user can configure its value in global typeAdapter configuration.
+      if (props.type && this.OPTIONS.typeAdapters[props.type]) {
+        return this.OPTIONS.typeAdapters[props.type](row[key], row);
+      }
+
+      // value: Function
+      // If user needs to evaluate the value manually.
+      if (props.value) {
+        return props.value(row);
+      }
+
+      //If props are defined but need to display row value.
+      return row[key];
     }
   }
 };
@@ -222,7 +241,7 @@ export default {
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: $md-amber-50;
+      background-color: #fff8e1;
       position: absolute;
       z-index: 2;
     }

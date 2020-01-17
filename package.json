@@ -1,6 +1,6 @@
 {
   "name": "@7span/vue-list",
-  "version": "0.1.0-beta.10",
+  "version": "0.1.0-beta.13",
   "publishConfig": {
     "access": "public"
   },
@@ -13,14 +13,14 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@7span/shilp": "0.1.0-beta.10",
-    "axios": "^0.19.0",
+    "@7span/shilp": "0.1.0-beta.19",
     "core-js": "^2.6.5",
     "lodash": "^4.17.15",
-    "material-colors": "^1.2.6",
     "vue": "^2.6.10",
-    "vue-material-design-icons": "^4.4.0",
-    "vuedraggable": "^2.23.0"
+    "vue-material-design-icons": "^4.4.0"
+  },
+  "peerDependencies": {
+    "@7span/shilp": "0.1.0-beta.10"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
