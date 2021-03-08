@@ -1,8 +1,16 @@
 <template>
   <div class="masnory">
     <ul class="masnory__cols">
-      <li :style="{flexBasis:`${100/size}%`}" v-for="col in masnoryCols()">
-        <div class="masnory__item" v-for="item in col">
+      <li
+        :style="{ flexBasis: `${100 / size}%` }"
+        v-for="(col, index) in masnoryCols()"
+        :key="`col-${index}`"
+      >
+        <div
+          class="masnory__item"
+          v-for="(item, itemIndex) in col"
+          :key="`item-${itemIndex}`"
+        >
           <slot :item="item" />
         </div>
       </li>
@@ -11,9 +19,11 @@
 </template>
 
 <script>
+import layout from "../layout";
+
 export default {
   name: "layout-masnory",
-  mixins: [require("../mixins/layouts").default],
+  mixins: [layout],
   data() {
     return {
       screenWidth: null
@@ -26,7 +36,7 @@ export default {
   },
   mounted() {
     this.screenWidth = window.innerWidth;
-    window.addEventListener("resize", e => {
+    window.addEventListener("resize", () => {
       this.screenWidth = window.innerWidth;
     });
   },

@@ -1,50 +1,47 @@
-const defaultOptions = {
-  requestHandler() {},
-  itemProps: {},
-  typeAdapters: {}
-};
+import defaultOptions from "./options";
 
-const install = (Vue, options = {}) => {
-  Vue.component("VList", {
-    extends: require("./components/List.vue").default,
-    provide: {
-      OPTIONS: Object.assign(defaultOptions, options)
-    },
+//Components
+import Root from "@/components/Root";
+import Pagination from "@/components/Pagination";
+import Counter from "@/components/Counter";
+import PerPage from "@/components/PerPage";
+import Attributes from "@/components/Attributes";
+import Search from "@/components/Search";
+
+//Layout
+import Table from "@/layouts/table/Index";
+
+const install = (Vue, userOptions = {}) => {
+  const options = Object.assign({}, defaultOptions, userOptions);
+  const prefix = options.componentPrefix;
+
+  //Root Component
+  Vue.component(`${prefix}List`, {
     data() {
       return {
-        options
+        options,
       };
-    }
+    },
+    provide: {
+      OPTIONS: options,
+    },
+    extends: Root,
   });
 
-  Vue.component(
-    "chevron-right",
-    require("vue-material-design-icons/ChevronRight").default
-  );
-  Vue.component(
-    "ChevronUp",
-    require("vue-material-design-icons/ChevronUp").default
-  );
-  Vue.component(
-    "ChevronDown",
-    require("vue-material-design-icons/ChevronDown").default
-  );
-  Vue.component(
-    "chevron-left",
-    require("vue-material-design-icons/ChevronLeft").default
-  );
-  Vue.component("drag", require("vue-material-design-icons/Drag").default);
+  Vue.component(`${prefix}ListPagination`, Pagination);
+  Vue.component(`${prefix}ListCounter`, Counter);
+  Vue.component(`${prefix}ListPerPage`, PerPage);
+  Vue.component(`${prefix}ListAttributes`, Attributes);
+  Vue.component(`${prefix}ListSearch`, Search);
+
+  Vue.component(`${prefix}ListTable`, Table);
 };
 
 const plugin = {
   install,
-  version: "__VERSION__"
 };
 
 export default plugin;
-export const VListGridTable = require("./layouts/GridTable").default;
-export const VListMasnory = require("./layouts/Masnory").default;
-export const VListTable = require("./layouts/Table").default;
 
 if (typeof window !== "undefined" && window.Vue) {
   window.Vue.use(plugin);
