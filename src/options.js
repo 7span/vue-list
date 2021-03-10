@@ -1,4 +1,4 @@
-import { reject, resolve } from "core-js/fn/promise";
+// import { reject, resolve } from "core-js/fn/promise";
 
 export default {
   componentPrefix: "V",
@@ -8,5 +8,5 @@ export default {
     });
   },
   itemProps: {},
-  typeAdapters: {},
+  typeAdapters: {}
 };

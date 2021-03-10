@@ -50,7 +50,7 @@ export default {
       localSearch: this.search,
       loadingMore: false,
       error: false,
-      response: null,
+      response: null
     };
   },
 
@@ -64,7 +64,7 @@ export default {
       handler() {
         //When filter changes, we need to set the page to 1st to get all the data from start
         this.changePage(1);
-      },
+      }
     },
 
     page(nv) {
@@ -94,11 +94,11 @@ export default {
         //Changing page to 1 will automatically call getData with latest params due to watcher
         this.changePage(1);
       },
-      deep: true,
+      deep: true
     },
     attrsToUse(newValue) {
       this.serializeAttrs(newValue);
-    },
+    }
   },
 
   created() {
@@ -144,7 +144,7 @@ export default {
         this.localPage = value;
         this.$emit("update:page", value);
         this.refresh();
-      },
+      }
     },
 
     currentPerPage: {
@@ -157,8 +157,8 @@ export default {
         this.localPerPage = value;
         this.$emit("update:perPage", value);
         this.changePage(1);
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -167,12 +167,12 @@ export default {
     },
 
     attrSerializer(attrs) {
-      return attrs.map((item) => {
+      return attrs.map(item => {
         if (typeof item == "string") {
           return {
             label: startCase(item),
             name: item,
-            visible: true,
+            visible: true
           };
         } else {
           if (item.attrs) {
@@ -182,7 +182,7 @@ export default {
             {},
             {
               visible: true,
-              label: startCase(item.name),
+              label: startCase(item.name)
             },
             item
           );
@@ -258,8 +258,8 @@ export default {
         this.$router.push({
           query: {
             ...existingQueryParams,
-            page: this.localPage,
-          },
+            page: this.localPage
+          }
         });
       }
     },
@@ -282,14 +282,14 @@ export default {
           search: this.localSearch,
           pagination: {
             page: this.localPage,
-            perPage: this.localPerPage,
+            perPage: this.localPerPage
           },
           sort: {
             by: this.localSortBy,
-            order: this.localSortOrder,
-          },
+            order: this.localSortOrder
+          }
         })
-        .then((res) => {
+        .then(res => {
           this.response = res;
 
           //Response event
@@ -309,7 +309,7 @@ export default {
         items: e,
         endpoint: this.endpoint,
         params: this.params,
-        data: this.data,
+        data: this.data
       };
       //If sort listner is provided, use it
       //Else execute the global callback
@@ -323,7 +323,7 @@ export default {
     updateAttr(data) {
       const { index, key, value } = data;
       this.$set(this.localAttrs[index], key, value);
-    },
-  },
+    }
+  }
 };
 </script>

@@ -17,7 +17,7 @@ export default {
     },
     count() {
       return this.$parent.count;
-    },
-  },
+    }
+  }
 };
 </script>

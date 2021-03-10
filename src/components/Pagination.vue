@@ -1,33 +1,50 @@
 <template>
   <div class="v-list-pagination" v-if="count > perPage">
     <!-- PREV -->
-    <button v-if="isPrev" @click="changePage(page - 1)">Prev</button>
+    <template>
+      <slot name="prev" :prev="prev" v-if="isPrev">
+        <button @click="prev">Prev</button>
+      </slot>
+    </template>
 
     <!-- PAGES -->
-    <button
-      v-for="n in paginationButtonCount"
-      :key="`page-${n}`"
-      @click="n == page ? null : changePage(n)"
-    >
-      {{ n }}
-    </button>
+    <template v-for="n in paginationButtonCount">
+      <slot name="middle" :nextPage="pageSwitch" :n="n">
+        <button :key="`page-${n}`" @click="n == page ? null : changePage(n)">
+          {{ n }}
+        </button>
+      </slot>
+    </template>
 
     <!-- NEXT -->
-    <button v-if="isNext" @click="changePage(page + 1)">Next</button>
+    <template>
+      <slot name="next" :next="next" v-if="isNext">
+        <button @click="changePage(page + 1)">Next</button>
+      </slot>
+    </template>
 
-    <select
-      v-if="totalPages > this.maxPagingLinks"
-      @input="changePage($event)"
-      :value="page"
-      :options="paginationLinks"
-    >
-      <option
-        v-for="(option, index) in paginationLinks"
-        :key="`option-${index}`"
+    <template>
+      <slot
+        name="select"
+        v-if="totalPages > this.maxPagingLinks"
+        :change="change"
+        :value="page"
+        :options="paginationLinks"
       >
-        {{ option }}
-      </option>
-    </select>
+        <select
+          @input="changePage($event.target.value)"
+          :value="page"
+          :options="paginationLinks"
+        >
+          <option
+            v-for="(option, index) in paginationLinks"
+            :key="`option-${index}`"
+          >
+            {{ option }}
+          </option>
+        </select>
+      </slot>
+    </template>
   </div>
 </template>
 
@@ -40,8 +57,8 @@ export default {
   props: {
     maxPagingLinks: {
       type: Number,
-      default: 5,
-    },
+      default: 5
+    }
   },
 
   computed: {
@@ -77,12 +94,28 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.count / this.perPage);
-    },
+    }
   },
   methods: {
+    prev() {
+      this.changePage(this.page - 1);
+    },
+    next() {
+      this.changePage(this.page + 1);
+    },
     changePage(number) {
       this.$parent.changePage(number);
     },
-  },
+    pageSwitch(n) {
+      if (this.page == n) {
+        return null;
+      } else {
+        this.changePage(n);
+      }
+    },
+    change(event) {
+      this.changePage(event.target.value);
+    }
+  }
 };
 </script>

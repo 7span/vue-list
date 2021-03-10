@@ -1,23 +1,23 @@
 <template>
-  <input
-    class="v-list-search"
-    type="text"
-    v-model="localSearch"
-    placeholder="Search"
-  />
+  <span>
+    <slot :value="$parent.localSearch" :set="setValue">
+      <input
+        class="v-list-search"
+        type="text"
+        :value="$parent.localSearch"
+        @input="setValue($event.target.value)"
+        placeholder="Search"
+      />
+    </slot>
+  </span>
 </template>
 
 <script>
 export default {
-  computed: {
-    localSearch: {
-      get() {
-        return this.$parent.localSearch;
-      },
-      set(value) {
-        this.$parent.localSearch = value;
-      },
-    },
-  },
+  methods: {
+    setValue(value) {
+      this.$parent.localSearch = value;
+    }
+  }
 };
 </script>

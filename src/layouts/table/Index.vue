@@ -82,8 +82,8 @@ export default {
   props: {
     reorder: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   inject: ["OPTIONS"],
@@ -92,7 +92,7 @@ export default {
     return {
       key,
       headers: [],
-      body: [],
+      body: []
     };
   },
 
@@ -103,8 +103,8 @@ export default {
         this.$set(this, "headers", []);
         this.$set(this, "body", []);
         this.generateHeader(newValue, 0);
-      },
-    },
+      }
+    }
   },
 
   created() {
@@ -119,8 +119,8 @@ export default {
       },
       get() {
         return cloneDeep(this.items);
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -128,7 +128,7 @@ export default {
       let spans = 1;
       for (var i = rowIndex + 1; i < this.headers.length; i++) {
         const row = this.headers[i];
-        const hasChild = row.some((item) => item.key.startsWith(colKey));
+        const hasChild = row.some(item => item.key.startsWith(colKey));
         if (hasChild) {
           return spans;
         } else {
@@ -142,7 +142,7 @@ export default {
       let spans = 1;
       for (var i = rowIndex + 1; i < this.headers.length; i++) {
         const row = this.headers[i];
-        const items = row.filter((item) => item.key.startsWith(colKey));
+        const items = row.filter(item => item.key.startsWith(colKey));
         if (items && items.length > 0) {
           spans = spans + items.length - 1;
         }
@@ -188,7 +188,7 @@ export default {
     thClass(attr) {
       const classList = [
         ...this.columnClass(attr),
-        `v-list-table__${attr.name}`,
+        `v-list-table__${attr.name}`
       ];
       if (attr.name == this.sortBy) classList.push("v-list-table__sort");
       if (attr.sortable) classList.push("v-list-table__sortable");
@@ -241,7 +241,7 @@ export default {
 
       //If props are defined but need to display row value.
       return row[key];
-    },
-  },
+    }
+  }
 };
 </script>
