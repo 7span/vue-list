@@ -19,13 +19,13 @@ const install = (Vue, userOptions = {}) => {
   Vue.component(`${prefix}List`, {
     data() {
       return {
-        options,
+        options
       };
     },
     provide: {
-      OPTIONS: options,
+      OPTIONS: options
     },
-    extends: Root,
+    extends: Root
   });
 
   Vue.component(`${prefix}ListPagination`, Pagination);
@@ -38,7 +38,7 @@ const install = (Vue, userOptions = {}) => {
 };
 
 const plugin = {
-  install,
+  install
 };
 
 export default plugin;

@@ -1,14 +1,16 @@
 <template>
   <div class="v-list-attributes">
     <template v-for="(attr, index) in allAttrs">
-      <label :key="`attr-${index}`">
-        <span>{{ attr.label }}</span>
-        <input
-          type="checkbox"
-          :checked="attr.visible"
-          @input="update(index, attr.name, $event)"
-        />
-      </label>
+      <slot :change="change" :attr="{ ...attr, index }">
+        <label :key="`attr-${index}`">
+          <span>{{ attr.label }}</span>
+          <input
+            type="checkbox"
+            :checked="attr.visible"
+            @input="update(index, attr.name, $event)"
+          />
+        </label>
+      </slot>
     </template>
   </div>
 </template>
@@ -18,7 +20,7 @@ export default {
   computed: {
     allAttrs() {
       return this.$parent.allAttrs;
-    },
+    }
   },
   methods: {
     update(index, name, event) {
@@ -26,9 +28,12 @@ export default {
         index,
         name: name,
         value: event.target.checked,
-        key: "visible",
+        key: "visible"
       });
     },
-  },
+    change(index, name, event) {
+      this.update(index, name, event);
+    }
+  }
 };
 </script>

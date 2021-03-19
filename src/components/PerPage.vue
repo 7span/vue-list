@@ -1,17 +1,20 @@
 <template>
-  <select
-    class="v-list-per-page"
-    v-if="currentPerPageOptions.length > 0"
-    :value="perPage"
-    @input="$parent.changePerPage(parseInt($event))"
-  >
-    <option
-      v-for="(option, index) in currentPerPageOptions"
-      :key="`option-${index}`"
-    >
-      {{ option }}
-    </option>
-  </select>
+  <span v-if="currentPerPageOptions.length > 0">
+    <slot :value="perPage" :change="change" :options="currentPerPageOptions">
+      <select
+        class="v-list-per-page"
+        :value="perPage"
+        @input="$parent.changePerPage(parseInt($event.target.value))"
+      >
+        <option
+          v-for="(option, index) in currentPerPageOptions"
+          :key="`option-${index}`"
+        >
+          {{ option }}
+        </option>
+      </select>
+    </slot>
+  </span>
 </template>
 
 <script>
@@ -19,9 +22,9 @@ export default {
   props: {
     perPageOptions: {
       type: Array,
-      default: () => [10, 25, 50, 100],
+      default: () => [10, 25, 50, 100]
     },
-    allAttrs: Array,
+    allAttrs: Array
   },
 
   computed: {
@@ -36,12 +39,17 @@ export default {
       if (this.perPage == 0 && this.perPageOptions.length > 0) {
         options.push({
           value: 0,
-          label: "All",
+          label: "All"
         });
       }
 
       return options;
-    },
+    }
   },
+  methods: {
+    change(event) {
+      this.$parent.changePerPage(parseInt(event.target.value));
+    }
+  }
 };
 </script>

@@ -21,12 +21,12 @@ export default {
 
     loaded() {
       return this.$parent.items && this.$parent.items.length;
-    },
+    }
   },
   methods: {
     loadMore() {
       this.$parent.loadMore();
-    },
-  },
+    }
+  }
 };
 </script>
