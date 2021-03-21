@@ -1,50 +1,48 @@
 <template>
   <div class="v-list-pagination" v-if="count > perPage">
     <!-- PREV -->
-    <template>
-      <slot name="prev" :prev="prev" v-if="isPrev">
-        <button @click="prev">Prev</button>
-      </slot>
-    </template>
+    <slot name="prev" :prev="prev" v-if="hasPrev">
+      <button @click="prev">Prev</button>
+    </slot>
 
     <!-- PAGES -->
-    <template v-for="n in paginationButtonCount">
-      <slot name="middle" :nextPage="pageSwitch" :n="n">
-        <button :key="`page-${n}`" @click="n == page ? null : changePage(n)">
-          {{ n }}
+    <template v-for="item in pagesToDisplay">
+      <slot name="active-page" v-if="item == page">
+        <span :key="`page-${item}`">{{ item }}</span>
+      </slot>
+      <slot v-else name="page" :change="change" :value="item">
+        <button :key="`page-${item}`" @click="change(item)">
+          {{ item }}
         </button>
       </slot>
     </template>
 
     <!-- NEXT -->
-    <template>
-      <slot name="next" :next="next" v-if="isNext">
-        <button @click="changePage(page + 1)">Next</button>
-      </slot>
-    </template>
+    <slot name="next" :next="next" v-if="hasNext">
+      <button @click="change(page + 1)">Next</button>
+    </slot>
 
-    <template>
-      <slot
-        name="select"
-        v-if="totalPages > this.maxPagingLinks"
-        :change="change"
+    <!-- SELECT -->
+    <slot
+      name="select"
+      v-if="total > this.pageLinks"
+      :change="change"
+      :value="page"
+      :options="pagesOptions"
+    >
+      <select
+        @input="change($event.target.value)"
         :value="page"
-        :options="paginationLinks"
+        :options="pagesOptions"
       >
-        <select
-          @input="changePage($event.target.value)"
-          :value="page"
-          :options="paginationLinks"
+        <option
+          v-for="(option, index) in pagesOptions"
+          :key="`option-${index}`"
         >
-          <option
-            v-for="(option, index) in paginationLinks"
-            :key="`option-${index}`"
-          >
-            {{ option }}
-          </option>
-        </select>
-      </slot>
-    </template>
+          {{ option }}
+        </option>
+      </select>
+    </slot>
   </div>
 </template>
 
@@ -55,10 +53,19 @@ export default {
   mixins: [pagination],
 
   props: {
-    maxPagingLinks: {
+    /**
+     * Number of buttons to display in pagination.
+     * Current Page will be center and other pages will be added in start and end.
+     * Odd number is recommended
+     */
+    pageLinks: {
       type: Number,
-      default: 5
-    }
+      default: 7,
+    },
+  },
+
+  created() {
+    this.$parent.set("paginationMode", "paging");
   },
 
   computed: {
@@ -69,53 +76,47 @@ export default {
       return this.$parent.localPerPage;
     },
 
-    mode() {
-      return this.$parent.paginationMode;
-    },
-
-    paginationLinks() {
+    pagesOptions() {
       const links = [];
-      for (var i = 1; i <= this.totalPages; i++) {
+      for (var i = 1; i <= this.total; i++) {
         links.push(i);
       }
       return links;
     },
 
-    paginationButtonCount() {
-      return this.totalPages >= this.maxPagingLinks
-        ? this.maxPagingLinks
-        : this.totalPages;
+    pagesToDisplay() {
+      const pages = Array.apply(null, Array(this.pageLinks));
+      const halfWay = Math.floor(this.pageLinks / 2);
+
+      if (this.page <= halfWay) {
+        return pages.map((value, index) => index + 1);
+      } else {
+        return pages.map((value, index) => this.page - halfWay + index);
+      }
     },
-    isNext() {
+
+    hasNext() {
       return this.page * this.perPage < this.count;
     },
-    isPrev() {
+
+    hasPrev() {
       return this.page != 1;
     },
-    totalPages() {
+
+    total() {
       return Math.ceil(this.count / this.perPage);
-    }
+    },
   },
   methods: {
     prev() {
-      this.changePage(this.page - 1);
+      this.change(this.page - 1);
     },
     next() {
-      this.changePage(this.page + 1);
+      this.change(this.page + 1);
     },
-    changePage(number) {
+    change(number) {
       this.$parent.changePage(number);
     },
-    pageSwitch(n) {
-      if (this.page == n) {
-        return null;
-      } else {
-        this.changePage(n);
-      }
-    },
-    change(event) {
-      this.changePage(event.target.value);
-    }
-  }
+  },
 };
 </script>

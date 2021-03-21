@@ -1,9 +1,9 @@
 <template>
-  <span class="v-list-counter" v-if="items.length > 0">
+  <div class="v-list-counter">
     <slot name="metadata" :showing="showing" :count="count">
-      Showing {{ showing }} items out of {{ count }}
+      <span> Showing {{ showing }} items out of {{ count }} </span>
     </slot>
-  </span>
+  </div>
 </template>
 
 <script>
@@ -13,11 +13,11 @@ export default {
       return this.items.length;
     },
     items() {
-      return this.$parent.items;
+      return this.$parent.localItems;
     },
     count() {
       return this.$parent.count;
-    }
-  }
+    },
+  },
 };
 </script>

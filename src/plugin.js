@@ -7,6 +7,7 @@ import Counter from "@/components/Counter";
 import PerPage from "@/components/PerPage";
 import Attributes from "@/components/Attributes";
 import Search from "@/components/Search";
+import LoadMore from "@/components/LoadMore";
 
 //Layout
 import Table from "@/layouts/table/Index";
@@ -19,13 +20,13 @@ const install = (Vue, userOptions = {}) => {
   Vue.component(`${prefix}List`, {
     data() {
       return {
-        options
+        options,
       };
     },
     provide: {
-      OPTIONS: options
+      OPTIONS: options,
     },
-    extends: Root
+    extends: Root,
   });
 
   Vue.component(`${prefix}ListPagination`, Pagination);
@@ -33,12 +34,12 @@ const install = (Vue, userOptions = {}) => {
   Vue.component(`${prefix}ListPerPage`, PerPage);
   Vue.component(`${prefix}ListAttributes`, Attributes);
   Vue.component(`${prefix}ListSearch`, Search);
-
+  Vue.component(`${prefix}ListLoadMore`, LoadMore);
   Vue.component(`${prefix}ListTable`, Table);
 };
 
 const plugin = {
-  install
+  install,
 };
 
 export default plugin;

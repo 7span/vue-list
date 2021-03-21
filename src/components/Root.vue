@@ -1,12 +1,18 @@
 <template>
   <div class="v-list" v-if="options">
-    <!-- LOADER -->
-    <slot v-if="loading && (initial || !loader)" name="loader">
+    <!-- LOADING -->
+    <slot v-if="loading" name="loading">
       <p>Loading...</p>
     </slot>
 
     <!-- CONTENT -->
     <template v-else>
+      <!-- LOADING -->
+      <slot v-if="loadingPage" name="loading-page">
+        <p>Loading Page...</p>
+      </slot>
+
+      <!-- ERROR -->
       <slot v-if="error" name="error">
         <p>There was an error while processing your request.</p>
       </slot>
@@ -19,7 +25,7 @@
       <!-- ITEMS -->
       <slot
         v-else
-        :items="data || items"
+        :items="localItems"
         :response="response"
         :loading="loading"
         :isEmpty="isEmpty"
@@ -30,188 +36,178 @@
 </template>
 
 <script>
-import { debounce, startCase } from "lodash-es";
-import props from "@/props";
+/**
+ * This is the base component to render the listing
+ */
+import { startCase } from "lodash-es";
 
 export default {
-  props: props,
+  name: "VList",
+  props: {
+    /**
+     * An API endpoint to hit for getting data. This will be appended to baseUrl
+     */
+    endpoint: String,
+
+    /**
+     * Default page to load
+     */
+    page: {
+      type: Number,
+      default: 1,
+    },
+
+    /**
+     * Number of results to fetch and display on each page.
+     */
+    perPage: {
+      type: Number,
+      default: 25,
+    },
+
+    /**
+     * Additional parameters to pass when making an API request.
+     */
+    params: Object,
+
+    /**
+     * Just like parameters but specifically to filter data.
+     */
+    filters: Object,
+
+    /**
+     * Uses this attribute when sorting items in listing.
+     */
+    sortBy: String,
+
+    /**
+     * Ascending or Descending?
+     */
+    sortOrder: {
+      type: String,
+      validator(value) {
+        return ["asc", "desc"].includes(value);
+      },
+    },
+
+    /**
+     * Default search query to use
+     */
+    search: {
+      type: String,
+    },
+
+    /**
+     * List of attributes to display in a list
+     */
+    attrs: {
+      type: Array,
+    },
+
+    /**
+     * An adaptor defines which attributes to be passed to layout
+     * This is helpful when you don't know which attributes are sent from API
+     * Also useful when you need to show all the columns except few.
+     */
+    attrsAdaptor: {
+      type: Function,
+      default: (data) => data,
+    },
+  },
   data() {
     return {
-      sidebarContent: false,
-      items: this.data || [],
-      count: 0,
-      loading: false,
-      initial: true,
       localPage: this.page,
       localPerPage: this.perPage,
       localSortBy: this.sortBy,
       localSortOrder: this.sortOrder,
-      localAttrs: null,
       localSearch: this.search,
-      loadingMore: false,
+      localItems: null,
+      localAttrs: null,
+      paginationMode: null,
+
       error: false,
-      response: null
+      response: null,
+      count: 0,
+
+      initial: true,
+      loading: false,
+      loadingMore: false,
+      loadingPage: false,
     };
   },
 
   watch: {
-    data(newValue) {
-      this.items = newValue;
-    },
-
+    /**
+     * Only filters, params & localSearch props will react to change
+     * All other props are non-reactive once component is initialized.
+     * When filters and params are changed, we need to reset the page
+     * and reseting a page will use the latest filter and params props.
+     */
     filters: {
       deep: true,
       handler() {
-        //When filter changes, we need to set the page to 1st to get all the data from start
-        this.changePage(1);
-      }
-    },
-
-    page(nv) {
-      this.changePage(nv);
-    },
-
-    sortBy(nv) {
-      this.localSortBy = nv;
-      this.changePage(1);
-    },
-    sortOrder(nv) {
-      this.localSortOrder = nv;
-      this.changePage(1);
-    },
-    perPage(nv) {
-      this.changePerPage(nv);
-    },
-    search(value) {
-      this.localSearch = value;
-    },
-
-    localSearch() {
-      this.debounceGetData();
-    },
-    params: {
-      handler(newValue) {
-        //Changing page to 1 will automatically call getData with latest params due to watcher
         this.changePage(1);
       },
-      deep: true
     },
-    attrsToUse(newValue) {
-      this.serializeAttrs(newValue);
-    }
+    params: {
+      deep: true,
+      handler() {
+        this.changePage(1);
+      },
+    },
+    localSearch() {
+      this.changePage(1);
+    },
   },
 
   created() {
-    this.initial = true;
-    //Create a clone of config to make overridable configs
-    //This helps to use v-model as config
-    this.setPaginationConfig();
-    this.serializeAttrs(this.attrsToUse);
-    //If data is provided explicitly, prevent the request
-    if (!this.data) {
-      this.refresh();
-    }
+    this.init();
   },
 
   computed: {
     attrsToUse() {
-      const attrs = this.attrs || Object.keys(this.items?.[0] || []);
-      if (this.attrsAdaptor) {
-        return this.attrsAdaptor(attrs);
-      } else {
-        return attrs;
-      }
-    },
-    allAttrs() {
-      return this.localAttrs;
-    },
-
-    debounceGetData() {
-      return debounce(this.getData, this.debounce);
+      const attrs = this.attrs || Object.keys(this.localItems?.[0] || {});
+      return this.attrsAdaptor(attrs);
     },
 
     isEmpty() {
-      if (this.data && this.data?.length != 0) return false;
-      if (this.items && this.items?.length != 0) return false;
+      if (this.localItems?.length != 0) return false;
       return true;
     },
-
-    currentPage: {
-      get() {
-        return parseInt(this.localPage || this.page);
-      },
-      set(value) {
-        this.localPage = value;
-        this.$emit("update:page", value);
-        this.refresh();
-      }
-    },
-
-    currentPerPage: {
-      get() {
-        return parseInt(
-          this.localPerPage || this.perPage || this.perPageOptions[0]
-        );
-      },
-      set(value) {
-        this.localPerPage = value;
-        this.$emit("update:perPage", value);
-        this.changePage(1);
-      }
-    }
   },
 
   methods: {
-    serializeAttrs(attrs) {
-      this.localAttrs = this.attrSerializer(attrs);
+    init() {
+      this.localAttrs = this.attrSerializer(this.attrsToUse);
+      if (!this.endpoint) return;
+
+      const page = parseInt(this.$route?.query?.page || this.page);
+      this.changePage(page);
     },
 
     attrSerializer(attrs) {
-      return attrs.map(item => {
+      return attrs.map((item) => {
         if (typeof item == "string") {
           return {
             label: startCase(item),
             name: item,
-            visible: true
+            visible: true,
           };
         } else {
           if (item.attrs) {
             item.attrs = this.attrSerializer(item.attrs);
           }
-          return Object.assign(
-            {},
-            {
-              visible: true,
-              label: startCase(item.name)
-            },
-            item
-          );
+          return {
+            visible: true,
+            label: startCase(item.name),
+            ...item,
+          };
         }
       });
     },
 
     set(key, value) {
       this[key] = value;
-    },
-
-    toggleSidebar(content) {
-      if (this.sidebarContent == content) {
-        this.sidebarContent = false;
-      } else {
-        this.sidebarContent = content;
-      }
-    },
-
-    setPaginationConfig() {
-      if (!this.pagination) return;
-
-      //Set the default page to render if page provided in URL
-      if (this.$route && this.$route.query.page) {
-        const page = parseInt(this.$route.query.page);
-        if (page != this.localPage) {
-          this.changePage(page);
-        }
-      }
     },
 
     refresh() {
@@ -221,7 +217,7 @@ export default {
     changePage(value) {
       this.localPage = value;
       this.$emit("update:page", value);
-      this.getData(false);
+      this.getData();
     },
 
     changePerPage(value) {
@@ -234,15 +230,15 @@ export default {
       this.$emit("beforeLoadMore");
       this.localPage++;
       this.$emit("update:page", this.localPage);
-      this.getData(true);
+      this.getData();
     },
 
-    setData(res, appendData) {
-      if (appendData) {
-        this.items = this.items.concat(res.items);
+    setData(res) {
+      if (this.paginationMode == "infinite") {
+        this.localItems = this.localItems.concat(res.items);
         this.$emit("afterLoadMore", res);
       } else {
-        this.items = res.items;
+        this.localItems = res.items;
         this.$emit("afterLoad", res);
       }
       this.count = res.count;
@@ -250,7 +246,7 @@ export default {
       //Set Page URL
       if (
         this.$router &&
-        this.paginationMode == "querystring" &&
+        this.paginationMode == "paging" &&
         this.$route.query.page != this.localPage
       ) {
         //We need maintain already existing query params in URL
@@ -258,19 +254,15 @@ export default {
         this.$router.push({
           query: {
             ...existingQueryParams,
-            page: this.localPage
-          }
+            page: this.localPage,
+          },
         });
       }
     },
 
-    getData(appendData = false) {
+    getData() {
       this.error = false;
-      if (appendData) {
-        this.loadingMore = true;
-      } else {
-        this.loading = true;
-      }
+      this.setLoader(true);
 
       //TODO: Accept requestHandler via props too for individual configs
       this.options
@@ -282,26 +274,45 @@ export default {
           search: this.localSearch,
           pagination: {
             page: this.localPage,
-            perPage: this.localPerPage
+            perPage: this.localPerPage,
           },
           sort: {
             by: this.localSortBy,
-            order: this.localSortOrder
-          }
+            order: this.localSortOrder,
+          },
         })
-        .then(res => {
+        .then((res) => {
           this.response = res;
 
           //Response event
           //Fires asap after ajax request is successfull
           this.$emit("res", res);
-          this.setData(res, appendData);
-          this.loading = this.loadingMore = this.initial = false;
+          this.setData(res);
+          this.setLoader(false);
         })
         .catch(() => {
           this.error = true;
-          this.loading = this.loadingMore = this.initial = false;
+          this.setLoader(false);
         });
+    },
+
+    setLoader(value) {
+      if (!value) {
+        this.initial = false;
+        this.loading = false;
+        this.loadingPage = false;
+        this.loadingMore = false;
+      } else {
+        if (this.paginationMode == "infinite") {
+          this.loadingMore = true;
+        } else {
+          if (this.initial) {
+            this.loading = true;
+          } else {
+            this.loadingPage = true;
+          }
+        }
+      }
     },
 
     sort(e) {
@@ -309,7 +320,6 @@ export default {
         items: e,
         endpoint: this.endpoint,
         params: this.params,
-        data: this.data
       };
       //If sort listner is provided, use it
       //Else execute the global callback
@@ -320,10 +330,10 @@ export default {
       }
     },
 
-    updateAttr(data) {
-      const { index, key, value } = data;
-      this.$set(this.localAttrs[index], key, value);
-    }
-  }
+    updateAttr(name, prop, value) {
+      const attr = this.localAttrs.find((item) => item.name == name);
+      this.$set(attr, prop, value);
+    },
+  },
 };
 </script>

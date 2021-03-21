@@ -1,23 +1,39 @@
 <template>
-  <span>
-    <slot :value="$parent.localSearch" :set="setValue">
+  <div class="v-list-search">
+    <slot :value="$parent.localSearch" :set="set">
       <input
-        class="v-list-search"
         type="text"
         :value="$parent.localSearch"
-        @input="setValue($event.target.value)"
+        @input="set($event.target.value)"
         placeholder="Search"
       />
     </slot>
-  </span>
+  </div>
 </template>
 
 <script>
+import { debounce } from "lodash-es";
+
 export default {
-  methods: {
-    setValue(value) {
+  props: {
+    /**
+     * Wait till this time to send an API request to avoid multiple requests when user is typing.
+     */
+    debounceTime: {
+      type: Number,
+      default: 1000,
+    },
+  },
+  data() {
+    return {
+      debounce,
+      set: null,
+    };
+  },
+  created() {
+    this.set = debounce(function(value) {
       this.$parent.localSearch = value;
-    }
-  }
+    }, this.debounceTime);
+  },
 };
 </script>

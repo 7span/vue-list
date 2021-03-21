@@ -1,55 +1,49 @@
 <template>
-  <span v-if="currentPerPageOptions.length > 0">
-    <slot :value="perPage" :change="change" :options="currentPerPageOptions">
-      <select
-        class="v-list-per-page"
-        :value="perPage"
-        @input="$parent.changePerPage(parseInt($event.target.value))"
-      >
+  <div class="v-list-per-page">
+    <slot :value="perPage" :change="change" :options="serializedOptions">
+      <select :value="perPage" @input="change($event.target.value)">
         <option
-          v-for="(option, index) in currentPerPageOptions"
+          v-for="(option, index) in serializedOptions"
           :key="`option-${index}`"
+          :value="option.value"
         >
-          {{ option }}
+          {{ option.label }}
         </option>
       </select>
     </slot>
-  </span>
+  </div>
 </template>
 
 <script>
 export default {
   props: {
-    perPageOptions: {
+    options: {
       type: Array,
-      default: () => [10, 25, 50, 100]
+      default: () => [10, 25, 50, 100],
     },
-    allAttrs: Array
   },
 
   computed: {
     perPage() {
       return this.$parent.perPage;
     },
-    currentPerPageOptions() {
-      const options = this.perPageOptions;
-      //If the limit is set to 0
-      //Add "All" option to dropdown
-      //Only if user has nnot provided blank array. This is to hide dropdown
-      if (this.perPage == 0 && this.perPageOptions.length > 0) {
-        options.push({
-          value: 0,
-          label: "All"
-        });
-      }
-
-      return options;
-    }
+    serializedOptions() {
+      return this.options.map((item) => {
+        if (typeof item != "object") {
+          return {
+            value: item,
+            label: item,
+          };
+        } else {
+          return item;
+        }
+      });
+    },
   },
   methods: {
-    change(event) {
-      this.$parent.changePerPage(parseInt(event.target.value));
-    }
-  }
+    change(value) {
+      this.$parent.changePerPage(value);
+    },
+  },
 };
 </script>

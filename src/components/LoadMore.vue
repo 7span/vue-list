@@ -14,19 +14,24 @@ import pagination from "@/mixins/pagination";
 
 export default {
   mixins: [pagination],
+
+  created() {
+    this.$parent.set("paginationMode", "infinite");
+  },
+
   computed: {
     loadingMore() {
       return this.$parent.loadingMore;
     },
 
     loaded() {
-      return this.$parent.items && this.$parent.items.length;
-    }
+      return this.$parent.localItems?.length;
+    },
   },
   methods: {
     loadMore() {
       this.$parent.loadMore();
-    }
-  }
+    },
+  },
 };
 </script>

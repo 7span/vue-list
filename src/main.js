@@ -1,8 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import axios from "axios";
-import "vayu/dist/style.css";
-import "@/plugins/vayu-vue";
+import router from "./router";
 Vue.config.productionTip = false;
 
 import plugin from "./plugin.js";
@@ -17,18 +16,19 @@ Vue.use(plugin, {
           limit: perPage,
           search,
           sort_by: sort.by,
-          sort_order: sort.order
-        }
+          sort_order: sort.order,
+        },
       })
-      .then(res => {
+      .then((res) => {
         return {
           items: res.data?.items,
-          count: res.data.meta.count
+          count: res.data.meta.count,
         };
       });
-  }
+  },
 });
 
 new Vue({
-  render: h => h(App)
+  render: (h) => h(App),
+  router,
 }).$mount("#app");

@@ -2,10 +2,10 @@ export default {
   inject: ["OPTIONS"],
   computed: {
     items() {
-      return this.$parent.items;
+      return this.$parent.localItems;
     },
-    allAttrs() {
-      return this.$parent.allAttrs;
+    attrs() {
+      return this.$parent.localAttrs;
     },
     pagination() {
       return this.$parent.paginationConfig;
@@ -15,12 +15,12 @@ export default {
     },
     sortOrder() {
       return this.$parent.localSortOrder;
-    }
+    },
   },
   methods: {
     sortItemsBy(by) {
       this.$parent.set("localSortBy", by.name);
-      if (this.sortOrder && this.sortOrder == "asc") {
+      if (this.sortOrder == "asc") {
         this.$parent.set("localSortOrder", "desc");
       } else {
         this.$parent.set("localSortOrder", "asc");
@@ -29,8 +29,8 @@ export default {
     },
     itemIndex(index) {
       return (
-        this.$parent.currentPerPage * (this.$parent.currentPage - 1) + index + 1
+        this.$parent.localPerPage * (this.$parent.localPage - 1) + index + 1
       );
-    }
-  }
+    },
+  },
 };
