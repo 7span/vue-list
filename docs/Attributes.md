@@ -1,11 +1,11 @@
 # Attributes
 
-> Get all the attributes and modify the settings.
+> Display all the attributes you provided and render a UI to modify those attributes.
 
 ## Slots
 
-| Name    | Description                              | Bindings                                     |
-| ------- | ---------------------------------------- | -------------------------------------------- |
-| default | Render custom UI to configure attributes | <br>**attr** `object` - The attribute object |
+| Name    | Description                        | Bindings                                                                                                                                     |
+| ------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| default | An individual attribute interface. | **update** `function` - Apply a change to an attribute and it's props. Params: [name,prop,value]<br>**attr** `object` - The attribute object |
 
 ---

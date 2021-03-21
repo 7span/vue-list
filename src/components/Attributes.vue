@@ -2,9 +2,9 @@
   <div class="v-list-attributes">
     <template v-for="(attr, index) in $parent.localAttrs">
       <!--
-        @slot Render custom UI to configure attributes
-        @binding {function} change Apply the change
+        @slot An individual attribute interface.
         @binding {object} attr The attribute object
+        @binding {function} update Apply a change to an attribute and it's props. Params: [name,prop,value]
       -->
       <slot :update="update" :attr="attr">
         <label :key="`attr-${index}`">
@@ -22,7 +22,7 @@
 
 <script>
 /**
- * Get all the attributes and modify the settings.
+ * Display all the attributes you provided and render a UI to modify those attributes.
  */
 export default {
   methods: {

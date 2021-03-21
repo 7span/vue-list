@@ -8,6 +8,7 @@ import PerPage from "@/components/PerPage";
 import Attributes from "@/components/Attributes";
 import Search from "@/components/Search";
 import LoadMore from "@/components/LoadMore";
+import GoTo from "@/components/GoTo";
 
 //Layout
 import Table from "@/layouts/table/Index";
@@ -36,6 +37,7 @@ const install = (Vue, userOptions = {}) => {
   Vue.component(`${prefix}ListSearch`, Search);
   Vue.component(`${prefix}ListLoadMore`, LoadMore);
   Vue.component(`${prefix}ListTable`, Table);
+  Vue.component(`${prefix}ListGoTo`, GoTo);
 };
 
 const plugin = {

@@ -1,57 +1,46 @@
 <template>
-  <div class="v-list-pagination" v-if="count > perPage">
-    <!-- PREV -->
-    <slot name="prev" :prev="prev" v-if="hasPrev">
+  <div class="v-list-pagination">
+    <!--
+      @slot Render a previous button
+      @binding {function} prev Got to previous page.
+      @binding {boolean} hasPrev If previous page is available or not.
+     -->
+    <slot name="prev" :prev="prev" :hasPrev="hasPrev">
       <button @click="prev">Prev</button>
     </slot>
 
-    <!-- PAGES -->
     <template v-for="item in pagesToDisplay">
-      <slot name="active-page" v-if="item == page">
-        <span :key="`page-${item}`">{{ item }}</span>
-      </slot>
-      <slot v-else name="page" :change="change" :value="item">
-        <button :key="`page-${item}`" @click="change(item)">
+      <!--
+      @slot Render an interface to display a page button.
+      @binding {function} change Call it to change a page.
+      @binding {int} value Page number a button presents.
+      @binding {boolean} isActive If a button is presenting a current page.
+     -->
+      <slot name="page" :change="change" :value="item" :isActive="item == page">
+        <span v-if="item == page" :key="`page-${item}`">{{ item }}</span>
+        <button v-else :key="`page-${item}`" @click="change(item)">
           {{ item }}
         </button>
       </slot>
     </template>
 
-    <!-- NEXT -->
-    <slot name="next" :next="next" v-if="hasNext">
-      <button @click="change(page + 1)">Next</button>
-    </slot>
-
-    <!-- SELECT -->
-    <slot
-      name="select"
-      v-if="total > this.pageLinks"
-      :change="change"
-      :value="page"
-      :options="pagesOptions"
-    >
-      <select
-        @input="change($event.target.value)"
-        :value="page"
-        :options="pagesOptions"
-      >
-        <option
-          v-for="(option, index) in pagesOptions"
-          :key="`option-${index}`"
-        >
-          {{ option }}
-        </option>
-      </select>
+    <!--
+      @slot Render a next button
+      @binding {function} prev Got to next page.
+      @binding {boolean} hasPrev If next page is available or not.
+     -->
+    <slot name="next" :next="next" :hasNext="hasNext">
+      <button @click="next">Next</button>
     </slot>
   </div>
 </template>
 
 <script>
-import pagination from "@/mixins/pagination";
+/**
+ * Display a pagination bar with clickable page numbers to allow users to navigate.
+ */
 
 export default {
-  mixins: [pagination],
-
   props: {
     /**
      * Number of buttons to display in pagination.
@@ -72,16 +61,17 @@ export default {
     page() {
       return this.$parent.localPage;
     },
+
     perPage() {
       return this.$parent.localPerPage;
     },
 
-    pagesOptions() {
-      const links = [];
-      for (var i = 1; i <= this.total; i++) {
-        links.push(i);
-      }
-      return links;
+    count() {
+      return this.$parent.count;
+    },
+
+    total() {
+      return Math.ceil(this.count / this.perPage);
     },
 
     pagesToDisplay() {
@@ -102,11 +92,8 @@ export default {
     hasPrev() {
       return this.page != 1;
     },
-
-    total() {
-      return Math.ceil(this.count / this.perPage);
-    },
   },
+
   methods: {
     prev() {
       this.change(this.page - 1);

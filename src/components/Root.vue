@@ -1,28 +1,46 @@
 <template>
-  <div class="v-list" v-if="options">
-    <!-- LOADING -->
+  <div class="v-list">
+    <!-- 
+      @slot Loader to display when a component is loading for the first time.
+     -->
     <slot v-if="loading" name="loading">
       <p>Loading...</p>
     </slot>
 
     <!-- CONTENT -->
     <template v-else>
-      <!-- LOADING -->
+      <!-- 
+      @slot Loader to display when navigating to other page.
+     -->
       <slot v-if="loadingPage" name="loading-page">
         <p>Loading Page...</p>
       </slot>
 
-      <!-- ERROR -->
-      <slot v-if="error" name="error">
+      <!-- 
+      @slot If there was an error from an API
+      @binding {object} error An errror returned from API
+     -->
+      <slot v-if="error" name="error" :error="error">
         <p>There was an error while processing your request.</p>
       </slot>
 
-      <!-- EMPTY -->
+      <!-- 
+      @slot When API returned no items.
+     -->
       <slot v-else-if="isEmpty" name="empty">
         <p>No data found!</p>
       </slot>
 
-      <!-- ITEMS -->
+      <!-- 
+      @slot Render a UI to list items.
+      @binding {array} items List if items
+      @binding {object} response A latest response from an API
+      @binding {boolean} loading If component is initializing and first request is being made.
+      @binding {boolean} loadingPage If navigating to another page.
+      @binding {boolean} loadingMore If loading more items.
+      @binding {boolean} isEmpty If there are no items returned by API.
+      @binding {function} refresh Refresh the listing by using the same parameters.
+     -->
       <slot
         v-else
         :items="localItems"
@@ -50,7 +68,7 @@ export default {
     endpoint: String,
 
     /**
-     * Default page to load
+     * Default page to load.
      */
     page: {
       type: Number,
@@ -216,29 +234,46 @@ export default {
 
     changePage(value) {
       this.localPage = value;
-      this.$emit("update:page", value);
       this.getData();
     },
 
     changePerPage(value) {
       this.localPerPage = value;
-      this.$emit("update:perPage", value);
       this.changePage(1);
     },
 
     loadMore() {
-      this.$emit("beforeLoadMore");
+      const oldPage = this.localPage;
       this.localPage++;
-      this.$emit("update:page", this.localPage);
+      const newPage = this.localPage;
+
+      /**
+       * @property {object} payload - Payload
+       * @property {int} payload.oldPage - Old Page No
+       * @property {int} payload.newPage - New Page No
+       */
+      this.$emit("beforeLoadMore", {
+        oldPage,
+        newPage,
+      });
+
       this.getData();
     },
 
     setData(res) {
       if (this.paginationMode == "infinite") {
         this.localItems = this.localItems.concat(res.items);
+
+        /**
+         * @property {object} res - Response received from an API
+         */
         this.$emit("afterLoadMore", res);
       } else {
         this.localItems = res.items;
+
+        /**
+         * @property {object} res - Response received from an API
+         */
         this.$emit("afterLoad", res);
       }
       this.count = res.count;
@@ -284,8 +319,9 @@ export default {
         .then((res) => {
           this.response = res;
 
-          //Response event
-          //Fires asap after ajax request is successfull
+          /**
+           * @property {object} res - Response received from an API
+           */
           this.$emit("res", res);
           this.setData(res);
           this.setLoader(false);
