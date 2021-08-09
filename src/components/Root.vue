@@ -131,6 +131,15 @@ export default {
       type: Function,
       default: (data) => data,
     },
+
+    /**
+     * Request Handler handles the API requests
+     * Use this prop to handle requests individually.
+     * If set, will get higher priority over global handler
+     */
+    requestHandler: {
+      type: Function,
+    },
   },
   data() {
     return {
@@ -299,23 +308,23 @@ export default {
       this.error = false;
       this.setLoader(true);
 
-      //TODO: Accept requestHandler via props too for individual configs
-      this.options
-        .requestHandler({
-          method: "get",
-          endpoint: this.endpoint,
-          params: this.params,
-          filters: this.filters,
-          search: this.localSearch,
-          pagination: {
-            page: this.localPage,
-            perPage: this.localPerPage,
-          },
-          sort: {
-            by: this.localSortBy,
-            order: this.localSortOrder,
-          },
-        })
+      const handler = this.requestHandler || this.options.requestHandler;
+
+      handler({
+        method: "get",
+        endpoint: this.endpoint,
+        params: this.params,
+        filters: this.filters,
+        search: this.localSearch,
+        pagination: {
+          page: this.localPage,
+          perPage: this.localPerPage,
+        },
+        sort: {
+          by: this.localSortBy,
+          order: this.localSortOrder,
+        },
+      })
         .then((res) => {
           this.response = res;
 
