@@ -74,8 +74,8 @@
 
 <script>
 import { cloneDeep } from "lodash-es";
-import layout from "@/mixins/layout";
-import { key } from "@/utils";
+import layout from "../../mixins/layout";
+import { key } from "../../utils";
 
 export default {
   mixins: [layout],

@@ -6,7 +6,7 @@
       @binding {boolean} hasPrev If previous page is available or not.
      -->
     <slot name="prev" :prev="prev" :hasPrev="hasPrev">
-      <button @click="prev">Prev</button>
+      <button :disabled="!hasPrev" @click="prev">Prev</button>
     </slot>
 
     <template v-for="item in pagesToDisplay">
@@ -30,7 +30,7 @@
       @binding {boolean} hasPrev If next page is available or not.
      -->
     <slot name="next" :next="next" :hasNext="hasNext">
-      <button @click="next">Next</button>
+      <button :disabled="!hasNext" @click="next">Next</button>
     </slot>
   </div>
 </template>
@@ -49,7 +49,7 @@ export default {
      */
     pageLinks: {
       type: Number,
-      default: 7,
+      default: 5,
     },
   },
 
@@ -74,14 +74,22 @@ export default {
       return Math.ceil(this.count / this.perPage);
     },
 
-    pagesToDisplay() {
-      const pages = Array.apply(null, Array(this.pageLinks));
-      const halfWay = Math.floor(this.pageLinks / 2);
+    halfWay() {
+      return Math.floor(this.pageLinks / 2);
+    },
 
-      if (this.page <= halfWay) {
+    pagesToDisplay() {
+      const pages = Array.apply(
+        null,
+        Array(Math.min(this.pageLinks, this.total))
+      );
+
+      if (this.page <= this.halfWay) {
         return pages.map((value, index) => index + 1);
+      } else if (this.total - this.page < this.halfWay) {
+        return pages.map((value, index) => this.total - index).reverse();
       } else {
-        return pages.map((value, index) => this.page - halfWay + index);
+        return pages.map((value, index) => this.page - this.halfWay + index);
       }
     },
 

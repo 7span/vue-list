@@ -1,8 +1,11 @@
 <template>
   <div id="app">
+    <button @click="tag++">TG</button>
     <v-list
+      :per-page="18"
       :attrs="attrs"
-      endpoint="https://app.whatshash.com/api/V1/public/poll"
+      endpoint="https://api.pagemaker.dev/api/v1/modules"
+      :filters="{ tag }"
     >
       <v-list-search />
       <v-list-table />
@@ -20,7 +23,11 @@
 export default {
   data() {
     return {
+      tag: 1,
       attrs: [
+        {
+          name: "_index",
+        },
         {
           name: "id",
           sortable: true,

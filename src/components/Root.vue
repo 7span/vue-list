@@ -57,7 +57,7 @@
 /**
  * This is the base component to render the listing
  */
-import { startCase } from "lodash-es";
+import { startCase, isEqual } from "lodash-es";
 
 export default {
   name: "VList",
@@ -172,18 +172,25 @@ export default {
      */
     filters: {
       deep: true,
-      handler() {
-        this.changePage(1);
+      handler(newValue, oldValue) {
+        if (!isEqual(newValue, oldValue)) {
+          this.changePage(1);
+        }
       },
     },
     params: {
       deep: true,
-      handler() {
-        this.changePage(1);
+      handler(newValue, oldValue) {
+        if (!isEqual(newValue, oldValue)) {
+          this.changePage(1);
+        }
       },
     },
-    localSearch() {
-      this.changePage(1);
+    search(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.localSearch = newValue;
+        this.changePage(1);
+      }
     },
   },
 
