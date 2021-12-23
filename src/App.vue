@@ -13,7 +13,7 @@
       <v-list-counter />
       <v-list-per-page />
       <v-list-go-to />
-      <!-- <v-list-load-more /> -->
+      <v-list-load-more />
       <v-list-attributes />
     </v-list>
   </div>
