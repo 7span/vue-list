@@ -38,7 +38,12 @@
             @click="tdClick(attr, row)"
           >
             <!-- Override Slot -->
-            <slot v-if="$scopedSlots[attr.name]" :name="attr.name" :item="row">
+            <slot
+              v-if="$scopedSlots[attr.name]"
+              :name="attr.name"
+              :item="row"
+              :toggleSelect="() => toggleSelect(row)"
+            >
               {{ row[attr.name] }}
             </slot>
 
@@ -241,6 +246,16 @@ export default {
 
       //If props are defined but need to display row value.
       return row[key];
+    },
+    toggleSelect(row) {
+      const selectedRows = [...this.$parent.selection];
+      const index = selectedRows.findIndex((item) => item.id === row.id);
+      if (index > -1) {
+        this.$delete(selectedRows, index);
+      } else {
+        selectedRows.push({ ...row });
+      }
+      this.$parent.set("selection", selectedRows);
     },
   },
 };

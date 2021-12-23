@@ -48,6 +48,7 @@
         :loading="loading"
         :isEmpty="isEmpty"
         :refresh="refresh"
+        :selection="selection"
       />
     </template>
   </div>
@@ -151,6 +152,7 @@ export default {
       localItems: null,
       localAttrs: null,
       paginationMode: null,
+      selection: [],
 
       error: false,
       response: null,
@@ -159,7 +161,7 @@ export default {
       initial: true,
       loading: false,
       loadingMore: false,
-      loadingPage: false,
+      loadingPage: false
     };
   },
 
@@ -192,6 +194,12 @@ export default {
         this.changePage(1);
       }
     },
+    selection: {
+      deep: true,
+      handler(newValue, oldValue) {
+        this.$emit("selection", newValue, oldValue);
+      }
+    }
   },
 
   created() {
