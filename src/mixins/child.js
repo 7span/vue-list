@@ -1,10 +1,10 @@
 export default {
   props: {
-    rootRef: Function,
+    rootRef: String,
   },
   computed: {
     root() {
-      return this.rootRef ? this.rootRef() : this.$parent;
+      return this.rootRef ? this.$refs[this.rootRef] : this.$parent;
     },
   },
 };
