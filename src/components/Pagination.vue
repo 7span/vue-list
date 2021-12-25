@@ -36,11 +36,14 @@
 </template>
 
 <script>
+import child from "../mixins/child";
+
 /**
  * Display a pagination bar with clickable page numbers to allow users to navigate.
  */
 
 export default {
+  mixins: [child],
   props: {
     /**
      * Number of buttons to display in pagination.
@@ -54,20 +57,20 @@ export default {
   },
 
   created() {
-    this.$parent.set("paginationMode", "paging");
+    this.root.set("paginationMode", "paging");
   },
 
   computed: {
     page() {
-      return this.$parent.localPage;
+      return this.root.localPage;
     },
 
     perPage() {
-      return this.$parent.localPerPage;
+      return this.root.localPerPage;
     },
 
     count() {
-      return this.$parent.count;
+      return this.root.count;
     },
 
     total() {
@@ -110,7 +113,7 @@ export default {
       this.change(this.page + 1);
     },
     change(number) {
-      this.$parent.changePage(number);
+      this.root.changePage(number);
     },
   },
 };

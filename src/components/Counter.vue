@@ -12,20 +12,23 @@
 </template>
 
 <script>
+import child from "../mixins/child";
+
 /**
  * Displays the counter of total items and displayed items in a list.
  */
 export default {
+  mixins: [child],
   computed: {
     items() {
-      return this.$parent.localItems;
+      return this.root.localItems;
     },
 
     showing() {
       return this.items.length;
     },
     count() {
-      return this.$parent.count;
+      return this.root.count;
     },
   },
 };

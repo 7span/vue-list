@@ -26,13 +26,13 @@ export default {
   mixins: [layout],
   data() {
     return {
-      screenWidth: null
+      screenWidth: null,
     };
   },
   props: {
     config: {
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   mounted() {
     this.screenWidth = window.innerWidth;
@@ -57,7 +57,7 @@ export default {
       } else {
         return this.layoutConfig.size.lg;
       }
-    }
+    },
   },
 
   methods: {
@@ -70,8 +70,8 @@ export default {
         _cols[index % this.size].push(item);
       });
       return _cols;
-    }
-  }
+    },
+  },
 };
 </script>
 

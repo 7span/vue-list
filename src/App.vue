@@ -7,6 +7,7 @@
       endpoint="https://api.pagemaker.dev/api/v1/modules"
       :filters="{ tag }"
       @selection="selectionChange(arguments)"
+      ref="list"
     >
       <template #default="{ selection }">
         <p>{{ selection }}</p>
@@ -18,14 +19,15 @@
             <button @click="toggleSelect()">Select</button>
           </template>
         </v-list-table>
-        <v-list-pagination />
+
         <v-list-counter />
-        <v-list-per-page />
         <v-list-go-to />
         <v-list-load-more />
         <v-list-attributes />
+        <v-list-pagination />
       </template>
     </v-list>
+    <v-list-per-page :root-ref="() => $refs.list" />
   </div>
 </template>
 
@@ -54,7 +56,7 @@ export default {
   methods: {
     selectionChange(val) {
       console.log(val);
-    }
-  }
+    },
+  },
 };
 </script>

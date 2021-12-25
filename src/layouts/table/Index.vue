@@ -120,7 +120,7 @@ export default {
     rows: {
       set(value) {
         this.$emit("reorder", value);
-        this.$parent.set("localItems", value);
+        this.root.set("localItems", value);
       },
       get() {
         return cloneDeep(this.items);
@@ -248,14 +248,14 @@ export default {
       return row[key];
     },
     toggleSelect(row) {
-      const selectedRows = [...this.$parent.selection];
+      const selectedRows = [...this.root.selection];
       const index = selectedRows.findIndex((item) => item.id === row.id);
       if (index > -1) {
         this.$delete(selectedRows, index);
       } else {
         selectedRows.push({ ...row });
       }
-      this.$parent.set("selection", selectedRows);
+      this.root.set("selection", selectedRows);
     },
   },
 };

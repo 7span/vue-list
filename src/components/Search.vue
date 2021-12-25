@@ -1,9 +1,9 @@
 <template>
   <div class="v-list-search">
-    <slot :value="$parent.localSearch" :set="set">
+    <slot :value="root.localSearch" :set="set">
       <input
         type="text"
-        :value="$parent.localSearch"
+        :value="root.localSearch"
         @input="set($event.target.value)"
         placeholder="Search"
       />
@@ -13,8 +13,10 @@
 
 <script>
 import { debounce } from "lodash-es";
+import child from "../mixins/child";
 
 export default {
+  mixins: [child],
   props: {
     /**
      * Wait till this time to send an API request to avoid multiple requests when user is typing.
@@ -32,7 +34,7 @@ export default {
   },
   created() {
     this.set = debounce(function(value) {
-      this.$parent.localSearch = value;
+      this.root.localSearch = value;
     }, this.debounceTime);
   },
 };

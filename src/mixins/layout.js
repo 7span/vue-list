@@ -1,36 +1,37 @@
+import child from "./child";
+
 export default {
+  mixins: [child],
   inject: ["OPTIONS"],
   computed: {
     items() {
-      return this.$parent.localItems;
+      return this.root.localItems;
     },
     attrs() {
-      return this.$parent.localAttrs;
+      return this.root.localAttrs;
     },
     pagination() {
-      return this.$parent.paginationConfig;
+      return this.root.paginationConfig;
     },
     sortBy() {
-      return this.$parent.localSortBy;
+      return this.root.localSortBy;
     },
     sortOrder() {
-      return this.$parent.localSortOrder;
+      return this.root.localSortOrder;
     },
   },
   methods: {
     sortItemsBy(by) {
-      this.$parent.set("localSortBy", by.name);
+      this.root.set("localSortBy", by.name);
       if (this.sortOrder == "asc") {
-        this.$parent.set("localSortOrder", "desc");
+        this.root.set("localSortOrder", "desc");
       } else {
-        this.$parent.set("localSortOrder", "asc");
+        this.root.set("localSortOrder", "asc");
       }
-      this.$parent.refresh();
+      this.root.refresh();
     },
     itemIndex(index) {
-      return (
-        this.$parent.localPerPage * (this.$parent.localPage - 1) + index + 1
-      );
+      return this.root.localPerPage * (this.root.localPage - 1) + index + 1;
     },
   },
 };

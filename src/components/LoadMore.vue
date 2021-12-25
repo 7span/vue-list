@@ -19,32 +19,36 @@
 </template>
 
 <script>
+import child from "../mixins/child";
+
 /**
  * Provides infinite list where users can click on Load more and new items from
  * API will be appended in a list keeping previous items as it is.
 
  */
 export default {
+  mixins: [child],
+
   created() {
-    this.$parent.set("paginationMode", "infinite");
+    this.root.set("paginationMode", "infinite");
   },
 
   computed: {
     loadingMore() {
-      return this.$parent.loadingMore;
+      return this.root.loadingMore;
     },
 
     loaded() {
-      return this.$parent.localItems?.length;
+      return this.root.localItems?.length;
     },
 
     count() {
-      return this.$parent.count;
+      return this.root.count;
     },
   },
   methods: {
     loadMore() {
-      this.$parent.loadMore();
+      this.root.loadMore();
     },
   },
 };

@@ -23,7 +23,10 @@
 </template>
 
 <script>
+import child from "../mixins/child";
+
 export default {
+  mixins: [child],
   props: {
     /**
      * An array of options which lets user select how many items they want to see in a list at a time.
@@ -37,7 +40,7 @@ export default {
 
   computed: {
     perPage() {
-      return this.$parent.perPage;
+      return this.root.perPage;
     },
     serializedOptions() {
       return this.options.map((item) => {
@@ -54,7 +57,7 @@ export default {
   },
   methods: {
     change(value) {
-      this.$parent.changePerPage(value);
+      this.root.changePerPage(value);
     },
   },
 };
