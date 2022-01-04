@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <button @click="tag++">TG</button>
+    <button @click="filters.tag++">TG</button>
     <v-list
       :per-page="18"
       :attrs="attrs"
@@ -8,7 +8,7 @@
       :filters="{ tag }"
       ref="list"
     >
-      <template #default="{ selection }">
+      <template #default="{ selection,instance }">
         <p>{{ selection }}</p>
         <hr />
 
@@ -25,17 +25,29 @@
         <v-list-load-more />
         <v-list-attributes />
         <v-list-pagination />
+
+        <dummy>
+          <v-list-per-page :parent="instance" />
+        </dummy>
       </template>
     </v-list>
-    <v-list-per-page :root-ref="() => $refs.list" />
+
+    <button @click="filters.tag = 1">Tag 1</button>
+    <button @click="filters.tag = 2">Tag 2</button>
+    <button>Tag 2</button>
   </div>
 </template>
 
 <script>
 export default {
+  components: {
+    Dummy: require("@/components/Dummy").default,
+  },
   data() {
     return {
-      tag: 1,
+      filters: {
+        tag: 1,
+      },
       attrs: [
         {
           name: "_index",

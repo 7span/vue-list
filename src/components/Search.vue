@@ -33,7 +33,7 @@ export default {
     };
   },
   created() {
-    this.set = debounce(function(value) {
+    this.set = debounce((value) => {
       this.root.localSearch = value;
     }, this.debounceTime);
   },

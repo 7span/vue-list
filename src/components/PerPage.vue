@@ -40,7 +40,7 @@ export default {
 
   computed: {
     perPage() {
-      return this.root.perPage;
+      return this.root.localPerPage;
     },
     serializedOptions() {
       return this.options.map((item) => {

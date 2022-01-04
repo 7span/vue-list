@@ -1,9 +1,14 @@
 <template>
   <div class="v-list">
     <!-- 
+      @slot Header Slot
+     -->
+    <slot name="header" v-bind="scope" />
+
+    <!-- 
       @slot Loader to display when a component is loading for the first time.
      -->
-    <slot v-if="loading" name="loading">
+    <slot v-if="loading" name="loading" v-bind="scope">
       <p>Loading...</p>
     </slot>
 
@@ -12,7 +17,7 @@
       <!-- 
       @slot Loader to display when navigating to other page.
      -->
-      <slot v-if="loadingPage" name="loading-page">
+      <slot v-if="loadingPage" name="loading-page" v-bind="scope">
         <p>Loading Page...</p>
       </slot>
 
@@ -20,14 +25,14 @@
       @slot If there was an error from an API
       @binding {object} error An errror returned from API
      -->
-      <slot v-if="error" name="error" :error="error">
+      <slot v-if="error" name="error" :error="error" v-bind="scope">
         <p>There was an error while processing your request.</p>
       </slot>
 
       <!-- 
       @slot When API returned no items.
      -->
-      <slot v-else-if="isEmpty" name="empty">
+      <slot v-else-if="isEmpty" name="empty" v-bind="scope">
         <p>No data found!</p>
       </slot>
 
@@ -41,16 +46,13 @@
       @binding {boolean} isEmpty If there are no items returned by API.
       @binding {function} refresh Refresh the listing by using the same parameters.
      -->
-      <slot
-        v-else
-        :items="localItems"
-        :response="response"
-        :loading="loading"
-        :isEmpty="isEmpty"
-        :refresh="refresh"
-        :selection="selection"
-      />
+      <slot v-else v-bind="scope" />
     </template>
+
+    <!-- 
+      @slot Footer Slot
+     -->
+    <slot name="footer" v-bind="scope" />
   </div>
 </template>
 
@@ -161,7 +163,7 @@ export default {
       initial: true,
       loading: false,
       loadingMore: false,
-      loadingPage: false
+      loadingPage: false,
     };
   },
 
@@ -194,12 +196,17 @@ export default {
         this.changePage(1);
       }
     },
+    localSearch(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.changePage(1);
+      }
+    },
     selection: {
       deep: true,
       handler(newValue, oldValue) {
         this.$emit("selection", newValue, oldValue);
-      }
-    }
+      },
+    },
   },
 
   created() {
@@ -207,6 +214,9 @@ export default {
   },
 
   computed: {
+    instance() {
+      return this;
+    },
     attrsToUse() {
       const attrs = this.attrs || Object.keys(this.localItems?.[0] || {});
       return this.attrsAdaptor(attrs);
@@ -215,6 +225,19 @@ export default {
     isEmpty() {
       if (this.localItems?.length != 0) return false;
       return true;
+    },
+    scope() {
+      return {
+        items: this.localItems,
+        response: this.response,
+        loading: this.loading,
+        isEmpty: this.isEmpty,
+        refresh: this.refresh,
+        selection: this.selection,
+        instance: this.instance,
+        loading: this.loading,
+        loadingPage: this.loadingPage,
+      };
     },
   },
 
