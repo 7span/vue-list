@@ -6,7 +6,6 @@
       :attrs="attrs"
       endpoint="https://api.pagemaker.dev/api/v1/modules"
       :filters="{ tag }"
-      @selection="selectionChange(arguments)"
       ref="list"
     >
       <template #default="{ selection }">
@@ -15,8 +14,9 @@
 
         <v-list-search />
         <v-list-table>
-          <template #select="{ toggleSelect }">
-            <button @click="toggleSelect()">Select</button>
+          <template #select="{ toggleSelect, isSelected }">
+            <button v-if="isSelected" @click="toggleSelect()">Selected</button>
+            <button v-else @click="toggleSelect()">Select</button>
           </template>
         </v-list-table>
 
@@ -52,11 +52,6 @@ export default {
         },
       ],
     };
-  },
-  methods: {
-    selectionChange(val) {
-      console.log(val);
-    },
   },
 };
 </script>

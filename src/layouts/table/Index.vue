@@ -43,6 +43,7 @@
               :name="attr.name"
               :item="row"
               :toggleSelect="() => toggleSelect(row)"
+              :isSelected="isSelected(row)"
             >
               {{ row[attr.name] }}
             </slot>
@@ -256,6 +257,11 @@ export default {
         selectedRows.push({ ...row });
       }
       this.root.set("selection", selectedRows);
+    },
+    isSelected(row) {
+      const selectedRows = [...this.root.selection];
+      const index = selectedRows.findIndex((item) => item.id === row.id);
+      return index > -1;
     },
   },
 };
