@@ -29,7 +29,11 @@
     >
       <slot name="body-start" />
 
-      <tr v-for="(row, rowIndex) in rows" :key="key('body-row', rowIndex)">
+      <tr
+        v-for="(row, rowIndex) in rows"
+        :key="key('body-row', rowIndex)"
+        :class="isSelected(row) ? 'v-list-table__selected' : ''"
+      >
         <template v-for="(attr, colIndex) in body">
           <td
             v-if="attr.visible"
