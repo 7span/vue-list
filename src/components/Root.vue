@@ -71,6 +71,11 @@ export default {
     endpoint: String,
 
     /**
+     * Static Config which will be passed to handler
+     */
+    config: Object,
+
+    /**
      * Default page to load.
      */
     page: {
@@ -363,6 +368,7 @@ export default {
           by: this.localSortBy,
           order: this.localSortOrder,
         },
+        config: this.config,
       })
         .then((res) => {
           this.response = res;
