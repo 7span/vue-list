@@ -1,6 +1,6 @@
 {
   "name": "@7span/vue-list",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
