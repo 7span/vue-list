@@ -280,6 +280,7 @@ export default {
     },
 
     changePage(value) {
+      this.selection = [];
       this.localPage = value;
       this.getData();
     },
