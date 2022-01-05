@@ -285,7 +285,6 @@ export default {
     },
 
     changePage(value) {
-      this.selection = [];
       this.localPage = value;
       this.getData();
     },
@@ -376,6 +375,7 @@ export default {
           /**
            * @property {object} res - Response received from an API
            */
+          this.selection = [];
           this.$emit("res", res);
           this.setData(res);
           this.setLoader(false);
