@@ -8,12 +8,15 @@
       :filters="{ tag }"
       ref="list"
     >
-      <template #default="{ selection,instance }">
+      <template #default="{ selection, instance }">
         <p>{{ selection }}</p>
         <hr />
 
         <v-list-search />
         <v-list-table>
+          <template #th_select="{ toggleSelectAll, selectionState }">
+            <button @click="toggleSelectAll()">{{ selectionState }}</button>
+          </template>
           <template #select="{ toggleSelect, isSelected }">
             <button v-if="isSelected" @click="toggleSelect()">Selected</button>
             <button v-else @click="toggleSelect()">Select</button>

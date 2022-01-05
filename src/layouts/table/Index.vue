@@ -12,11 +12,20 @@
             :colspan="colspan(rowIndex, col.key)"
             @click="col.sortable ? sortItemsBy(col) : null"
           >
-            <template v-if="col.name == sortBy">
-              <span v-if="sortOrder == 'asc'">↑</span>
-              <span v-else-if="sortOrder == 'desc'">↓</span>
-            </template>
-            <span>{{ col.label }}</span>
+            <slot
+              :name="`th_${col.name}`"
+              :attr="col"
+              :toggleSelectAll="toggleSelectAll"
+              :sortBy="sortBy"
+              :sortOrder="sortOrder"
+              :selectionState="selectionState"
+            >
+              <template v-if="col.name == sortBy">
+                <span v-if="sortOrder == 'asc'">↑</span>
+                <span v-else-if="sortOrder == 'desc'">↓</span>
+              </template>
+              <span>{{ col.label }}</span>
+            </slot>
           </th>
         </template>
       </tr>
@@ -130,6 +139,15 @@ export default {
       get() {
         return cloneDeep(this.items);
       },
+    },
+    selectionState() {
+      if (this.root.selection.length === this.rows.length) {
+        return "all";
+      } else if (this.root.selection.length === 0) {
+        return "none";
+      } else {
+        return "some";
+      }
     },
   },
 
@@ -266,6 +284,21 @@ export default {
       const selectedRows = [...this.root.selection];
       const index = selectedRows.findIndex((item) => item.id === row.id);
       return index > -1;
+    },
+    toggleSelectAll() {
+      switch (this.selectionState) {
+        case "all":
+          this.root.set("selection", []);
+          break;
+
+        case "some":
+        case "none":
+          this.root.set("selection", this.rows);
+          break;
+
+        default:
+          break;
+      }
     },
   },
 };
