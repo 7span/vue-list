@@ -54,9 +54,7 @@
             <slot
               v-if="$scopedSlots[attr.name]"
               :name="attr.name"
-              :item="row"
-              :toggleSelect="() => toggleSelect(row)"
-              :isSelected="isSelected(row)"
+              v-bind="tdScope(attr, row, rowIndex)"
             >
               {{ row[attr.name] }}
             </slot>
@@ -64,22 +62,34 @@
             <!-- Global Slot -->
             <component
               v-else-if="OPTIONS.slots && OPTIONS.slots[attr.name]"
-              :item="row"
               :is="OPTIONS.slots[attr.name]"
+              v-bind="tdScope(attr, row, rowIndex)"
             />
 
             <!-- Index -->
-            <slot v-else-if="attr.name == '_index'" name="_index" :item="row">
+            <slot
+              v-else-if="attr.name == '_index'"
+              name="_index"
+              v-bind="tdScope(attr, row, rowIndex)"
+            >
               {{ itemIndex(rowIndex) }}
             </slot>
 
             <!-- Drag Handle -->
-            <slot v-else-if="attr.name == '_drag'" name="_drag" :item="row">
+            <slot
+              v-else-if="attr.name == '_drag'"
+              name="_drag"
+              v-bind="tdScope(attr, row, rowIndex)"
+            >
               <span class="v-list-table__drag">Drag</span>
             </slot>
 
             <!-- Default Slot -->
-            <slot v-else :name="attr.name" :item="row">
+            <slot
+              v-else
+              :name="attr.name"
+              v-bind="tdScope(attr, row, rowIndex)"
+            >
               {{ td(attr, row) }}
             </slot>
           </td>
@@ -244,6 +254,16 @@ export default {
       return classList;
     },
 
+    tdScope(attr, row, rowIndex) {
+      return {
+        toggleSelect: () => this.toggleSelect(row),
+        isSelected: this.isSelected(row),
+        item: row,
+        rowIndex: this.itemIndex(rowIndex),
+        content: this.td(attr, row),
+      };
+    },
+
     td(attr, row) {
       const key = attr.name;
       // valueMap: JSON
@@ -270,6 +290,7 @@ export default {
       //If props are defined but need to display row value.
       return row[key];
     },
+
     toggleSelect(row) {
       const selectedRows = [...this.root.selection];
       const index = selectedRows.findIndex((item) => item.id === row.id);
@@ -280,11 +301,13 @@ export default {
       }
       this.root.set("selection", selectedRows);
     },
+
     isSelected(row) {
       const selectedRows = [...this.root.selection];
       const index = selectedRows.findIndex((item) => item.id === row.id);
       return index > -1;
     },
+
     toggleSelectAll() {
       switch (this.selectionState) {
         case "all":
