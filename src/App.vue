@@ -5,7 +5,7 @@
       :per-page="18"
       :attrs="attrs"
       endpoint="https://api.pagemaker.dev/api/v1/modules"
-      :filters="{ tag }"
+      :filters="{ tag: filters.tag }"
       ref="list"
     >
       <template #default="{ selection, instance }">
@@ -13,7 +13,7 @@
         <hr />
 
         <v-list-search />
-        <v-list-table>
+        <v-list-table :rowClass="rowClass">
           <template #th_select="{ toggleSelectAll, selectionState }">
             <button @click="toggleSelectAll()">{{ selectionState }}</button>
           </template>
@@ -67,6 +67,16 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    rowClass(row, rowIndex) {
+      return [
+        {
+          "in-active": true
+        },
+        "disabled"
+      ];
+    },
   },
 };
 </script>

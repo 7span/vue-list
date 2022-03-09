@@ -1,7 +1,11 @@
 <template>
   <table class="v-list-table">
     <thead>
-      <tr v-for="(row, rowIndex) in headers" :key="key('head-row', rowIndex)">
+      <tr
+        v-for="(row, rowIndex) in headers"
+        :key="key('head-row', rowIndex)"
+        :class="[...rowClass(row, rowIndex)]"
+      >
         <template v-for="(col, colIndex) in row">
           <th
             v-if="col.visible"
@@ -41,7 +45,10 @@
       <tr
         v-for="(row, rowIndex) in rows"
         :key="key('body-row', rowIndex)"
-        :class="isSelected(row) ? 'v-list-table__selected' : ''"
+        :class="[
+          { 'v-list-table__selected': isSelected(row) },
+          ...rowClass(row, rowIndex)
+        ]"
       >
         <template v-for="(attr, colIndex) in body">
           <td
@@ -112,6 +119,9 @@ export default {
     reorder: {
       type: Boolean,
       default: false,
+    },
+    rowClass: {
+      type: Function,
     },
   },
 
