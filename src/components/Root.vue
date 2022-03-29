@@ -240,7 +240,6 @@ export default {
         refresh: this.refresh,
         selection: this.selection,
         instance: this.instance,
-        loading: this.loading,
         loadingPage: this.loadingPage,
       };
     },
@@ -309,11 +308,11 @@ export default {
         newPage,
       });
 
-      this.getData();
+      this.getData(true);
     },
 
-    setData(res) {
-      if (this.paginationMode == "infinite") {
+    setData(res, appendData) {
+      if (appendData) {
         this.localItems = this.localItems.concat(res.items);
 
         /**
@@ -347,7 +346,7 @@ export default {
       }
     },
 
-    getData() {
+    getData(appendData = false) {
       this.error = false;
       this.setLoader(true);
 
@@ -377,7 +376,7 @@ export default {
            */
           this.selection = [];
           this.$emit("res", res);
-          this.setData(res);
+          this.setData(res, appendData);
           this.setLoader(false);
         })
         .catch(() => {
