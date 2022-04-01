@@ -275,7 +275,7 @@ export default {
     thScope(col) {
       return {
         attr: col,
-        toggleSelectAll: this.toggleSelectAll(),
+        toggleSelectAll: () => this.toggleSelectAll(),
         sortBy: this.sortBy,
         sortOrder: this.sortOrder,
         selectionState: this.selectionState,
