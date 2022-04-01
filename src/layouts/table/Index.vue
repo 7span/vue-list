@@ -24,11 +24,21 @@
               :sortOrder="sortOrder"
               :selectionState="selectionState"
             >
+              <span>{{ col.label }}</span>
+            </slot>
+
+            <slot
+              name="sort"
+              :attr="col"
+              :toggleSelectAll="toggleSelectAll"
+              :sortBy="sortBy"
+              :sortOrder="sortOrder"
+              :selectionState="selectionState"
+            >
               <template v-if="col.name == sortBy">
                 <span v-if="sortOrder == 'asc'">↑</span>
                 <span v-else-if="sortOrder == 'desc'">↓</span>
               </template>
-              <span>{{ col.label }}</span>
             </slot>
           </th>
         </template>
@@ -47,7 +57,7 @@
         :key="key('body-row', rowIndex)"
         :class="[
           { 'v-list-table__selected': isSelected(row) },
-          ...rowClass(row, rowIndex)
+          ...rowClass(row, rowIndex),
         ]"
       >
         <template v-for="(attr, colIndex) in body">
