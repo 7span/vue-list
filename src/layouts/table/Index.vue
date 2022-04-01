@@ -16,18 +16,20 @@
             :colspan="colspan(rowIndex, col.key)"
             @click="col.sortable ? sortItemsBy(col) : null"
           >
-            <slot name="th_before" v-bind="thScope(col)">
-              <template v-if="col.name == sortBy">
-                <span v-if="sortOrder == 'asc'">↑</span>
-                <span v-else-if="sortOrder == 'desc'">↓</span>
-              </template>
-            </slot>
+            <div class="v-list-table__head">
+              <slot name="th_before" v-bind="thScope(col)" />
 
-            <slot :name="`th_${col.name}`" v-bind="thScope(col)">
-              <span>{{ col.label }}</span>
-            </slot>
+              <slot :name="`th_${col.name}`" v-bind="thScope(col)">
+                <span>{{ col.label }}</span>
+              </slot>
 
-            <slot name="th_after" v-bind="thScope(col)" />
+              <slot name="th_after" v-bind="thScope(col)">
+                <template v-if="col.name == sortBy">
+                  <span v-if="sortOrder == 'asc'">↑</span>
+                  <span v-else-if="sortOrder == 'desc'">↓</span>
+                </template>
+              </slot>
+            </div>
           </th>
         </template>
       </tr>

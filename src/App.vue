@@ -14,6 +14,12 @@
 
         <v-list-search />
         <v-list-table :rowClass="rowClass">
+          <template #th_after="{ attr, sortBy, sortOrder }">
+            <div v-if="attr.name == sortBy" style="margin-left: 2px">
+              <span v-if="sortOrder == 'asc'">⬆️</span>
+              <span v-else-if="sortOrder == 'desc'">⬇️</span>
+            </div>
+          </template>
           <template #th_select="{ toggleSelectAll, selectionState }">
             <button @click="toggleSelectAll()">{{ selectionState }}</button>
           </template>
@@ -72,9 +78,9 @@ export default {
     rowClass(row, rowIndex) {
       return [
         {
-          "in-active": true
+          "in-active": true,
         },
-        "disabled"
+        "disabled",
       ];
     },
   },
