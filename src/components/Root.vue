@@ -241,6 +241,7 @@ export default {
         selection: this.selection,
         instance: this.instance,
         loadingPage: this.loadingPage,
+        loadingMore: this.loadingMore,
       };
     },
   },

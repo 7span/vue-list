@@ -8,7 +8,7 @@
       :filters="{ tag: filters.tag }"
       ref="list"
     >
-      <template #default="{ selection, instance }">
+      <template #default="{ selection, instance, loadingMore }">
         <p>{{ selection }}</p>
         <hr />
 
@@ -38,6 +38,8 @@
         <dummy>
           <v-list-per-page :parent="instance" />
         </dummy>
+
+        <p>{{ loadingMore }}</p>
       </template>
     </v-list>
 
