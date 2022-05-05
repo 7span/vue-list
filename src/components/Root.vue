@@ -380,8 +380,8 @@ export default {
           this.setData(res, appendData);
           this.setLoader(false);
         })
-        .catch(() => {
-          this.error = true;
+        .catch((err) => {
+          this.error = err;
           this.setLoader(false);
         });
     },
