@@ -404,13 +404,15 @@ export default {
           this.selection = [];
           this.$emit("res", res);
           this.setData(res, appendData);
-          this.setUrl();
+          setUrl();
           this.setLoader(false);
         })
         .catch((err) => {
-          console.error(err);
           this.error = err;
           this.setLoader(false);
+
+          // Throwing error here to allow handling errors at config level
+          throw new Error(err);
         });
     },
 

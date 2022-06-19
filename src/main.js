@@ -28,6 +28,9 @@ Vue.use(plugin, {
           items: res.data?.data,
           count: res.data.meta.total,
         };
+      })
+      .catch((err) => {
+        console.log(err);
       });
   },
 });
