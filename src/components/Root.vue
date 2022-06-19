@@ -26,7 +26,10 @@
       @binding {object} error An errror returned from API
      -->
       <slot v-if="error" name="error" :error="error" v-bind="scope">
-        <p>There was an error while processing your request.</p>
+        <div>
+          <p>There was an error while processing your request.</p>
+          <p>{{ error }}</p>
+        </div>
       </slot>
 
       <!-- 
@@ -218,7 +221,11 @@ export default {
     },
 
     "$route.query.page"(newValue) {
-      if (newValue && this.localPage != newValue) {
+      if (!newValue) {
+        this.changePage(1);
+        return;
+      }
+      if (this.localPage != newValue) {
         this.changePage(newValue);
       }
     },
@@ -339,14 +346,23 @@ export default {
         this.$emit("afterLoad", res);
       }
       this.count = res.count;
+    },
 
-      //Set Page URL
+    /**
+     * Updates the query parameters in the router when pagination is available.
+     *
+     * Initially when the component is loaded, the default page is 1 and no query param is added.
+     * So when navigaing back to page=1, we should avoid adding page = 1 in query param to avoid
+     * additional history in routing.
+     */
+    setUrl() {
       if (
         this.$router &&
         this.paginationMode == "paging" &&
-        this.$route.query.page != this.localPage
+        this.$route.query.page != this.localPage &&
+        this.localPage != 1
       ) {
-        //We need maintain already existing query params in URL
+        //Maintain already existing query params in URL
         const existingQueryParams = this.$route.query || {};
         this.$router.push({
           query: {
@@ -388,9 +404,11 @@ export default {
           this.selection = [];
           this.$emit("res", res);
           this.setData(res, appendData);
+          this.setUrl();
           this.setLoader(false);
         })
         .catch((err) => {
+          console.error(err);
           this.error = err;
           this.setLoader(false);
         });
