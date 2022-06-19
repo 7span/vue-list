@@ -219,7 +219,6 @@ export default {
 
     "$route.query.page"(newValue, oldValue) {
       if (this.localPage != newValue) {
-        console.log(newValue, oldValue, this.localPage);
         this.changePage(newValue);
       }
     },
