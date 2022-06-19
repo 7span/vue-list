@@ -217,8 +217,8 @@ export default {
       },
     },
 
-    "$route.query.page"(newValue, oldValue) {
-      if (this.localPage != newValue) {
+    "$route.query.page"(newValue) {
+      if (newValue && this.localPage != newValue) {
         this.changePage(newValue);
       }
     },
