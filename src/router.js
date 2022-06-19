@@ -3,7 +3,12 @@ import VueRouter from "vue-router";
 
 Vue.use(VueRouter);
 
-const routes = [];
+const routes = [
+  {
+    path: "/",
+    component: require("./Index.vue").default,
+  },
+];
 
 const router = new VueRouter({
   routes,

@@ -187,6 +187,7 @@ export default {
         }
       },
     },
+
     params: {
       deep: true,
       handler(newValue, oldValue) {
@@ -195,22 +196,32 @@ export default {
         }
       },
     },
+
     search(newValue, oldValue) {
       if (newValue != oldValue) {
         this.localSearch = newValue;
         this.changePage(1);
       }
     },
+
     localSearch(newValue, oldValue) {
       if (newValue != oldValue) {
         this.changePage(1);
       }
     },
+
     selection: {
       deep: true,
       handler(newValue, oldValue) {
         this.$emit("selection", newValue, oldValue);
       },
+    },
+
+    "$route.query.page"(newValue, oldValue) {
+      if (this.localPage != newValue) {
+        console.log(newValue, oldValue, this.localPage);
+        this.changePage(newValue);
+      }
     },
   },
 

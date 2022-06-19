@@ -1,6 +1,6 @@
 {
   "name": "@7span/vue-list",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
@@ -36,6 +36,7 @@
     "prettier": "^1.19.1",
     "sass-loader": "^7.1.0",
     "vue-docgen-cli": "^4.36.0",
+    "vue-router": "^3.5.4",
     "vue-template-compiler": "^2.6.10"
   },
   "publishConfig": {
