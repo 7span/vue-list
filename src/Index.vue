@@ -1,11 +1,14 @@
 <template>
   <div id="app">
     <button @click="filters.tag++">TG</button>
+    <button @click="toggleSortOrder">Toggle Sort Order</button>
     <v-list
       :per-page="18"
       :attrs="attrs"
       endpoint="https://api.pagemaker.dev/api/v1/modules"
       :filters="{ tag: filters.tag }"
+      :sort-by="sortBy"
+      :sort-order="sortOrder"
       ref="list"
     >
       <template #default="{ selection, instance, loadingMore }">
@@ -45,7 +48,6 @@
 
     <button @click="filters.tag = 1">Tag 1</button>
     <button @click="filters.tag = 2">Tag 2</button>
-    <button>Tag 2</button>
   </div>
 </template>
 
@@ -59,6 +61,8 @@ export default {
       filters: {
         tag: 1,
       },
+      sortBy: "name",
+      sortOrder: "desc",
       attrs: [
         {
           name: "_index",
@@ -84,6 +88,10 @@ export default {
         },
         "disabled",
       ];
+    },
+    toggleSortOrder() {
+      if (this.sortOrder === "asc") this.sortOrder = "desc";
+      else this.sortOrder = "asc";
     },
   },
 };
