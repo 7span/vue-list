@@ -177,7 +177,7 @@ export default {
 
   watch: {
     /**
-     * Only filters, params & localSearch props will react to change
+     * Only filters, params, localSearch, localSortBy & localSortOrder props will react to change
      * All other props are non-reactive once component is initialized.
      * When filters and params are changed, we need to reset the page
      * and reseting a page will use the latest filter and params props.
@@ -208,6 +208,18 @@ export default {
     },
 
     localSearch(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.changePage(1);
+      }
+    },
+
+    localSortBy(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.changePage(1);
+      }
+    },
+
+    localSortOrder(newValue, oldValue) {
       if (newValue != oldValue) {
         this.changePage(1);
       }
