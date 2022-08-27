@@ -265,6 +265,9 @@ export default {
 
   methods: {
     init() {
+      /**
+       *  TODO: localAttrs is not reactive as it is copied here.
+       */
       this.localAttrs = this.attrSerializer(this.attrsToUse);
       if (!this.endpoint) return;
 
@@ -404,7 +407,7 @@ export default {
           this.selection = [];
           this.$emit("res", res);
           this.setData(res, appendData);
-          setUrl();
+          this.setUrl();
           this.setLoader(false);
         })
         .catch((err) => {
