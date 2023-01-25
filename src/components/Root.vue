@@ -63,8 +63,8 @@
 /**
  * This is the base component to render the listing
  */
-import { startCase, isEqual } from "lodash-es";
-
+import { startCase, isEqual, unset } from "lodash-es";
+import { findObjectKeyPath } from "../utils";
 export default {
   name: "VList",
   props: {
@@ -247,6 +247,17 @@ export default {
 
   created() {
     this.init();
+
+    console.log(
+      "FIND OBJECT KEY PATH --->",
+      findObjectKeyPath({ location: "ahmedasbad" }, "location")
+    );
+
+    let obj = { location: "ahmedaad" };
+
+    console.log("UNSET**********", unset(obj, "location"));
+
+    console.log("obj------->", obj);
   },
 
   computed: {
@@ -273,6 +284,7 @@ export default {
         instance: this.instance,
         loadingPage: this.loadingPage,
         loadingMore: this.loadingMore,
+        filters: this.filters,
       };
     },
   },
@@ -470,6 +482,17 @@ export default {
     updateAttr(name, prop, value) {
       const attr = this.localAttrs.find((item) => item.name == name);
       this.$set(attr, prop, value);
+    },
+    resetFilter(key, value) {
+      console.log("inside reset filter", key);
+      const path = findObjectKeyPath(this.filters, key);
+      console.log("path ------>", path);
+      if (path) {
+        unset(this.filters, this.filters[`${path}.${key}`]);
+      } else unset(this.filters, "tag");
+      // delete filters[key];
+
+      this.$emit("update:filters", this.filters);
     },
   },
 };

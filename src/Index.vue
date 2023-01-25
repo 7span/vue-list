@@ -6,15 +6,39 @@
       :per-page="18"
       :attrs="attrs"
       endpoint="https://api.pagemaker.dev/api/v1/modules"
-      :filters="{ tag: filters.tag }"
       :sort-by="sortBy"
       :sort-order="sortOrder"
       ref="list"
+      :filters.sync="filters"
     >
+      <template #header>
+        <div>
+          <h2>Filters applied</h2>
+
+          <v-list-active-filters>
+            <template #default="{ active,reset }">
+              <button
+                type="button"
+                v-for="(filter, index) in active"
+                :key="index"
+                @click="reset(filter)"
+              >
+                {{ filter[0] }}
+              </button>
+            </template>
+          </v-list-active-filters>
+
+          <div>
+            <h2>Current filter state</h2>
+            <pre>
+              {{ filters }}
+            </pre>
+          </div>
+        </div>
+      </template>
       <template #default="{ selection, instance, loadingMore }">
         <p>{{ selection }}</p>
         <hr />
-
         <v-list-search />
         <v-list-table :rowClass="rowClass">
           <template #th_after="{ attr, sortBy, sortOrder }">
@@ -58,8 +82,14 @@ export default {
   },
   data() {
     return {
+      // filters: {
+      //   tag: 1,
+      // },
       filters: {
-        tag: 1,
+        location: {
+          city: "rajkot",
+          state: "gujarat",
+        },
       },
       sortBy: "name",
       sortOrder: "desc",
@@ -81,6 +111,9 @@ export default {
     };
   },
   methods: {
+    resetFilterProperty(property) {
+      this.filters[property] = null;
+    },
     rowClass(row, rowIndex) {
       return [
         {
