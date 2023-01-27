@@ -1,61 +1,149 @@
 <template>
   <div v-if="filters && Object.keys(filters).length">
-    <slot :active="active" :reset="reset">
-      <template v-for="(filter, index) in active">
-        <button type="button" :key="index" @click="reset(filter)">
-          {{ filter[0] }}
-        </button>
+    <slot :active="active">
+      <template v-for="(filter, categoryIndex) in active">
+        <label :key="`category-${categoryIndex}`" style="display:block">
+          {{ filter.attr.label }}
+        </label>
+
+        <template v-for="value in filter.data">
+          <button
+            type="button"
+            :key="`value-${value.value}`"
+            @click="value.reset(filter.attr.value, value.value)"
+          >
+            {{ value.label }}
+          </button>
+        </template>
       </template>
     </slot>
   </div>
 </template>
 
 <script>
-import { set, unset, findKey } from "lodash-es";
-
 import child from "../mixins/child";
-
+import { toPascalCase } from "@/utils.js";
 export default {
   mixins: [child],
   props: {},
 
-  created() {
-    // var cart = { a: [{ b: { c: 7 } }] };
-    // set(cart, "a.b", null);
-    // console.log("cart object", cart);
-    // let obj = {
-    //   location: { city: { town: { area: "naranpura" } }, state: "gujrat" },
-    // };
-    // console.log("Find KEY===>", this.findPath(obj, "area"));
-  },
+  created() {},
 
   computed: {
     filters() {
       return this.root.filters;
     },
+    isEmpty() {
+      if (this.filters && Object.entries(this.filters).length) return false;
+      else return true;
+    },
 
     active() {
-      return Object.entries(this.filters).filter((item) => {
-        const filterKey = item[0];
-        const filterValue = item[1];
-        if (typeof filterValue == "object") {
-          console.log("inside typeof Object");
-        } else {
-        }
+      const result = [];
+      if (!this.isEmpty) {
+        for (let key in this.filters) {
+          // Check data type for null checking
+          const value = this.filters[key];
+          if (value) {
+            if (typeof value == "object" && Array.isArray(value)) {
+              if (value.length) {
+                result.push({
+                  attr: {
+                    label: toPascalCase(key),
+                    value: key,
+                  },
+                  data: value.map((item) => {
+                    return {
+                      label: toPascalCase(item),
+                      value: item,
+                      reset: (key, value) => this.reset(key, value),
+                    };
+                  }),
+                });
+              }
+            } else if (typeof value == "object") {
+              // currently no support for nested objects
+            } else {
+              // Static string or boolean or number
 
-        if (filterValue)
-          return {
-            name: filterKey,
-            value: filterValue,
-          };
-      });
+              result.push({
+                attr: {
+                  label: toPascalCase(key), // convert gender or status_id to valid label like Gender or Status ID
+                  value: key,
+                },
+                data: [
+                  {
+                    label: toPascalCase(value), // convert value to valid label like 2 -> display_name like male or female
+                    value: value,
+                    reset: (key, value) => this.reset(key, value),
+                  },
+                ],
+              });
+            }
+          }
+        }
+      }
+
+      return result;
     },
   },
 
   methods: {
-    reset(filter) {
-      this.root.resetFilter(filter[0], filter[1]);
+    reset(key, value) {
+      this.root.resetFilter(key, value);
     },
   },
 };
 </script>
+
+<!-- Input props 
+filters:{
+  category:['denim','cotton'],
+  gender:'male',
+  archived:true
+}
+
+filters:[
+  {
+    attr:{
+      label:'Category',
+      value:'category'
+    },
+    data:[
+      {
+        label:'Denim',
+        value:1
+      },
+      {
+        label:'Cotton',
+        value:2
+      }
+    ]
+  },
+  {
+    attr : {
+      label : 'Archived',
+      value : 'archived'
+    },
+    data : [
+    {
+      label : 'True',
+      value : true
+    },
+    ]
+  }
+]
+
+
+
+Output active filter 
+[
+  {
+    key : {value:'gender', label:'Gender'},
+    value : {value:'male',label:'Male'}
+  },
+  {
+    key : 'category',
+    value : ['denim','cotton']
+  }
+] -->

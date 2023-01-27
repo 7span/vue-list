@@ -16,15 +16,21 @@
           <h2>Filters applied</h2>
 
           <v-list-active-filters>
-            <template #default="{ active,reset }">
-              <button
-                type="button"
-                v-for="(filter, index) in active"
-                :key="index"
-                @click="reset(filter)"
-              >
-                {{ filter[0] }}
-              </button>
+            <template #default="{ active }">
+              <template v-for="(filter, categoryIndex) in active">
+                <label :key="`category-${categoryIndex}`" style="display:block">
+                  {{ filter.attr.label }}
+                </label>
+                <template v-for="value in filter.data">
+                  <button
+                    type="button"
+                    :key="`value-${value.value}`"
+                    @click="value.reset(filter.attr.value, value.value)"
+                  >
+                    {{ value.label }}
+                  </button>
+                </template>
+              </template>
             </template>
           </v-list-active-filters>
 
@@ -86,10 +92,11 @@ export default {
       //   tag: 1,
       // },
       filters: {
-        location: {
-          city: "rajkot",
-          state: "gujarat",
-        },
+        location: ["rajkot", "junagadh", "amreli"],
+        places: ["Ajmer", "Mount Abu"],
+        archived: true,
+        gender: "male",
+        category: ["denim", "cotton"],
       },
       sortBy: "name",
       sortOrder: "desc",
@@ -111,9 +118,6 @@ export default {
     };
   },
   methods: {
-    resetFilterProperty(property) {
-      this.filters[property] = null;
-    },
     rowClass(row, rowIndex) {
       return [
         {
