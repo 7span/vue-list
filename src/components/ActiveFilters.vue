@@ -39,33 +39,35 @@ export default {
     },
 
     active() {
-      const result = [];
+      let result = [];
       if (!this.isEmpty) {
-        for (let key in this.filters) {
-          // Check data type for null checking
-          const value = this.filters[key];
+        const entries = Object.entries(this.filters);
+        entries.forEach((item) => {
+          const key = item[0];
+          const value = item[1];
           if (value) {
-            if (typeof value == "object" && Array.isArray(value)) {
-              if (value.length) {
-                result.push({
-                  attr: {
-                    label: toPascalCase(key),
-                    value: key,
-                  },
-                  data: value.map((item) => {
-                    return {
-                      label: toPascalCase(item),
-                      value: item,
-                      reset: (key, value) => this.reset(key, value),
-                    };
-                  }),
-                });
-              }
+            if (
+              typeof value == "object" &&
+              Array.isArray(value) &&
+              value.length
+            ) {
+              result.push({
+                attr: {
+                  label: toPascalCase(key),
+                  value: key,
+                },
+                data: value.map((item) => {
+                  return {
+                    label: toPascalCase(item),
+                    value: item,
+                    reset: (key, value) => this.reset(key, value),
+                  };
+                }),
+              });
             } else if (typeof value == "object") {
-              // currently no support for nested objects
+              // Currently no support for objects nested.
             } else {
-              // Static string or boolean or number
-
+              //         // Static string or boolean or number
               result.push({
                 attr: {
                   label: toPascalCase(key), // convert gender or status_id to valid label like Gender or Status ID
@@ -81,7 +83,7 @@ export default {
               });
             }
           }
-        }
+        });
       }
 
       return result;
