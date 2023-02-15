@@ -88,9 +88,6 @@ export default {
   },
   data() {
     return {
-      // filters: {
-      //   tag: 1,
-      // },
       filters: {
         location: ["rajkot", "junagadh", "amreli"],
         places: ["Ajmer", "Mount Abu"],

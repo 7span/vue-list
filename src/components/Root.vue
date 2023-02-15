@@ -63,8 +63,7 @@
 /**
  * This is the base component to render the listing
  */
-import { startCase, isEqual, unset, cloneDeep } from "lodash-es";
-import { findObjectKeyPath } from "../utils";
+import { startCase, isEqual, cloneDeep } from "lodash-es";
 export default {
   name: "VList",
   props: {
