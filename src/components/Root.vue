@@ -490,18 +490,30 @@ export default {
     resetFilter(key, value) {
       let clonedFilters = cloneDeep(this.filters);
 
-      const filteredItem = clonedFilters.find((item) => {
-        return item.key == key;
-      });
-
-      if (filteredItem.values.length == 1) {
-        clonedFilters = clonedFilters.filter((item) => {
-          return item.key !== key;
+      if (this.isFilterArrayType) {
+        const filteredItem = clonedFilters.find((item) => {
+          return item.key == key;
         });
+
+        if (filteredItem.values.length == 1) {
+          clonedFilters = clonedFilters.filter((item) => {
+            return item.key !== key;
+          });
+        } else {
+          filteredItem.values = filteredItem.values.filter(
+            (item) => item.value !== value
+          );
+        }
       } else {
-        filteredItem.values = filteredItem.values.filter(
-          (item) => item.value !== value
-        );
+        if (
+          Array.isArray(clonedFilters[key] && clonedFilters[key].length > 1)
+        ) {
+          clonedFilters[key] = clonedFilters[key].filter(
+            (item) => item !== value
+          );
+        } else {
+          clonedFilters[key] = [];
+        }
       }
 
       this.$emit("update:filters", clonedFilters);
