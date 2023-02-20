@@ -1,6 +1,6 @@
 <template>
   <div v-if="filters && Object.keys(filters).length">
-    <slot :active="active">
+    <slot :active="active" :filters="filters" :serializedFields="serializer">
       <template v-for="(filter, categoryIndex) in active">
         <label :key="`category-${categoryIndex}`">
           {{ filter.attr.label }}
@@ -36,6 +36,30 @@ export default {
     isEmpty() {
       if (this.filters && Object.entries(this.filters).length) return false;
       else return true;
+    },
+
+    serializer() {
+      if (this.root.isFilterArrayType) {
+        return this.root.filters.map((item) => {
+          return {
+            ...item,
+            values: item.values.map((value) => {
+              return {
+                ...value,
+                reset: (key, value) => this.root.resetFilter(key, value),
+              };
+            }),
+          };
+        });
+      } else {
+        return Object.keys(this.root.filters).map((item) => {
+          return {
+            key: item,
+            label: pascalCase(item),
+            values: this.getValues(this.filters[item], item),
+          };
+        });
+      }
     },
 
     active() {
@@ -93,6 +117,24 @@ export default {
   methods: {
     reset(key, value) {
       this.root.resetFilter(key, value);
+    },
+
+    getValues(value, key) {
+      if (Array.isArray(value)) {
+        return value.map((item) => {
+          return {
+            label: pascalCase(item),
+            value: item,
+            reset: (key, value) => this.root.resetFilter(key, value),
+          };
+        });
+      } else {
+        return {
+          label: pascalCase(value),
+          value: value,
+          reset: (key, value) => this.root.resetFilter(key, value),
+        };
+      }
     },
   },
 };

@@ -101,7 +101,7 @@ export default {
     /**
      * Just like parameters but specifically to filter data.
      */
-    filters: Object,
+    filters: [Object, Array],
 
     /**
      * Uses this attribute when sorting items in listing.
@@ -256,6 +256,11 @@ export default {
       const attrs = this.attrs || Object.keys(this.localItems?.[0] || {});
       return this.attrsAdaptor(attrs);
     },
+    isFilterArrayType() {
+      if (typeof this.filters == "object" && Array.isArray(this.filters))
+        return true;
+      else return false;
+    },
 
     isEmpty() {
       if (this.localItems?.length != 0) return false;
@@ -390,6 +395,15 @@ export default {
       }
     },
 
+    convertDataStructure(filters) {
+      let result = {};
+      filters.forEach((item) => {
+        result[item.key] = item.values;
+      });
+
+      return result;
+    },
+
     getData(appendData = false) {
       this.error = false;
       this.setLoader(true);
@@ -400,7 +414,9 @@ export default {
         method: "get",
         endpoint: this.endpoint,
         params: this.params,
-        filters: this.filters,
+        filters: this.isFilterArrayType
+          ? this.convertDataStructure(this.filters)
+          : this.filters,
         search: this.localSearch,
         pagination: {
           page: this.localPage,
@@ -472,17 +488,20 @@ export default {
       this.$set(attr, prop, value);
     },
     resetFilter(key, value) {
-      const clonedFilters = cloneDeep(this.filters);
+      let clonedFilters = cloneDeep(this.filters);
 
-      if (
-        typeof clonedFilters[key] == "object" &&
-        Array.isArray(clonedFilters[key])
-      ) {
-        clonedFilters[key] = clonedFilters[key].filter(
-          (item) => item !== value
-        );
+      const filteredItem = clonedFilters.find((item) => {
+        return item.key == key;
+      });
+
+      if (filteredItem.values.length == 1) {
+        clonedFilters = clonedFilters.filter((item) => {
+          return item.key !== key;
+        });
       } else {
-        delete clonedFilters[key];
+        filteredItem.values = filteredItem.values.filter(
+          (item) => item.value !== value
+        );
       }
 
       this.$emit("update:filters", clonedFilters);

@@ -16,16 +16,17 @@
           <h2>Filters applied</h2>
 
           <v-list-active-filters>
-            <template #default="{ active }">
-              <template v-for="(filter, categoryIndex) in active">
+            <template #default="{ serializedFields }">
+              <template v-for="(filter, categoryIndex) in serializedFields">
                 <label :key="`category-${categoryIndex}`" style="display:block">
-                  {{ filter.attr.label }}
+                  {{ filter.label }}
                 </label>
-                <template v-for="value in filter.data">
+                <template v-for="value in filter.values">
+                  {{ value }}
                   <button
                     type="button"
                     :key="`value-${value.value}`"
-                    @click="value.reset(filter.attr.value, value.value)"
+                    @click="value.reset(filter.key, value.value)"
                   >
                     {{ value.label }}
                   </button>
@@ -95,6 +96,34 @@ export default {
         gender: "male",
         category: ["denim", "cotton"],
       },
+
+      // filters: [
+      //   {
+      //     key: "location",
+      //     label: "Location",
+      //     values: [
+      //       {
+      //         label: "Rajkot",
+      //         value: 2,
+      //       },
+      //       {
+      //         label: "Junagadh",
+      //         value: 4,
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     key: "gender",
+      //     label: "Gender",
+      //     values: [
+      //       {
+      //         label: "Male",
+      //         value: 1,
+      //       },
+      //     ],
+      //   },
+      // ],
+
       sortBy: "name",
       sortOrder: "desc",
       attrs: [
