@@ -22,7 +22,6 @@
                   {{ filter.label }}
                 </label>
                 <template v-for="value in filter.values">
-                  {{ value }}
                   <button
                     type="button"
                     :key="`value-${value.value}`"

@@ -129,11 +129,13 @@ export default {
           };
         });
       } else {
-        return {
-          label: pascalCase(value),
-          value: value,
-          reset: (key, value) => this.root.resetFilter(key, value),
-        };
+        return [
+          {
+            label: pascalCase(value),
+            value: value,
+            reset: (key, value) => this.root.resetFilter(key, value),
+          },
+        ];
       }
     },
   },

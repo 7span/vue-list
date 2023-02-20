@@ -506,13 +506,14 @@ export default {
         }
       } else {
         if (
-          Array.isArray(clonedFilters[key] && clonedFilters[key].length > 1)
+          Array.isArray(clonedFilters[key]) &&
+          clonedFilters[key].length > 1
         ) {
           clonedFilters[key] = clonedFilters[key].filter(
             (item) => item !== value
           );
         } else {
-          clonedFilters[key] = [];
+          delete clonedFilters[key];
         }
       }
 
