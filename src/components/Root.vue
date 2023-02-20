@@ -472,18 +472,20 @@ export default {
       this.$set(attr, prop, value);
     },
     resetFilter(key, value) {
-      const clonedFilter = cloneDeep(this.filters);
+      const clonedFilters = cloneDeep(this.filters);
 
       if (
-        typeof clonedFilter[key] == "object" &&
-        Array.isArray(clonedFilter[key])
+        typeof clonedFilters[key] == "object" &&
+        Array.isArray(clonedFilters[key])
       ) {
-        clonedFilter[key] = clonedFilter[key].filter((item) => item !== value);
+        clonedFilters[key] = clonedFilters[key].filter(
+          (item) => item !== value
+        );
       } else {
-        delete clonedFilter[key];
+        delete clonedFilters[key];
       }
 
-      this.$emit("update:filters", clonedFilter);
+      this.$emit("update:filters", clonedFilters);
     },
   },
 };

@@ -9,9 +9,8 @@ import Attributes from "./components/Attributes";
 import Search from "./components/Search";
 import LoadMore from "./components/LoadMore";
 import GoTo from "./components/GoTo";
-
-// Active Filters
 import ActiveFilters from "./components/ActiveFilters";
+
 //Layout
 import Table from "./layouts/table/Index";
 

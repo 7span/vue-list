@@ -2,7 +2,7 @@
   <div v-if="filters && Object.keys(filters).length">
     <slot :active="active">
       <template v-for="(filter, categoryIndex) in active">
-        <label :key="`category-${categoryIndex}`" style="display:block">
+        <label :key="`category-${categoryIndex}`">
           {{ filter.attr.label }}
         </label>
 
@@ -22,7 +22,7 @@
 
 <script>
 import child from "../mixins/child";
-import { toPascalCase } from "@/utils.js";
+import { pascalCase } from "@/utils.js";
 export default {
   mixins: [child],
   props: {},
@@ -53,12 +53,12 @@ export default {
             ) {
               result.push({
                 attr: {
-                  label: toPascalCase(key),
+                  label: pascalCase(key),
                   value: key,
                 },
                 data: value.map((item) => {
                   return {
-                    label: toPascalCase(item),
+                    label: pascalCase(item),
                     value: item,
                     reset: (key, value) => this.reset(key, value),
                   };
@@ -70,12 +70,12 @@ export default {
               //         // Static string or boolean or number
               result.push({
                 attr: {
-                  label: toPascalCase(key), // convert gender or status_id to valid label like Gender or Status ID
+                  label: pascalCase(key), // convert gender or status_id to valid label like Gender or Status ID
                   value: key,
                 },
                 data: [
                   {
-                    label: toPascalCase(value), // convert value to valid label like 2 -> display_name like male or female
+                    label: pascalCase(value), // convert value to valid label like 2 -> display_name like male or female
                     value: value,
                     reset: (key, value) => this.reset(key, value),
                   },

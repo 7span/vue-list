@@ -4,6 +4,6 @@ export const key = (...args) => {
   return args.join("-");
 };
 
-export const toPascalCase = (str) => {
+export const pascalCase = (str) => {
   return startCase(camelCase(str));
 };
