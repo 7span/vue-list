@@ -1,16 +1,20 @@
 <template>
-  <div v-if="filters && Object.keys(filters).length">
-    <slot :active="active" :filters="filters" :serializedFields="serializer">
-      <template v-for="(filter, categoryIndex) in active">
-        <label :key="`category-${categoryIndex}`">
-          {{ filter.attr.label }}
+  <div v-if="filters">
+    <slot
+      :filters="filters"
+      :serializedField="serializedField"
+      :active="active"
+    >
+      <template v-for="filter in active">
+        <label :key="`category-${filter.key}`">
+          {{ filter.label }}
         </label>
 
-        <template v-for="value in filter.data">
+        <template v-for="value in filter.values">
           <button
             type="button"
             :key="`value-${value.value}`"
-            @click="value.reset(filter.attr.value, value.value)"
+            @click="value.reset(filter.key, value.value)"
           >
             {{ value.label }}
           </button>
@@ -33,12 +37,9 @@ export default {
     filters() {
       return this.root.filters;
     },
-    isEmpty() {
-      if (this.filters && Object.entries(this.filters).length) return false;
-      else return true;
-    },
 
-    serializer() {
+    serializedField() {
+      // This method generates standard filter data structure
       if (this.root.isFilterArrayType) {
         return this.root.filters.map((item) => {
           return {
@@ -56,70 +57,28 @@ export default {
           return {
             key: item,
             label: pascalCase(item),
-            values: this.getValues(this.filters[item], item),
+            values: this.valueSerializer(this.filters[item]),
           };
         });
       }
     },
 
     active() {
-      let result = [];
-      if (!this.isEmpty) {
-        const entries = Object.entries(this.filters);
-        entries.forEach((item) => {
-          const key = item[0];
-          const value = item[1];
-          if (value) {
-            if (
-              typeof value == "object" &&
-              Array.isArray(value) &&
-              value.length
-            ) {
-              result.push({
-                attr: {
-                  label: pascalCase(key),
-                  value: key,
-                },
-                data: value.map((item) => {
-                  return {
-                    label: pascalCase(item),
-                    value: item,
-                    reset: (key, value) => this.reset(key, value),
-                  };
-                }),
-              });
-            } else if (typeof value == "object") {
-              // Currently no support for objects nested.
-            } else {
-              //         // Static string or boolean or number
-              result.push({
-                attr: {
-                  label: pascalCase(key), // convert gender or status_id to valid label like Gender or Status ID
-                  value: key,
-                },
-                data: [
-                  {
-                    label: pascalCase(value), // convert value to valid label like 2 -> display_name like male or female
-                    value: value,
-                    reset: (key, value) => this.reset(key, value),
-                  },
-                ],
-              });
-            }
-          }
+      // This method checks for active filter values and filters out any null value
+      return this.serializedField.filter((item) => {
+        const values = item.values.filter((value) => {
+          if (!value.value) return false;
+          else return true;
         });
-      }
 
-      return result;
+        if (!values.length) return false;
+        else return true;
+      });
     },
   },
 
   methods: {
-    reset(key, value) {
-      this.root.resetFilter(key, value);
-    },
-
-    getValues(value, key) {
+    valueSerializer(value) {
       if (Array.isArray(value)) {
         return value.map((item) => {
           return {

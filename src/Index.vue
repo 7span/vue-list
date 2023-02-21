@@ -16,9 +16,9 @@
           <h2>Filters applied</h2>
 
           <v-list-active-filters>
-            <template #default="{ serializedFields }">
-              <template v-for="(filter, categoryIndex) in serializedFields">
-                <label :key="`category-${categoryIndex}`" style="display:block">
+            <template #default="{ active }">
+              <template v-for="(filter, categoryIndex) in active">
+                <label :key="`category-${categoryIndex}`">
                   {{ filter.label }}
                 </label>
                 <template v-for="value in filter.values">
@@ -92,8 +92,8 @@ export default {
         location: ["rajkot", "junagadh", "amreli"],
         places: ["Ajmer", "Mount Abu"],
         archived: true,
-        gender: "male",
-        category: ["denim", "cotton"],
+        gender: "",
+        category: [],
       },
 
       // filters: [
