@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import Dummy from "@/components/Dummy";
+import Dummy from "@/components/Dummy.vue";
 export default {
   components: {
     Dummy,
