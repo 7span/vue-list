@@ -52,9 +52,10 @@
 </template>
 
 <script>
+import Dummy from "@/components/Dummy";
 export default {
   components: {
-    Dummy: require("@/components/Dummy").default,
+    Dummy,
   },
   data() {
     return {
