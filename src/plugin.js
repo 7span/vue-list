@@ -13,12 +13,12 @@ import GoTo from "@/components/GoTo.vue";
 //Layout
 import Table from "@/layouts/table/Index.vue";
 
-const install = (Vue, userOptions = {}) => {
+const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions);
   const prefix = options.componentPrefix;
 
   //Root Component
-  Vue.component(`${prefix}List`, {
+  app.component(`${prefix}List`, {
     data() {
       return {
         options,
@@ -30,14 +30,14 @@ const install = (Vue, userOptions = {}) => {
     extends: Root,
   });
 
-  Vue.component(`${prefix}ListPagination`, Pagination);
-  Vue.component(`${prefix}ListCounter`, Counter);
-  Vue.component(`${prefix}ListPerPage`, PerPage);
-  Vue.component(`${prefix}ListAttributes`, Attributes);
-  Vue.component(`${prefix}ListSearch`, Search);
-  Vue.component(`${prefix}ListLoadMore`, LoadMore);
-  Vue.component(`${prefix}ListTable`, Table);
-  Vue.component(`${prefix}ListGoTo`, GoTo);
+  app.component(`${prefix}ListPagination`, Pagination);
+  app.component(`${prefix}ListCounter`, Counter);
+  app.component(`${prefix}ListPerPage`, PerPage);
+  app.component(`${prefix}ListAttributes`, Attributes);
+  app.component(`${prefix}ListSearch`, Search);
+  app.component(`${prefix}ListLoadMore`, LoadMore);
+  app.component(`${prefix}ListTable`, Table);
+  app.component(`${prefix}ListGoTo`, GoTo);
 };
 
 const plugin = {

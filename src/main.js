@@ -1,13 +1,16 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import axios from "axios";
 import qs from "qs";
 import router from "./router";
-
-Vue.config.productionTip = false;
-
 import plugin from "./plugin.js";
-Vue.use(plugin, {
+// import VList from "../dist/vue-list.mjs";
+const app = createApp(App);
+app.use(router);
+
+app.config.productionTip = false;
+// app.use(VList, {
+app.use(plugin, {
   requestHandler(requestData) {
     const { endpoint, pagination, search, sort, filters } = requestData;
     const { page, perPage } = pagination;
@@ -29,13 +32,10 @@ Vue.use(plugin, {
           count: res.data.meta.total,
         };
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
       });
   },
 });
 
-new Vue({
-  render: (h) => h(App),
-  router,
-}).$mount("#app");
+app.mount("#app");

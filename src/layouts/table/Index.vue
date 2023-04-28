@@ -59,7 +59,7 @@
           >
             <!-- Override Slot -->
             <slot
-              v-if="$scopedSlots[attr.name]"
+              v-if="$slots[attr.name]"
               :name="attr.name"
               v-bind="tdScope(attr, row, rowIndex)"
             >
@@ -112,6 +112,7 @@
 import { cloneDeep } from "lodash-es";
 import layout from "../../mixins/layout";
 import { key } from "../../utils";
+import { getCurrentInstance } from "vue";
 
 export default {
   mixins: [layout],
@@ -139,8 +140,8 @@ export default {
     attrs: {
       deep: true,
       handler(newValue) {
-        this.$set(this, "headers", []);
-        this.$set(this, "body", []);
+        this.headers = [];
+        this.body = [];
         this.generateHeader(newValue, 0);
       },
     },
@@ -200,7 +201,7 @@ export default {
 
     generateHeader(attrs, index, parentKey = "0") {
       if (!this.headers[index]) {
-        this.$set(this.headers, index, []);
+        this.headers[index] = [];
       }
       attrs.forEach((attr, attrIndex) => {
         //Render only if the attr is visible
@@ -259,7 +260,8 @@ export default {
 
     tdClass(attr) {
       const classList = [...this.columnClass(attr)];
-      if (this.$listeners.rowClick && attr.rowClick !== false)
+      const { emit } = getCurrentInstance();
+      if (emit && emit("rowClick") && attr.rowClick !== false)
         classList.push("v-list-table__click");
       return classList;
     },
@@ -315,7 +317,7 @@ export default {
       const selectedRows = [...this.root.selection];
       const index = selectedRows.findIndex((item) => item.id === row.id);
       if (index > -1) {
-        this.$delete(selectedRows, index);
+        selectedRows.splice(index, 1);
       } else {
         selectedRows.push({ ...row });
       }

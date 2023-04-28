@@ -460,16 +460,16 @@ export default {
       };
       //If sort listner is provided, use it
       //Else execute the global callback
-      if (this.$listeners.sort) {
+      if (this.$attrs.sort) {
         this.$emit("sort", context);
-      } else if (this.options.sort) {
-        this.options.sort(context);
+      } else if (this.$options.sort) {
+        this.$options.sort(context);
       }
     },
 
     updateAttr(name, prop, value) {
       const attr = this.localAttrs.find((item) => item.name == name);
-      this.$set(attr, prop, value);
+      attr[prop] = value;
     },
   },
 };

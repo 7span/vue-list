@@ -1,8 +1,8 @@
 // vite.config.js
 
 import { defineConfig } from "vite";
-import { createVuePlugin as vue } from "vite-plugin-vue2";
 import { fileURLToPath, URL } from "node:url";
+import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
   //https://vitejs.dev/config/
@@ -12,5 +12,11 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
     extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
+  },
+  build: {
+    lib: {
+      entry: "src/plugin.js",
+      name: "vue-list",
+    },
   },
 });

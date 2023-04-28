@@ -8,5 +8,5 @@ export default {
     });
   },
   itemProps: {},
-  typeAdapters: {}
+  typeAdapters: {},
 };
