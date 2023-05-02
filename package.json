@@ -1,19 +1,16 @@
 {
   "name": "@7span/vue-list",
   "version": "0.6.12",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
-    "build:plugin": "vite build --target lib --name vue-list src/plugin.js",
     "docs": "vue-docgen",
-    "prepublishOnly": "npm run build:plugin",
-    "serve:plugin": "vue-cli-service build --target lib --name vue-list src/plugin.js --watch"
+    "prepublishOnly": "npm run build:plugin"
   },
-  "main": "dist/vue-list.common.js",
-  "unpkg": "dist/vue-list.umd.min.js",
-  "jsdelivr": "dist/vue-list.umd.min.js",
+  "main": "dist/vue-list.js",
   "files": [
     "dist"
   ],
@@ -26,6 +23,7 @@
   },
   "devDependencies": {
     "@vue/eslint-config-prettier": "^6.0.0",
+    "autoprefixer": "^10.4.14",
     "axios": "^0.21.1",
     "babel-plugin-add-module-exports": "^1.0.2",
     "eslint": "^8.39.0",
