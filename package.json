@@ -8,7 +8,7 @@
     "serve": "vite preview",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "docs": "vue-docgen",
-    "prepublishOnly": "npm run build:plugin"
+    "prepublishOnly": "npm run build"
   },
   "main": "dist/vue-list.js",
   "files": [
