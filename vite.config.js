@@ -2,6 +2,7 @@
 
 import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
+import * as path from "path";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
@@ -15,8 +16,17 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: "src/plugin.js",
-      name: "vue-list",
+      entry: path.resolve(__dirname, "src/plugin.js"),
+      fileName: "vue-list",
+      name: "VueList",
+    },
+    rollupOptions: {
+      external: ["vue"],
+      output: {
+        globals: {
+          vue: "vue",
+        },
+      },
     },
   },
 });

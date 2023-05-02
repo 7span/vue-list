@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <button @click="filters.tag++">TG</button>
     <button @click="toggleSortOrder">Toggle Sort Order</button>
     <v-list

@@ -4,12 +4,10 @@ import axios from "axios";
 import qs from "qs";
 import router from "./router";
 import plugin from "./plugin.js";
-// import VList from "../dist/vue-list.mjs";
 const app = createApp(App);
 app.use(router);
 
 app.config.productionTip = false;
-// app.use(VList, {
 app.use(plugin, {
   requestHandler(requestData) {
     const { endpoint, pagination, search, sort, filters } = requestData;
