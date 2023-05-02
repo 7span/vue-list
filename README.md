@@ -2,4 +2,6 @@
 
 - Add Slim Rendering Option
 
-migration
+## Supports
+
+- Vue3
