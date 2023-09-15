@@ -1,6 +1,6 @@
 {
-  "name": "@7span/vue-list-v3",
-  "version": "2.0.0",
+  "name": "@7span/vue-list",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
