@@ -48,6 +48,8 @@
 
     <button @click="filters.tag = 1">Tag 1</button>
     <button @click="filters.tag = 2">Tag 2</button>
+    <button @click="updateColumn()">Update Column</button>
+    <button @click="updateRow()">Update Row</button>
   </div>
 </template>
 
@@ -92,6 +94,19 @@ export default {
     toggleSortOrder() {
       if (this.sortOrder === "asc") this.sortOrder = "desc";
       else this.sortOrder = "asc";
+    },
+    updateColumn() {
+      this.$refs.list.updateColumn(1, "name", (context) => {
+        return "Hitali";
+      });
+    },
+    updateRow() {
+      this.$refs.list.updateRow(3, (context) => {
+        return {
+          id: 3,
+          name: "Hardik",
+        };
+      });
     },
   },
 };

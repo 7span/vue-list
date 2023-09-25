@@ -471,6 +471,38 @@ export default {
       const attr = this.localAttrs.find((item) => item.name == name);
       this.$set(attr, prop, value);
     },
+    updateColumn(rowIndex, columnKey, updateCallback) {
+      if (
+        rowIndex !== -1 &&
+        this.localItems[rowIndex].hasOwnProperty(columnKey)
+      ) {
+        const updatedValue = updateCallback({
+          rowValue: this.localItems[rowIndex],
+          columnValue: this.localItems[rowIndex][columnKey],
+          items: this.localItems,
+          page: 1,
+          total: this.localItems.length,
+        });
+
+        this.localItems[rowIndex][columnKey] = updatedValue;
+      }
+    },
+    updateRow(rowIndex, updateCallback) {
+      if (rowIndex !== -1) {
+        const currentRow = this.localItems[rowIndex];
+        const updatedData = updateCallback({
+          rowValue: currentRow,
+          items: this.localItems,
+          page: 1,
+          total: this.localItems.length,
+        });
+        for (const key in updatedData) {
+          if (currentRow.hasOwnProperty(key)) {
+            currentRow[key] = updatedData[key];
+          }
+        }
+      }
+    },
   },
 };
 </script>
