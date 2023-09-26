@@ -475,8 +475,8 @@ export default {
     },
     updateColumn(rowIndex, columnKey, updateCallback) {
       if (
-        !rowIndex ||
-        rowIndex < 0 ||
+        rowIndex === null ||
+        rowIndex === "" ||
         !this.localItems[rowIndex].hasOwnProperty(columnKey)
       ) {
         return;
@@ -490,7 +490,7 @@ export default {
       this.localItems[rowIndex][columnKey] = updatedValue;
     },
     updateRow(rowIndex, updateCallback) {
-      if (!rowIndex || rowIndex < 0) {
+      if (rowIndex === null || rowIndex === "") {
         return;
       }
       const currentRow = this.localItems[rowIndex];
