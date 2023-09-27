@@ -274,7 +274,7 @@ export default {
         loadingPage: this.loadingPage,
         loadingMore: this.loadingMore,
         page: this.localPage,
-        total: this.count,
+        count: this.count,
       };
     },
   },
