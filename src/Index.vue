@@ -54,9 +54,10 @@
 </template>
 
 <script>
+import Dummy from "@/components/Dummy.vue";
 export default {
   components: {
-    Dummy: require("@/components/Dummy").default,
+    Dummy,
   },
   data() {
     return {
