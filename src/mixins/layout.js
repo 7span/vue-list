@@ -5,7 +5,7 @@ export default {
   inject: ["OPTIONS"],
   computed: {
     items() {
-      return this.root.localItems;
+      return this.root.localItems || [];
     },
     attrs() {
       return this.root.localAttrs;
@@ -31,7 +31,7 @@ export default {
       this.root.refresh();
     },
     itemIndex(index) {
-      return this.root.localPerPage * (this.root.localPage - 1) + index + 1;
+      return this.root.localPerPage * (this.root.serverPage - 1) + index + 1;
     },
   },
 };
