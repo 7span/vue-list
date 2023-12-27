@@ -155,6 +155,7 @@ export default {
   data() {
     return {
       localPage: this.page,
+      serverPage: null,
       localPerPage: this.perPage,
       localSortBy: this.sortBy,
       localSortOrder: this.sortOrder,
@@ -180,7 +181,7 @@ export default {
      * Only filters, params, localSearch, sortBy & sortOrder props will react to change
      * All other props are non-reactive once component is initialized.
      * When filters and params are changed, we need to reset the page
-     * and reseting a page will use the latest filter and params props.
+     * and resetting a page will use the latest filter and params props.
      */
     filters: {
       deep: true,
@@ -237,15 +238,25 @@ export default {
     "$route.query.page"(newValue) {
       if (!newValue) {
         this.changePage(1);
-        return;
-      }
-      if (this.localPage != newValue) {
+      } else if (this.localPage != newValue) {
         this.changePage(newValue);
       }
     },
   },
 
+  /**
+   * localAttrs data is required for child components and hence generating on created.
+   */
   created() {
+    // TODO: localAttrs is not reactive as it is copied here.
+    this.localAttrs = this.attrSerializer(this.attrsToUse);
+  },
+
+  /**
+   * Once all the child components are ready and provided a proper state like "paginationMode"
+   * call initialization of table.
+   */
+  mounted() {
     this.init();
   },
 
@@ -279,14 +290,23 @@ export default {
 
   methods: {
     init() {
-      /**
-       *  TODO: localAttrs is not reactive as it is copied here.
-       */
-      this.localAttrs = this.attrSerializer(this.attrsToUse);
       if (!this.endpoint) return;
 
-      const page = parseInt(this.$route?.query?.page || this.page);
-      this.changePage(page);
+      const page = this.$route?.query?.page || this.page;
+
+      // Validate if page number is valid
+      // if invalid, just replace the query param and watcher will take care of request.
+      if (page < 1) {
+        const existingQueryParams = this.$route.query || {};
+        this.$router.replace({
+          query: {
+            ...existingQueryParams,
+            page: undefined,
+          },
+        });
+      } else {
+        this.changePage(page);
+      }
     },
 
     attrSerializer(attrs) {
@@ -376,8 +396,7 @@ export default {
       if (
         this.$router &&
         this.paginationMode == "paging" &&
-        this.$route.query.page != this.localPage &&
-        this.localPage != 1
+        this.$route.query.page != this.localPage
       ) {
         //Maintain already existing query params in URL
         const existingQueryParams = this.$route.query || {};
@@ -423,6 +442,7 @@ export default {
           this.setData(res, appendData);
           this.setUrl();
           this.setLoader(false);
+          this.serverPage = this.localPage;
         })
         .catch((err) => {
           this.error = err;
