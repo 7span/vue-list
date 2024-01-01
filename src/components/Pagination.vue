@@ -5,6 +5,10 @@
       @binding {function} prev Got to previous page.
       @binding {boolean} hasPrev If previous page is available or not.
      -->
+    <slot name="first" :first="first" :hasPrev="hasPrev">
+      <button :disabled="!hasPrev" @click="first">First</button>
+    </slot>
+
     <slot name="prev" :prev="prev" :hasPrev="hasPrev">
       <button :disabled="!hasPrev" @click="prev">Prev</button>
     </slot>
@@ -31,6 +35,10 @@
      -->
     <slot name="next" :next="next" :hasNext="hasNext">
       <button :disabled="!hasNext" @click="next">Next</button>
+    </slot>
+
+    <slot name="last" :last="last" :hasNext="hasNext">
+      <button :disabled="!hasNext" @click="last">Last</button>
     </slot>
   </div>
 </template>
@@ -111,6 +119,12 @@ export default {
     },
     next() {
       this.change(this.page + 1);
+    },
+    first() {
+      this.change(1);
+    },
+    last() {
+      this.change(this.pagesToDisplay[this.pagesToDisplay.length - 1]);
     },
     change(number) {
       this.root.changePage(number);
