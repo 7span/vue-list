@@ -124,7 +124,7 @@ export default {
       this.change(1);
     },
     last() {
-      this.change(this.pagesToDisplay[this.pagesToDisplay.length - 1]);
+      this.change(this.total);
     },
     change(number) {
       this.root.changePage(number);
