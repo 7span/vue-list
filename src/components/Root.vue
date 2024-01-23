@@ -69,7 +69,7 @@ export default {
   name: "VList",
   props: {
     /**
-     * An API endpoint to hit for getting data. This will be appended to baseUrl
+     * An API endpoint to hit for getting data.
      */
     endpoint: String,
 
@@ -80,6 +80,8 @@ export default {
 
     /**
      * Default page to load.
+     * The prop is just an initial value.
+     * Local state is managed by localPage.
      */
     page: {
       type: Number,
@@ -88,6 +90,8 @@ export default {
 
     /**
      * Number of results to fetch and display on each page.
+     * The prop is just an initial value.
+     * Local state is managed by localPerPage.
      */
     perPage: {
       type: Number,
@@ -96,6 +100,7 @@ export default {
 
     /**
      * Additional parameters to pass when making an API request.
+     * This prop does not have any local copy as it is just a forwarder.
      */
     params: Object,
 
@@ -106,11 +111,15 @@ export default {
 
     /**
      * Uses this attribute when sorting items in listing.
+     * The prop is just an initial value.
+     * Local state is managed by localSortBy.
      */
     sortBy: String,
 
     /**
      * Ascending or Descending?
+     * The prop is just an initial value.
+     * Local state is managed by localSortOrder.
      */
     sortOrder: {
       type: String,
@@ -121,6 +130,8 @@ export default {
 
     /**
      * Default search query to use
+     * The prop is just an initial value.
+     * Local state is managed by localSearch.
      */
     search: {
       type: String,
@@ -152,22 +163,66 @@ export default {
       type: Function,
     },
   },
+
   data() {
+    let localPage = this.page;
+    let localPerPage = this.perPage;
+    let localSortBy = this.sortBy;
+    let localSortOrder = this.sortOrder;
+    let localSearch = this.search;
+    let _attrSettings;
+
+    const oldState = this.$vueList.options.stateManager.get(this.endpoint);
+    if (oldState) {
+      const {
+        params,
+        filters,
+        config,
+        search,
+        pagination,
+        sort,
+        attrSettings,
+      } = oldState;
+      localPage = pagination.page;
+      localPerPage = pagination.perPage;
+      localSortBy = sort.by;
+      localSortOrder = sort.order;
+      localSearch = search;
+      _attrSettings = attrSettings;
+    }
+
+    console.log(_attrSettings);
+
+    // this.$emit("update:filters", filters);
     return {
-      localPage: this.page,
-      localPerPage: this.perPage,
-      localSortBy: this.sortBy,
-      localSortOrder: this.sortOrder,
-      localSearch: this.search,
-      localItems: null,
-      localAttrs: null,
-      paginationMode: null,
+      /**
+       * These local variables are copy of props.
+       * This is required as the values given as props are considered as initial values.
+       * The component may change these values as user interacts with interface.
+       * Thought of updating the props vial .sync modifier but in that case user will have to
+       * create a state in host component to sync values.
+       */
+      localPage,
+      localPerPage,
+      localSortBy,
+      localSortOrder,
+      localSearch,
+
+      items: null,
+
+      /**
+       * serverPage only gets updated after success full response respected to page.
+       * This is added to prevent a flash update of indexes due to "page" variable change.
+       */
+      serverPage: null,
       selection: [],
+      attrSettings: _attrSettings,
 
       error: false,
       response: null,
       count: 0,
 
+      paginationMode: null,
       initial: true,
       loading: false,
       loadingMore: false,
@@ -175,56 +230,72 @@ export default {
     };
   },
 
+  created() {
+    this.setDefaultAttrSettings();
+  },
+
+  /**
+   * Once all the child components are ready and provided a proper state like "paginationMode"
+   * call initialization of table.
+   */
+  mounted() {
+    this.init();
+  },
+
+  provide() {
+    return {
+      setSearch: this.setSearch,
+      setSort: this.setSort,
+      setPaginationMode: this.setPaginationMode,
+      setSelection: this.setSelection,
+      setItems: this.setItems,
+      setPage: this.setPage,
+      setPerPage: this.setPerPage,
+
+      updateAttr: this.updateAttr,
+      loadMore: this.loadMore,
+    };
+  },
+
   watch: {
     /**
-     * Only filters, params, localSearch, sortBy & sortOrder props will react to change
+     * Only filters, params, search, sortBy & sortOrder props will react to change
      * All other props are non-reactive once component is initialized.
      * When filters and params are changed, we need to reset the page
-     * and reseting a page will use the latest filter and params props.
+     * and resetting a page will use the latest filter and params props.
      */
-    filters: {
+    watchFilters: {
       deep: true,
       handler(newValue, oldValue) {
         if (!isEqual(newValue, oldValue)) {
-          this.changePage(1);
+          this.setPage(1);
         }
       },
     },
 
+    /**
+     * params is just a forwarder & it does not have
+     * any usage in the component.
+     */
     params: {
       deep: true,
       handler(newValue, oldValue) {
         if (!isEqual(newValue, oldValue)) {
-          this.changePage(1);
+          this.setPage(1);
         }
       },
     },
 
-    search(newValue, oldValue) {
-      if (newValue != oldValue) {
-        this.localSearch = newValue;
-        this.changePage(1);
-      }
+    search(newValue) {
+      this.setSearch(newValue);
     },
 
-    localSearch(newValue, oldValue) {
-      if (newValue != oldValue) {
-        this.changePage(1);
-      }
+    sortBy(newValue) {
+      this.setSort({ by: newValue, order: this.localSortOrder });
     },
 
-    sortBy(newValue, oldValue) {
-      if (newValue != oldValue) {
-        this.localSortBy = newValue;
-        this.changePage(1);
-      }
-    },
-
-    sortOrder(newValue, oldValue) {
-      if (newValue != oldValue) {
-        this.localSortOrder = newValue;
-        this.changePage(1);
-      }
+    sortOrder(newValue) {
+      this.setSort({ by: this.localSortOrder, order: newValue });
     },
 
     selection: {
@@ -236,35 +307,44 @@ export default {
 
     "$route.query.page"(newValue) {
       if (!newValue) {
-        this.changePage(1);
-        return;
-      }
-      if (this.localPage != newValue) {
-        this.changePage(newValue);
+        this.setPage(1);
+      } else if (this.localPage != newValue) {
+        this.setPage(newValue);
       }
     },
-  },
-
-  created() {
-    this.init();
   },
 
   computed: {
+    /**
+     * Why these watch-computed required:
+     * https://stackoverflow.com/a/74945916/3165956
+     */
+    watchFilters() {
+      return Object.assign({}, this.filters);
+    },
+
     instance() {
       return this;
     },
-    attrsToUse() {
-      const attrs = this.attrs || Object.keys(this.localItems?.[0] || {});
-      return this.attrsAdaptor(attrs);
+
+    /**
+     * When attrs is provided in props, the same attr.name is used to find column value from response.
+     * If the attrs is not provided, we can get first item of response and get keys from there as fallback.
+     */
+    serializedAttrs() {
+      const attrs = this.attrs || Object.keys(this.items?.[0] || {});
+      const attrsAfterAdaptor = this.attrsAdaptor(attrs);
+      return this.attrSerializer(attrsAfterAdaptor);
     },
 
     isEmpty() {
-      if (this.localItems?.length != 0) return false;
+      if (this.items?.length != 0) return false;
       return true;
     },
+
     scope() {
       return {
-        items: this.localItems,
+        items: this.items,
         response: this.response,
         loading: this.loading,
         isEmpty: this.isEmpty,
@@ -275,34 +355,66 @@ export default {
         loadingMore: this.loadingMore,
       };
     },
+
+    requestPayload() {
+      return {
+        params: this.params,
+        filters: this.filters,
+        search: this.localSearch,
+        pagination: {
+          page: this.localPage,
+          perPage: this.localPerPage,
+        },
+        sort: {
+          by: this.localSortBy,
+          order: this.localSortOrder,
+        },
+        config: this.config,
+        attrSettings: this.attrSettings,
+      };
+    },
   },
 
   methods: {
     init() {
-      /**
-       *  TODO: localAttrs is not reactive as it is copied here.
-       */
-      this.localAttrs = this.attrSerializer(this.attrsToUse);
       if (!this.endpoint) return;
 
-      const page = parseInt(this.$route?.query?.page || this.page);
-      this.changePage(page);
+      const page = this.localPage || this.$route?.query?.page || this.page;
+      // Validate if page number is valid
+      // if invalid, just replace the query param and watcher will take care of request.
+      if (page < 1) {
+        const existingQueryParams = this.$route.query || {};
+        this.$router.replace({
+          query: {
+            ...existingQueryParams,
+            page: undefined,
+          },
+        });
+      } else {
+        this.setPage(page);
+      }
     },
 
+    /**
+     * Attribute serializer builds an array of objects with following keys:
+     * label, name.
+     *
+     * input: ['name','email']
+     * output: [{label:'Name',name:'name'},{label:'Email',name:'email'} ]
+     */
     attrSerializer(attrs) {
       return attrs.map((item) => {
         if (typeof item == "string") {
           return {
             label: startCase(item),
             name: item,
-            visible: true,
           };
         } else {
+          // If there is a nested attribute:
           if (item.attrs) {
             item.attrs = this.attrSerializer(item.attrs);
           }
           return {
-            visible: true,
             label: startCase(item.name),
             ...item,
           };
@@ -310,22 +422,41 @@ export default {
       });
     },
 
-    set(key, value) {
-      this[key] = value;
+    setSearch(value) {
+      this.localSearch = value;
+      this.setPage(1);
+    },
+
+    setSort({ by, order }) {
+      this.localSortBy = by;
+      this.localSortOrder = order;
+      this.setPage(1);
+    },
+
+    setPaginationMode(value) {
+      this.paginationMode = value;
+    },
+
+    setSelection(value) {
+      this.selection = value;
+    },
+
+    setItems(value) {
+      this.items = value;
     },
 
     refresh() {
       this.getData();
     },
 
-    changePage(value) {
+    setPage(value) {
       this.localPage = value;
       this.getData();
     },
 
-    changePerPage(value) {
+    setPerPage(value) {
       this.localPerPage = value;
-      this.changePage(1);
+      this.setPage(1);
     },
 
     loadMore() {
@@ -348,14 +479,14 @@ export default {
 
     setData(res, appendData) {
       if (appendData) {
-        this.localItems = this.localItems.concat(res.items);
+        this.items = this.items.concat(res.items);
 
         /**
          * @property {object} res - Response received from an API
          */
         this.$emit("afterLoadMore", res);
       } else {
-        this.localItems = res.items;
+        this.items = res.items;
 
         /**
          * @property {object} res - Response received from an API
@@ -369,15 +500,14 @@ export default {
      * Updates the query parameters in the router when pagination is available.
      *
      * Initially when the component is loaded, the default page is 1 and no query param is added.
-     * So when navigaing back to page=1, we should avoid adding page = 1 in query param to avoid
+     * So when navigating back to page=1, we should avoid adding page = 1 in query param to avoid
      * additional history in routing.
      */
     setUrl() {
       if (
         this.$router &&
         this.paginationMode == "paging" &&
-        this.$route.query.page != this.localPage &&
-        this.localPage != 1
+        this.$route.query.page != this.localPage
       ) {
         //Maintain already existing query params in URL
         const existingQueryParams = this.$route.query || {};
@@ -394,26 +524,17 @@ export default {
       this.error = false;
       this.setLoader(true);
 
-      const handler = this.requestHandler || this.options.requestHandler;
+      const handler =
+        this.requestHandler || this.$vueList.options.requestHandler;
 
       handler({
         method: "get",
         endpoint: this.endpoint,
-        params: this.params,
-        filters: this.filters,
-        search: this.localSearch,
-        pagination: {
-          page: this.localPage,
-          perPage: this.localPerPage,
-        },
-        sort: {
-          by: this.localSortBy,
-          order: this.localSortOrder,
-        },
-        config: this.config,
+        ...this.requestPayload,
       })
         .then((res) => {
           this.response = res;
+          this.setStateOnStateManager();
 
           /**
            * @property {object} res - Response received from an API
@@ -423,6 +544,7 @@ export default {
           this.setData(res, appendData);
           this.setUrl();
           this.setLoader(false);
+          this.serverPage = this.localPage;
         })
         .catch((err) => {
           this.error = err;
@@ -462,14 +584,41 @@ export default {
       //Else execute the global callback
       if (this.$listeners.sort) {
         this.$emit("sort", context);
-      } else if (this.options.sort) {
-        this.options.sort(context);
+      } else if (this.$vueList.options.sort) {
+        this.$vueList.options.sort(context);
       }
     },
 
+    /**
+     * Update the config of an attribute
+     *
+     * @param {name} string Name of an attribute
+     * @param {prop} string A property to update
+     * @param {value} string A value to set
+     */
     updateAttr(name, prop, value) {
-      const attr = this.localAttrs.find((item) => item.name == name);
-      this.$set(attr, prop, value);
+      this.$set(this.attrSettings[name], prop, value);
+      this.setStateOnStateManager();
+    },
+
+    setDefaultAttrSettings() {
+      console.log("<>", { ...this.attrSettings });
+      if (this.attrSettings) return;
+
+      const attrSettings = this.serializedAttrs.reduce((value, item) => {
+        value[item.name] = {
+          visible: true,
+        };
+        return value;
+      }, {});
+      this.$set(this, "attrSettings", attrSettings);
+    },
+
+    setStateOnStateManager() {
+      this.$vueList.options.stateManager.set(
+        this.endpoint,
+        this.requestPayload
+      );
     },
   },
 };

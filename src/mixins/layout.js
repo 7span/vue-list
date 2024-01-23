@@ -2,13 +2,16 @@ import child from "./child";
 
 export default {
   mixins: [child],
-  inject: ["OPTIONS"],
+  inject: ["setSort"],
   computed: {
     items() {
-      return this.root.localItems;
+      return this.root.items || [];
     },
     attrs() {
-      return this.root.localAttrs;
+      return this.root.serializedAttrs;
+    },
+    attrSettings() {
+      return this.root.attrSettings;
     },
     pagination() {
       return this.root.paginationConfig;
@@ -22,16 +25,17 @@ export default {
   },
   methods: {
     sortItemsBy(by) {
-      this.root.set("localSortBy", by.name);
+      let order;
       if (this.sortOrder == "asc") {
-        this.root.set("localSortOrder", "desc");
+        order = "desc";
       } else {
-        this.root.set("localSortOrder", "asc");
+        order = "asc";
       }
-      this.root.refresh();
+      this.setSort({ by: by.name, order });
     },
+
     itemIndex(index) {
-      return this.root.localPerPage * (this.root.localPage - 1) + index + 1;
+      return this.root.localPerPage * (this.root.serverPage - 1) + index + 1;
     },
   },
 };

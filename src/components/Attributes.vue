@@ -1,18 +1,18 @@
 <template>
   <div class="v-list-attributes">
-    <template v-for="(attr, index) in root.localAttrs">
+    <template v-for="(attr, index) in root.serializedAttrs">
       <!--
         @slot An individual attribute interface.
         @binding {object} attr The attribute object
         @binding {function} update Apply a change to an attribute and it's props. Params: [name,prop,value]
       -->
-      <slot :update="update" :attr="attr">
+      <slot :update="updateAttr" :attr="attr">
         <label :key="`attr-${index}`">
           <span>{{ attr.label }}</span>
           <input
             type="checkbox"
-            :checked="attr.visible"
-            @input="update(attr.name, 'visible', $event.target.checked)"
+            :checked="root.attrSettings[attr.name].visible"
+            @input="updateAttr(attr.name, 'visible', $event.target.checked)"
           />
         </label>
       </slot>
@@ -28,17 +28,6 @@ import child from "../mixins/child";
  */
 export default {
   mixins: [child],
-  methods: {
-    /**
-     * Update the config of an attribute
-     *
-     * @param {name} string Name of an attribute
-     * @param {prop} string A property to update
-     * @param {value} string A value to set
-     */
-    update(name, prop, value) {
-      this.root.updateAttr(name, prop, value);
-    },
-  },
+  inject: ["updateAttr"],
 };
 </script>
