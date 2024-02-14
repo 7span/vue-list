@@ -204,7 +204,7 @@ export default {
       }
       attrs.forEach((attr, attrIndex) => {
         //Render only if the attr is visible
-        if (attrSettings[attr.name].visible) {
+        if (attrSettings?.[attr.name]?.visible) {
           //This unique key based on index helps to find parent-child
           //Make sure `attr` stays reactive by not extracting it but adding additional data by keys
           const uniqueKey = parentKey + "" + attrIndex;

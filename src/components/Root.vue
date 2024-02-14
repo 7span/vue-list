@@ -165,35 +165,16 @@ export default {
   },
 
   data() {
-    let localPage = this.page;
-    let localPerPage = this.perPage;
-    let localSortBy = this.sortBy;
-    let localSortOrder = this.sortOrder;
-    let localSearch = this.search;
-    let _attrSettings;
+    const previousState = this.getState();
+    const {
+      page,
+      perPage,
+      sortBy,
+      sortOrder,
+      search,
+      attrSettings,
+    } = previousState;
 
-    const oldState = this.$vueList.options.stateManager.get(this.endpoint);
-    if (oldState) {
-      const {
-        params,
-        filters,
-        config,
-        search,
-        pagination,
-        sort,
-        attrSettings,
-      } = oldState;
-      localPage = pagination.page;
-      localPerPage = pagination.perPage;
-      localSortBy = sort.by;
-      localSortOrder = sort.order;
-      localSearch = search;
-      _attrSettings = attrSettings;
-    }
-
-    console.log(_attrSettings);
-
-    // this.$emit("update:filters", filters);
     return {
       /**
        * These local variables are copy of props.
@@ -202,11 +183,13 @@ export default {
        * Thought of updating the props vial .sync modifier but in that case user will have to
        * create a state in host component to sync values.
        */
-      localPage,
-      localPerPage,
-      localSortBy,
-      localSortOrder,
-      localSearch,
+      localPage: page,
+      localPerPage: perPage,
+      localSortBy: sortBy,
+      localSortOrder: sortOrder,
+      localSearch: search,
+
+      attrSettings,
 
       items: null,
 
@@ -216,30 +199,35 @@ export default {
        */
       serverPage: null,
       selection: [],
-      attrSettings: _attrSettings,
 
       error: false,
       response: null,
       count: 0,
 
       paginationMode: null,
-      initial: true,
+      isFirstRequest: true,
       loading: false,
       loadingMore: false,
       loadingPage: false,
+      initializingState: true,
     };
   },
 
-  created() {
-    this.setDefaultAttrSettings();
-  },
+  created() {},
 
   /**
    * Once all the child components are ready and provided a proper state like "paginationMode"
    * call initialization of table.
    */
   mounted() {
-    this.init();
+    this.setDefaultAttrSettings();
+    const { filters } = this.getState();
+    this.$emit("update:filters", filters);
+
+    this.$nextTick(() => {
+      this.init();
+      this.initializingState = false;
+    });
   },
 
   provide() {
@@ -266,10 +254,9 @@ export default {
      */
     watchFilters: {
       deep: true,
-      handler(newValue, oldValue) {
-        if (!isEqual(newValue, oldValue)) {
-          this.setPage(1);
-        }
+      handler() {
+        if (this.initializingState) return;
+        this.setPage(1);
       },
     },
 
@@ -392,6 +379,24 @@ export default {
         });
       } else {
         this.setPage(page);
+      }
+    },
+
+    getState() {
+      try {
+        const oldState = this.$vueList.options.stateManager.get(this.endpoint);
+        return {
+          page: oldState?.pagination?.page || this.page,
+          perPage: oldState?.pagination?.perPage || this.perPage,
+          sortBy: oldState?.sort.by || this.sortBy,
+          sortOrder: oldState?.sort.order || this.sortOrder,
+          search: oldState?.search || this.search,
+          attrSettings: oldState?.attrSettings,
+          filters: oldState?.filters,
+        };
+      } catch (err) {
+        console.error(err);
+        return {};
       }
     },
 
@@ -557,7 +562,7 @@ export default {
 
     setLoader(value) {
       if (!value) {
-        this.initial = false;
+        this.isFirstRequest = false;
         this.loading = false;
         this.loadingPage = false;
         this.loadingMore = false;
@@ -565,7 +570,7 @@ export default {
         if (this.paginationMode == "infinite") {
           this.loadingMore = true;
         } else {
-          if (this.initial) {
+          if (this.isFirstRequest) {
             this.loading = true;
           } else {
             this.loadingPage = true;
@@ -602,7 +607,6 @@ export default {
     },
 
     setDefaultAttrSettings() {
-      console.log("<>", { ...this.attrSettings });
       if (this.attrSettings) return;
 
       const attrSettings = this.serializedAttrs.reduce((value, item) => {
@@ -619,6 +623,10 @@ export default {
         this.endpoint,
         this.requestPayload
       );
+    },
+
+    clearState() {
+      this.$vueList.options.stateManager.set(this.endpoint);
     },
   },
 };

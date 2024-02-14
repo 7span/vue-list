@@ -9,7 +9,7 @@
     <v-list
       :per-page="18"
       :attrs="attrs"
-      endpoint="https://api.pagemaker.io/api/v1/modules"
+      endpoint="skills"
       :filters.sync="filters"
       :sort-by="sortBy"
       :sort-order="sortOrder"
@@ -17,9 +17,6 @@
       :search="search"
     >
       <template #default="{ selection, instance, loadingMore }">
-        <p>{{ selection }}</p>
-        <hr />
-
         <v-list-search />
         <v-list-table :rowClass="rowClass">
           <template #th_after="{ attr, sortBy, sortOrder }">
@@ -53,6 +50,7 @@
 
     <button @click="$set(filters, 'tagId', 1)">Tag 1</button>
     <button @click="$set(filters, 'tagId', 2)">Tag 2</button>
+    <button @click="clearState()">Clear State</button>
   </div>
 </template>
 
@@ -75,15 +73,18 @@ export default {
           name: "_index",
         },
         {
-          name: "select",
-        },
-        {
           name: "id",
           sortable: true,
         },
         {
+          name: "status",
+        },
+        {
           name: "name",
           sortable: true,
+        },
+        {
+          name: "color",
         },
       ],
     };
@@ -100,6 +101,9 @@ export default {
     toggleSortOrder() {
       if (this.sortOrder === "asc") this.sortOrder = "desc";
       else this.sortOrder = "asc";
+    },
+    clearState() {
+      this.$refs.list.clearState();
     },
   },
 };

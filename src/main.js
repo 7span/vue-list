@@ -16,33 +16,43 @@ Vue.use(plugin, {
 
     get(endpoint) {
       const key = `vue-list--${endpoint}`;
-      if (localStorage.getItem(key)) {
-        return JSON.parse(localStorage.getItem(key));
-      } else {
+      try {
+        if (localStorage.getItem(key)) {
+          return JSON.parse(localStorage.getItem(key));
+        } else {
+          return null;
+        }
+      } catch {
         return null;
       }
     },
   },
 
-  requestHandler(requestData) {
+  async requestHandler(requestData) {
     const { endpoint, pagination, search, sort, filters } = requestData;
     const { page, perPage } = pagination;
+
+    //DIRECTUS COUNT
+    const count = await axios
+      .get(`https://crm.7span.in/items/${endpoint}?aggregate[countDistinct]=id`)
+      .then(({ data }) => data.data[0].countDistinct.id);
+
     return axios
-      .get(endpoint, {
+      .get(`https://crm.7span.in/items/${endpoint}`, {
         params: {
           page,
-          per_page: perPage,
-          search,
-          sort_by: sort.by,
-          sort_order: sort.order,
-          filters: filters,
+          limit: perPage,
+          search: search,
+          sort: (sort.order == "asc" ? "-" : "") + sort.by,
+          // sort_order: sort.order,
+          // filters: filters,
         },
         paramsSerializer: (params) => qs.stringify(params),
       })
-      .then((res) => {
+      .then(({ data }) => {
         return {
-          items: res.data?.data,
-          count: res.data.meta.total,
+          items: data.data,
+          count: count,
         };
       })
       .catch((err) => {
