@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #f81a27;
+      }
+
+      .cls-3 {
+        fill: #e50922;
+      }
+
+      .cls-4 {
+        fill: #d7001a;
+      }
+
+      .cls-5 {
+        fill: #c70008;
+      }
+    </style>
+    <symbol id="a" viewBox="0 0 288.11 299.41">
+      <g id="b">
+        <polygon id="c" class="cls-5" points="57.62 299.41 0 199.61 115.24 199.61 57.62 99.8 115.24 0 172.87 99.8 230.49 199.61 288.11 299.41 172.87 299.41 57.62 299.41"/>
+        <polygon id="d" class="cls-5" points="57.62 299.41 0 199.61 115.24 199.61 57.62 299.41"/>
+        <polygon id="e" class="cls-3" points="115.24 199.61 172.87 299.41 57.62 299.41 115.24 199.61"/>
+        <polygon id="f" class="cls-2" points="172.87 299.41 115.24 199.61 230.49 199.61 172.87 299.41"/>
+        <polygon id="g" class="cls-4" points="230.49 199.61 288.11 299.41 172.87 299.41 230.49 199.61"/>
+        <polygon id="h" class="cls-4" points="115.24 199.61 57.62 99.8 172.87 99.8 115.24 199.61"/>
+        <polygon id="i" class="cls-5" points="172.87 99.8 230.49 199.61 115.24 199.61 172.87 99.8"/>
+        <polygon id="j" class="cls-2" points="115.24 0 172.87 99.8 57.62 99.8 115.24 0"/>
+      </g>
+    </symbol>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <rect class="cls-1" width="500" height="500"/>
+      <g id="icon">
+        <g id="m">
+          <use width="288.11" height="299.41" transform="translate(121.23 383.82) scale(.89 -.89)" xlink:href="#a"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
