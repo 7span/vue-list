@@ -1,8 +1,20 @@
 <template>
-  <v-list :attrs="state.attrs" :per-page="4" endpoint="skills" sort-by="name">
+  <v-list
+    :attrs="state.attrs"
+    :per-page="4"
+    endpoint="skills"
+    sort-by="name"
+    sort-order="asc"
+  >
     <template #default>
       <v-list-attributes />
       <v-list-table :rowClass="() => []">
+        <template #color="{ item }">
+          <div @click="handleClick">
+            {{ item.color || "---" }}
+          </div>
+        </template>
+
         <template #actions="{ item }">
           <button class="btn btn-primary">View</button>
         </template>
@@ -17,10 +29,10 @@ import { reactive } from "vue";
 const state = reactive({
   attrs: [
     { name: "_index", label: "#" },
-    { name: "color" },
+    { name: "color", rowClick: false },
     { name: "status" },
     { name: "name", sortable: true },
-    { name: "actions" },
+    { name: "actions", rowClick: false },
   ],
 });
 </script>
@@ -78,6 +90,7 @@ tbody tr:hover {
   display: flex;
   align-items: center;
 }
+
 .v-list-attributes label input {
   margin-left: 5px;
 }

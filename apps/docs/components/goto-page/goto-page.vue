@@ -1,12 +1,18 @@
 <template>
-  <v-list :attrs="state.attrs" :per-page="4" endpoint="skills" sort-by="name">
+  <v-list
+    :attrs="state.attrs"
+    :per-page="4"
+    endpoint="skills"
+    sort-by="name"
+    sort-order="asc"
+  >
     <template #default>
       <v-list-table :rowClass="() => []">
         <template #actions="{ item }">
           <button class="btn btn-primary">View</button>
         </template>
       </v-list-table>
-      <span>Go To Page :</span><v-list-go-to class="go-to" />
+      <span>Go To Page :</span><v-list-go-to />
     </template>
   </v-list>
 </template>

@@ -7,20 +7,31 @@ import Attributes from './attributes.vue';
 
 ## Overview
 
-- Display all the attributes you provided and render a UI to modify those attributes.
+- Display all the attributes you provided and render a UI to modify those attributes within the context of a v-list component.
+- The component renders a user interface to modify attributes provided through the `attrs` prop.
+- Use `v-list-attributes` component inside the **#default** slot of the wrapper component.
 
 <Attributes/>
 
-## Examples
+## Example
 
-```vue {3,10} [app.vue]
+```vue {3,11} [app.vue]
 <template>
-  <v-list :attrs="state.attrs" :per-page="4" endpoint="skills" sort-by="name">
+  <v-list
+    :attrs="state.attrs"
+    :per-page="4"
+    endpoint="skills"
+    sort-by="name"
+    sort-order="asc"
+  >
     <template #default>
+      <!-- Integration of v-list-attributes component -->
       <v-list-attributes />
+
+      <!-- Additional customization within the default slot -->
       <v-list-table :rowClass="() => []">
         <template #actions="{ item }">
-          <button class="btn btn-primary">View</button>
+          <button class="btn btn-primary" @click="handleView">View</button>
         </template>
       </v-list-table>
     </template>
@@ -33,15 +44,15 @@ import { reactive } from "vue";
 const state = reactive({
   attrs: [
     { name: "_index", label: "#" },
-    { name: "color" },
+    { name: "color", rowClick: false },
     { name: "status" },
     { name: "name", sortable: true },
-    { name: "actions" },
+    { name: "actions", rowClick: false },
   ],
 });
 </script>
 
-<style>
+<style scoped>
 /* Tabel Styling */
 table {
   width: 100%;
@@ -128,43 +139,15 @@ const state = reactive({
 
 ```
 
-**Description:**
+**Attribute Configuration Properties:**
 
-### `name`
-
-- The `name` property specifies the key in the API response corresponding to the data for the column.
-- You can override the default column name with `label` property.
-
-### `type (Optional)`
-
-- The `type` property defines the type of data in the column (e.g., "string", "number", etc.).
-
-### `fix (Optional)`
-
-- The `fix` property, when set to true, enforces a fixed width for the column.
-
-### `width (Optional)`
-
-- The `width` property allows developers to specify a custom width for the column.
-
-### `rowClick (Optional)`
-
-- The `rowClick` property allows developers to specify wether row should be clickable or not for that column.
-
-### `sortable (Optional)`
-
-- The sortable property, when set to true, enables sorting functionality for the column.
-
-| Key      | Description                                                                         |
-| -------- | ----------------------------------------------------------------------------------- |
-| name     | Specifies the key in the API response corresponding to the data for the column.     |
-| label    | Can be used to override the default column name for display purposes.               |
-| type     | Defines the type of data in the column (e.g., "string", "number", etc.).            |
-| fix      | When set to true, enforces a fixed width for the column.                            |
-| rowClick | Allows developers to specify wether row should be clickable or not for that column. |
-| sortable | When set to true, enables sorting functionality for the column.                     |
-
----
+- `name`: Specifies the key in the API response corresponding to the data for the column.
+- `label`: Can be used to override the default column name for display purposes.
+- `type`: Defines the type of data in the column (e.g., "string", "number", etc.).
+- `fix`: When set to true, enforces a fixed width for the column.
+- `width`: Allows developers to specify a custom width for the column.
+- `rowClick`: Allows developers to specify whether a row should be clickable or not for that column.
+- `sortable`: When set to true, enables sorting functionality for the column.
 
 ## Props
 
@@ -174,8 +157,6 @@ const state = reactive({
 
 ## Slots
 
-| Name    | Description                        | Bindings                                                                                                                                     |
-| ------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| default | An individual attribute interface. | **update** `function` - Apply a change to an attribute and it's props. Params: [name,prop,value]<br>**attr** `object` - The attribute object |
-
----
+| Name    | Description                        |
+| ------- | ---------------------------------- |
+| default | An individual attribute interface. |

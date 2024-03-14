@@ -5,9 +5,10 @@ import PerPage from './per-page.vue';
 
 # Components
 
-## Per Page
+## Overview
 
-- Display a pagination bar with clickable page numbers to allow users to navigate.
+- `v-list-per-page` component provides a pagination bar with clickable page numbers, allowing users to navigate through the list easily.
+- To utilize `v-list-per-page` component, integrate it within the **#default** slot of the wrapper component.
 
 <PerPage/>
 
@@ -15,14 +16,18 @@ import PerPage from './per-page.vue';
 
 ```vue
 <template>
-  <v-list :attrs="state.attrs" :per-page="4" endpoint="skills" sort-by="name">
+  <v-list
+    :attrs="state.attrs"
+    :per-page="10"
+    endpoint="skills"
+    sort-by="name"
+    sort-order="asc"
+  >
     <template #default>
-      <v-list-table :rowClass="() => []">
-        <template #actions="{ item }">
-          <button class="btn btn-primary">View</button>
-        </template>
-      </v-list-table>
-      <v-list-per-page />
+      <v-list-table :rowClass="() => []"> </v-list-table>
+
+      <!-- Integration of v-list-per-page component -->
+      <span>Per Page :</span> <v-list-per-page />
     </template>
   </v-list>
 </template>
@@ -36,7 +41,6 @@ const state = reactive({
     { name: "color" },
     { name: "status" },
     { name: "name", sortable: true },
-    { name: "actions" },
   ],
 });
 </script>

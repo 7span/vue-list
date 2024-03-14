@@ -2,9 +2,9 @@
   <v-list
     :attrs="state.attrs"
     endpoint="skills"
+    :per-page="4"
     sort-by="name"
     sort-order="asc"
-    :per-page="4"
   >
     <template #default>
       <v-list-table :rowClass="() => []"> </v-list-table>
@@ -13,7 +13,7 @@
           <button
             type="button"
             class="btn btn-primary btn-load-more"
-            @click.native="loadMore"
+            @click="loadMore"
             :class="{ 'btn-load-more--loading': loading }"
           >
             <span class="btn-load-more__text">Load More</span>

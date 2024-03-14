@@ -5,23 +5,32 @@ import Counters from './counters.vue';
 
 # Components
 
-## Counters
+## Overview
 
 - Displays the counter of total items and displayed items in a list.
+- Use `v-list-counter` component inside the **#default** slot of the wrapper component.
 
 <Counters/>
 
 ## Example
 
-```vue
+```vue {17} [app.vue]
 <template>
-  <v-list :attrs="state.attrs" :per-page="4" endpoint="skills" sort-by="name">
+  <v-list
+    :attrs="state.attrs"
+    :per-page="4"
+    endpoint="skills"
+    sort-by="name"
+    sort-order="asc"
+  >
     <template #default>
       <v-list-table :rowClass="() => []">
         <template #actions="{ item }">
           <button class="btn btn-primary">View</button>
         </template>
       </v-list-table>
+
+      <!-- Integration of v-list-counter component -->
       <v-list-counter />
     </template>
   </v-list>
@@ -96,8 +105,6 @@ input[type="checkbox"] {
 
 ## Slots
 
-| Name    | Description                          | Bindings                                                                                                                  |
-| ------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| default | Custom interface to display counters | **showing** `int` - Number of items being displayed in a list<br>**count** `int` - Total number of items returned via API |
-
----
+| Name    | Description                          |
+| ------- | ------------------------------------ |
+| default | Custom interface to display counters |

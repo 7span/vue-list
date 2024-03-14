@@ -1,11 +1,16 @@
 <template>
-  <v-list :attrs="state.attrs" :per-page="4" endpoint="skills" sort-by="name">
+  <v-list
+    :attrs="state.attrs"
+    :per-page="10"
+    endpoint="skills"
+    sort-by="name"
+    sort-order="asc"
+  >
     <template #default>
-      <v-list-table :rowClass="() => []">
-        <template #actions="{ item }">
-          <button class="btn btn-primary">View</button>
-        </template>
-      </v-list-table>
+      <v-list-table :rowClass="() => []"> </v-list-table>
+
+      <!-- Integration of v-list-per-page component -->
+      <span>Per Page :</span>
       <v-list-per-page />
     </template>
   </v-list>
@@ -20,7 +25,6 @@ const state = reactive({
     { name: "color" },
     { name: "status" },
     { name: "name", sortable: true },
-    { name: "actions" },
   ],
 });
 </script>
