@@ -292,7 +292,7 @@ export default {
     init() {
       if (!this.endpoint) return;
 
-      const page = this.$route?.query?.page || this.page;
+      const page = Number(this.$route?.query?.page) || this.page;
 
       // Validate if page number is valid
       // if invalid, just replace the query param and watcher will take care of request.
