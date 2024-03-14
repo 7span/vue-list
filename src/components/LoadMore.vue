@@ -28,9 +28,10 @@ import child from "../mixins/child";
  */
 export default {
   mixins: [child],
+  inject: ["setPaginationMode", "loadMore"],
 
   created() {
-    this.root.set("paginationMode", "infinite");
+    this.setPaginationMode("infinite");
   },
 
   computed: {
@@ -39,16 +40,11 @@ export default {
     },
 
     loaded() {
-      return this.root.localItems?.length;
+      return this.root.items?.length;
     },
 
     count() {
       return this.root.count;
-    },
-  },
-  methods: {
-    loadMore() {
-      this.root.loadMore();
     },
   },
 };

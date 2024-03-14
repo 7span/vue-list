@@ -5,6 +5,11 @@
       @binding {function} prev Got to previous page.
       @binding {boolean} hasPrev If previous page is available or not.
      -->
+
+    <slot name="first" :first="first" :hasPrev="hasPrev">
+      <button :disabled="!hasPrev" @click="first">First</button>
+    </slot>
+
     <slot name="prev" :prev="prev" :hasPrev="hasPrev">
       <button :disabled="!hasPrev" @click="prev">Prev</button>
     </slot>
@@ -16,9 +21,14 @@
       @binding {int} value Page number a button presents.
       @binding {boolean} isActive If a button is presenting a current page.
      -->
-      <slot name="page" :change="change" :value="item" :isActive="item == page">
+      <slot
+        name="page"
+        :change="setPage"
+        :value="item"
+        :isActive="item == page"
+      >
         <span v-if="item == page" :key="`page-${item}`">{{ item }}</span>
-        <button v-else :key="`page-${item}`" @click="change(item)">
+        <button v-else :key="`page-${item}`" @click="setPage(item)">
           {{ item }}
         </button>
       </slot>
@@ -31,6 +41,10 @@
      -->
     <slot name="next" :next="next" :hasNext="hasNext">
       <button :disabled="!hasNext" @click="next">Next</button>
+    </slot>
+
+    <slot name="last" :last="last" :hasNext="hasNext">
+      <button :disabled="!hasNext" @click="last">Last</button>
     </slot>
   </div>
 </template>
@@ -56,8 +70,10 @@ export default {
     },
   },
 
+  inject: ["setPaginationMode", "setPage"],
+
   created() {
-    this.root.set("paginationMode", "paging");
+    this.setPaginationMode("paging");
   },
 
   computed: {
@@ -107,13 +123,16 @@ export default {
 
   methods: {
     prev() {
-      this.change(this.page - 1);
+      this.setPage(this.page - 1);
     },
     next() {
-      this.change(this.page + 1);
+      this.setPage(this.page + 1);
     },
-    change(number) {
-      this.root.changePage(number);
+    first() {
+      this.setPage(1);
+    },
+    last() {
+      this.setPage(this.total);
     },
   },
 };

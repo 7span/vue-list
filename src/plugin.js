@@ -17,19 +17,10 @@ const install = (Vue, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions);
   const prefix = options.componentPrefix;
 
-  //Root Component
-  Vue.component(`${prefix}List`, {
-    data() {
-      return {
-        options,
-      };
-    },
-    provide: {
-      OPTIONS: options,
-    },
-    extends: Root,
-  });
+  Vue.prototype.$vueList = { options: options };
 
+  //Root Component
+  Vue.component(`${prefix}List`, Root);
   Vue.component(`${prefix}ListPagination`, Pagination);
   Vue.component(`${prefix}ListCounter`, Counter);
   Vue.component(`${prefix}ListPerPage`, PerPage);

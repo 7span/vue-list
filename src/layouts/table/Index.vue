@@ -8,7 +8,6 @@
       >
         <template v-for="(col, colIndex) in row">
           <th
-            v-if="col.visible"
             :key="key('head-col', rowIndex, colIndex)"
             :class="thClass(col)"
             :style="thStyle(col)"
@@ -52,7 +51,6 @@
       >
         <template v-for="(attr, colIndex) in body">
           <td
-            v-if="attr.visible"
             :key="key('body-col', colIndex)"
             :class="tdClass(attr)"
             @click="tdClick(attr, row)"
@@ -68,8 +66,10 @@
 
             <!-- Global Slot -->
             <component
-              v-else-if="OPTIONS.slots && OPTIONS.slots[attr.name]"
-              :is="OPTIONS.slots[attr.name]"
+              v-else-if="
+                $vueList.options.slots && $vueList.options.slots[attr.name]
+              "
+              :is="$vueList.options.slots[attr.name]"
               v-bind="tdScope(attr, row, rowIndex)"
             />
 
@@ -125,7 +125,7 @@ export default {
     },
   },
 
-  inject: ["OPTIONS"],
+  inject: ["setSelection", "setItems"],
 
   data() {
     return {
@@ -136,25 +136,25 @@ export default {
   },
 
   watch: {
-    attrs: {
+    attrSettings: {
       deep: true,
       handler(newValue) {
         this.$set(this, "headers", []);
         this.$set(this, "body", []);
-        this.generateHeader(newValue, 0);
+        this.generateHeader(this.attrs, newValue, 0);
       },
     },
   },
 
   created() {
-    this.generateHeader(this.attrs, 0);
+    this.generateHeader(this.attrs, this.attrSettings, 0);
   },
 
   computed: {
     rows: {
       set(value) {
         this.$emit("reorder", value);
-        this.root.set("localItems", value);
+        this.setItems(value);
       },
       get() {
         return cloneDeep(this.items);
@@ -198,13 +198,13 @@ export default {
       return spans;
     },
 
-    generateHeader(attrs, index, parentKey = "0") {
+    generateHeader(attrs, attrSettings, index, parentKey = "0") {
       if (!this.headers[index]) {
         this.$set(this.headers, index, []);
       }
       attrs.forEach((attr, attrIndex) => {
         //Render only if the attr is visible
-        if (attr.visible) {
+        if (attrSettings?.[attr.name]?.visible) {
           //This unique key based on index helps to find parent-child
           //Make sure `attr` stays reactive by not extracting it but adding additional data by keys
           const uniqueKey = parentKey + "" + attrIndex;
@@ -297,8 +297,8 @@ export default {
 
       // type: String
       // If type is provided, user can configure its value in global typeAdapter configuration.
-      if (attr.type && this.OPTIONS.typeAdapters[attr.type]) {
-        return this.OPTIONS.typeAdapters[attr.type](row[key], row);
+      if (attr.type && this.$vueList.options.typeAdapters[attr.type]) {
+        return this.$vueList.options.typeAdapters[attr.type](row[key], row);
       }
 
       // value: Function
@@ -319,7 +319,8 @@ export default {
       } else {
         selectedRows.push({ ...row });
       }
-      this.root.set("selection", selectedRows);
+
+      this.setSelection(selectedRows);
     },
 
     isSelected(row) {
@@ -331,12 +332,12 @@ export default {
     toggleSelectAll() {
       switch (this.selectionState) {
         case "all":
-          this.root.set("selection", []);
+          this.setSelection([]);
           break;
 
         case "some":
         case "none":
-          this.root.set("selection", this.rows);
+          this.setSelection(this.rows);
           break;
 
         default:
