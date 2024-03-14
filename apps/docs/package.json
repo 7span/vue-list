@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "vue-list-docs",
   "private": true,
   "version": "1.0.0",
   "description": "",
@@ -9,7 +9,7 @@
     "preview": "vitepress preview"
   },
   "dependencies": {
-    "@7span/vue-list": "workspace:*",
+    "@7span/vue-list": "workspace:1.*",
     "axios": "^0.21.1",
     "qs": "^6.11.1",
     "vue": "^3.4.19"
