@@ -297,7 +297,7 @@ export default {
       // Validate if page number is valid
       // if invalid, just replace the query param and watcher will take care of request.
       if (page < 1) {
-        const existingQueryParams = Number(this.$route.query) || {};
+        const existingQueryParams = this.$route.query || {};
         this.$router.replace({
           query: {
             ...existingQueryParams,
