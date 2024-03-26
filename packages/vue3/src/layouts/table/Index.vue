@@ -35,21 +35,13 @@
       </tr>
     </thead>
 
-    <component
-      :is="reorder ? 'draggable' : 'tbody'"
-      v-bind="reorder ? { handle: '.v-list-table__drag', tag: 'tbody' } : {}"
-      v-model="rows"
+    <Tbody
+      :reorder="reorder"
+      :rows="rows"
+      :isSelected="isSelected"
+      :rowClass="rowClass"
     >
-      <slot name="body-start" />
-
-      <tr
-        v-for="(row, rowIndex) in rows"
-        :key="key('body-row', rowIndex)"
-        :class="[
-          { 'v-list-table__selected': isSelected(row) },
-          ...rowClass(row, rowIndex),
-        ]"
-      >
+      <template #body-row="{ row, rowIndex }">
         <template v-for="(attr, colIndex) in body">
           <td
             v-if="attr.visible"
@@ -101,10 +93,8 @@
             </slot>
           </td>
         </template>
-      </tr>
-
-      <slot name="body-end" />
-    </component>
+      </template>
+    </Tbody>
   </table>
 </template>
 
@@ -113,8 +103,12 @@ import { cloneDeep } from "lodash-es";
 import layout from "../../mixins/layout";
 import { key } from "../../utils";
 import { getCurrentInstance } from "vue";
+import Tbody from "./tbody.vue";
 
 export default {
+  components: {
+    Tbody,
+  },
   mixins: [layout],
   props: {
     reorder: {
@@ -124,6 +118,11 @@ export default {
     rowClass: {
       type: Function,
     },
+  },
+  provide() {
+    return {
+      reorder: this.reorder,
+    };
   },
 
   inject: ["OPTIONS"],
