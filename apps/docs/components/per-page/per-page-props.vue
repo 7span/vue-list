@@ -1,7 +1,7 @@
 <template>
   <VList
     :attrs="state.attrs"
-    :per-page="4"
+    :per-page="5"
     endpoint="skills"
     sort-by="name"
     sort-order="asc"
@@ -9,8 +9,9 @@
     <template #default>
       <VListTable :rowClass="() => []"> </VListTable>
 
-      <!-- Integration of VListCounter component -->
-      <VListCounter />
+      <!-- Integration of VListPerPage component -->
+      <span>Per Page :</span>
+      <VListPerPage :options="[5, 10, 15, 20]" />
     </template>
   </VList>
 </template>

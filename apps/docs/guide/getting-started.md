@@ -1,12 +1,8 @@
 # Getting Started
 
-<!--
-<img src="https://cdn.sanity.io/images/czqk28jt/prod_bk_us/fbf45e184fdb17a53d7568936911ec92c3928d69-1333x1333.png?w=750&q=40&fit=max&auto=format" width="300" height="100">
- -->
-
 ## Installation
 
-Vue List can be installed with package installer of your choice as following:
+Install `vue-list` using your preferred package manager:
 
 ::: code-group
 
@@ -26,55 +22,63 @@ yarn add @7span/vue-list
 
 ## Setup
 
-Let's begin by setting up the plugin object. It is recommended to create it in a separate file and export it, as shown below to keep the logic contained and separate.
-
-### Step 1: Create a plugin folder
-
-Inside your project folder, create a new folder called plugins inside the `/src` folder. You should now have a path like `src/plugins`.
-
-### Step 2: Create the VueJS plugin
-
-Create a javascript file named vue-list.js inside the `src/plugins`. Main method of Vue List is
-`requestHandler()`, which we will dicusss in step 3. export requestHandler() and import it in `main.js` along with `vue-list` package as below.
+Let's begin by setting up the plugin object. In your `main.js` or main entry file, install the plugin into Vue:
 
 ::: code-group
 
-```js [vue-list.js]
-// src/plugins/vue-list.js
-export const requestHandler = (requestData) => {};
-```
-
-:::
-
-::: code-group
-
-```js {4,5,8} [main.js]
-// src/main.js
+```js [main.js]
+// main.js
 import { createApp } from "vue";
+import "./style.css";
 import App from "./App.vue";
 import VueList from "@7span/vue-list";
-import { requestHandler } from "./plugins/vue-list";
+import axios from "axios";
+import qs from "qs"; // Import the qs library for query string serialization
 
 const app = createApp(App);
-app.use(VueList, { requestHandler });
+app.use(VueList, {
+  async requestHandler(requestData) {
+    const { endpoint, pagination, search, sort, filters } = requestData;
+    const { page, perPage } = pagination;
+
+    // Fetch total count of items
+    const count = await axios
+      .get(`https://crm.7span.in/items/${endpoint}?aggregate[countDistinct]=id`)
+      .then(({ data }) => data.data[0].countDistinct.id);
+
+    return axios
+      .get(`https://crm.7span.in/items/${endpoint}`, {
+        params: {
+          page,
+          limit: perPage,
+          search: search,
+          sort: (sort.order == "asc" ? "-" : "") + sort.by,
+        },
+        paramsSerializer: (params) => qs.stringify(params),
+      })
+      .then(({ data }) => {
+        return {
+          items: data.data,
+          count: count,
+        };
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+});
+
 app.mount("#app");
 ```
 
 :::
 
-### Step 3: Data Fetching
+## Description
 
-`vue-list` package provides a generic data fetching and processing solution for Vue.js applications, particularly focusing on functionalities related to data tables.
-
-> [!note] Note
-> `vue-list` is designed to be agnostic to the underlying data source technology.
-> It can work with various data providers like Axios, GraphQL, or Directus, allowing you to adapt it to your specific project needs.
-
-Let's understand `requestHandler()` in following steps:
+The `requestHandler` function defined above is responsible for fetching and processing data from the API endpoint. Here's how it works:
 
 **1. Data Request Handler:**
 
-- The requestHandler function serves as the central point for fetching and processing data.
 - It accepts an single argument containing information about the data request, including:\
    `endpoint`: URL of the API endpoint to fetch data from.\
    `filters`: Any filters to be applied to the data.\
@@ -85,63 +89,12 @@ Let's understand `requestHandler()` in following steps:
 
 **2. Standardized Data Response:**
 
-- The requestHandler function expects the API response to adhere to a specific format, regardless of the data source:\
+- The requestHandler function expects to return the API response to adhere to a specific format, regardless of the data source:\
   `items`: This key should hold the actual data fetched from the server, typically an array of objects representing the data items.\
   `count`: This key should hold an integer representing the total number of data items available, even if not displayed due to pagination or filters.\
   `res`: This key can optionally hold the entire raw response object for further use in your application.
 
-## Example
+> [!note] Note
+> Ensure that the `requestHandler` function setup correctly with expected response format. Adjust the endpoint URLs and query parameters according to your specific API requirements.
 
-::: code-group
-
-```js[vue-list.js]
-import axios from "axios";
-
-export const requestHandler = (requestData) => {
-  return axios
-    .get(endpoint)
-    .then(({ data }) => {
-      return {
-        items: data.data,
-        count: data.data.length,
-        res: data,
-      };
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-```
-
-:::
-
-## Basic Usage
-
-::: code-group
-
-```js[App.vue]
-<template>
-  <VList
-    class="divide-y divide-gray-100"
-    endpoint="https://crm.7span.in/items/skills"
-  >
-    <template #header>V List Table </template>
-    <template #default="{ items }">
-      <div
-        v-for="(item, index) in items"
-        :key="item.id"
-        class="flex items-center justify-between p-4"
-      >
-        {{ index }}-{{ item }}
-      </div>
-    </template>
-    <template #loading> Loading Data... </template>
-    <template #empty>
-      <div class="py-4 h-full">===No Data Found===</div>
-    </template>
-  </VList>
-</template>
-
-```
-
-:::
+Now that you've learned how to set up the `vue-list` plugin, let's dive into the [Components](/guide/builtin-components/intro.html) provided by the package to understand how they work and how you can use them to build listing layouts in your Vue.js applications.
