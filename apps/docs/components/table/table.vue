@@ -4,13 +4,10 @@
     :per-page="4"
     endpoint="skills"
     sort-by="name"
-    sort-order="asc"
+    sort-order="desc"
   >
     <template #default>
       <VListTable :rowClass="() => []"> </VListTable>
-
-      <!-- Integration of VListCounter component -->
-      <VListCounter />
     </template>
   </VList>
 </template>
@@ -21,7 +18,7 @@ import { reactive } from "vue";
 const state = reactive({
   attrs: [
     { name: "_index", label: "#" },
-    { name: "color" },
+    { name: "color", rowClick: false },
     { name: "status" },
     { name: "name", sortable: true },
   ],

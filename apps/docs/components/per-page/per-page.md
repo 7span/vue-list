@@ -1,22 +1,23 @@
 <script setup>
 import PerPage from './per-page.vue';
+import PerPageProps from './per-page-props.vue';
 
 </script>
 
-# Components
+# Per Page Component
 
 ## Overview
 
-- `v-list-per-page` component provides a pagination bar with clickable page numbers, allowing users to navigate through the list easily.
-- To utilize `v-list-per-page` component, integrate it within the **#default** slot of the wrapper component.
+- `VListPerPage` component provides a pagination bar with clickable page numbers, allowing users to navigate through the list easily.
+- To utilize `VListPerPage` component, integrate it within the **#default** slot of the wrapper component.
 
 <PerPage/>
 
 ## Example
 
-```vue
+```vue {13} [app.vue]
 <template>
-  <v-list
+  <VList
     :attrs="state.attrs"
     :per-page="10"
     endpoint="skills"
@@ -24,12 +25,12 @@ import PerPage from './per-page.vue';
     sort-order="asc"
   >
     <template #default>
-      <v-list-table :rowClass="() => []"> </v-list-table>
+      <VListTable :rowClass="() => []"> </VListTable>
 
-      <!-- Integration of v-list-per-page component -->
-      <span>Per Page :</span> <v-list-per-page />
+      <!-- Integration of VListPerPage component -->
+      <span>Per Page :</span> <VListPerPage />
     </template>
-  </v-list>
+  </VList>
 </template>
 
 <script setup>
@@ -44,59 +45,51 @@ const state = reactive({
   ],
 });
 </script>
-
-<style>
-/* Tabel Styling */
-table {
-  width: 100%;
-  border: 1px solid #e5e7eb;
-}
-
-thead tr th {
-  font-size: 0.875rem;
-  border-bottom: 1px solid #e5e7eb;
-  color: #6b7280 !important;
-  padding-bottom: 0.5rem;
-  font-weight: 600;
-  padding: 0.5rem;
-  text-align: start;
-}
-
-tbody tr td {
-  padding: 0.5rem;
-  text-align: start;
-}
-
-tbody tr:hover {
-  background: #f8f9fa;
-}
-
-/* Button Styling */
-.btn {
-  padding: 4px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.btn.btn-primary {
-  background-color: #1690d8;
-  color: #ffffff;
-  text-align: start;
-}
-
-.vp-doc table {
-  display: table;
-}
-
-input[type="checkbox"] {
-  height: 16px;
-  width: 16px;
-  accent-color: #1690d8;
-}
-</style>
 ```
+
+## Configuration
+
+- `options`
+
+  **Type:** `array`
+
+  **Default:** [10, 25, 50, 100]
+
+  **Desc:** The options prop allows you to specify an array of options for users to select from.
+  Each option can be provided as an object with value or label and value keys to customize the display label and underlying value.
+
+**Example**
+
+```vue
+<VListPerPage :options="[10, 20, 30, 40, 50]" />
+
+<!-- OR -->
+
+<VListPerPage
+  :options="[
+    { label: 'Option1', value: 15 },
+    { label: 'Option2', value: 20 },
+    { label: 'Option3', value: 30 },
+  ]"
+/>
+```
+
+- `Default Value` : To set the default number of items per page, pass the desired value to the `per-page` prop in the `VList` component where `VListPerPage` is integrated.
+
+**Example**
+
+```vue {3}
+<VList
+  :attrs="state.attrs"
+  :per-page="5"
+  endpoint="skills"
+  sort-by="name"
+  sort-order="asc"
+>
+</VList>
+```
+
+<PerPageProps />
 
 ## Props
 
@@ -109,5 +102,3 @@ input[type="checkbox"] {
 | Name    | Description                                    | Bindings                                                                                                                               |
 | ------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | default | Custom interface to list down all the options. | **value** `int` - Current value.<br>**change** `function` - Change the value.<br>**options** `array` - An array of serialized options. |
-
----

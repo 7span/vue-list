@@ -37,6 +37,8 @@ export default defineConfig({
             text: "Components",
             collapsed: false,
             items: [
+              { text: "Root", link: "/components/root/root.md" },
+              { text: "Table", link: "/components/table/table.md" },
               {
                 text: "Attributes",
                 link: "/components/attributes/attributes.md",
@@ -50,21 +52,9 @@ export default defineConfig({
               },
               { text: "Per Page", link: "/components/per-page/per-page.md" },
               { text: "Search", link: "/components/search/search.md" },
-              {
-                text: "All Features",
-                link: "/components/all-features/all-features.md",
-              },
             ],
           },
         ],
-      },
-      {
-        text: "Integration Guides",
-        items: [{ text: "Configuration", link: "/guide/configuration" }],
-      },
-      {
-        text: "Reference",
-        items: [{ text: "API Reference", link: "/guide/api" }],
       },
     ],
     search: {
