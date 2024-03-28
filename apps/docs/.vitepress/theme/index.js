@@ -9,7 +9,7 @@ import Draggable from "vuedraggable";
 export default {
   extends: DefaultTheme,
   enhanceApp({ app }) {
-    app.component("draggable", Draggable);
+    app.component("Draggable", Draggable);
     app.use(VueList, {
       async requestHandler(requestData) {
         {

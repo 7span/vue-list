@@ -1,5 +1,8 @@
 <template>
-  <draggable
+  <!-- 
+    Used 'item-key' as 'name' to ensure unique identification as columns are generated with 'name' key in the attrs array
+  -->
+  <Draggable
     v-if="reorder"
     handle=".v-list-table__drag"
     v-model="rowsData"
@@ -18,7 +21,7 @@
       </tr>
     </template>
     <slot name="body-end" />
-  </draggable>
+  </Draggable>
 
   <template v-else>
     <tbody>

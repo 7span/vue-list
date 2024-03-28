@@ -35,11 +35,11 @@
       </tr>
     </thead>
 
-    <Tbody
+    <TheTbody
       :reorder="reorder"
       :rows="rows"
-      :isSelected="isSelected"
-      :rowClass="rowClass"
+      :is-selected="isSelected"
+      :row-class="rowClass"
     >
       <template #body-row="{ row, rowIndex }">
         <template v-for="(attr, colIndex) in body">
@@ -94,7 +94,7 @@
           </td>
         </template>
       </template>
-    </Tbody>
+    </TheTbody>
   </table>
 </template>
 
@@ -103,11 +103,11 @@ import { cloneDeep } from "lodash-es";
 import layout from "../../mixins/layout";
 import { key } from "../../utils";
 import { getCurrentInstance } from "vue";
-import Tbody from "./tbody.vue";
+import TheTbody from "./TheTbody.vue";
 
 export default {
   components: {
-    Tbody,
+    TheTbody,
   },
   mixins: [layout],
   props: {
