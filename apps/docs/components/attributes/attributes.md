@@ -3,13 +3,13 @@ import Attributes from './attributes.vue';
 
 </script>
 
-# Components
+# Attributes Component
 
 ## Overview
 
-- Display all the attributes you provided and render a UI to modify those attributes within the context of a v-list component.
+- Display all the attributes you provided and render a UI to modify those attributes within the context of a VList component.
 - The component renders a user interface to modify attributes provided through the `attrs` prop.
-- Use `v-list-attributes` component inside the **#default** slot of the wrapper component.
+- Use `VListAttributes` component inside the **#default** slot of the wrapper component.
 
 <Attributes/>
 
@@ -17,7 +17,7 @@ import Attributes from './attributes.vue';
 
 ```vue {3,11} [app.vue]
 <template>
-  <v-list
+  <VList
     :attrs="state.attrs"
     :per-page="4"
     endpoint="skills"
@@ -25,17 +25,23 @@ import Attributes from './attributes.vue';
     sort-order="asc"
   >
     <template #default>
-      <!-- Integration of v-list-attributes component -->
-      <v-list-attributes />
+      <!-- Integration of VListAttributes component -->
+      <VListAttributes />
 
       <!-- Additional customization within the default slot -->
-      <v-list-table :rowClass="() => []">
-        <template #actions="{ item }">
-          <button class="btn btn-primary" @click="handleView">View</button>
+      <VListTable :rowClass="() => []">
+        <template #color="{ item }">
+          <div>
+            {{ item.color || "---" }}
+          </div>
         </template>
-      </v-list-table>
+
+        <template #actions="{ item }">
+          <button class="btn btn-primary">View</button>
+        </template>
+      </VListTable>
     </template>
-  </v-list>
+  </VList>
 </template>
 
 <script setup>
@@ -47,7 +53,7 @@ const state = reactive({
     { name: "color", rowClick: false },
     { name: "status" },
     { name: "name", sortable: true },
-    { name: "actions", rowClick: false },
+    { name: "actions", rowClick: true },
   ],
 });
 </script>
@@ -56,26 +62,6 @@ const state = reactive({
 /* Tabel Styling */
 table {
   width: 100%;
-  border: 1px solid #e5e7eb;
-}
-
-thead tr th {
-  font-size: 0.875rem;
-  border-bottom: 1px solid #e5e7eb;
-  color: #6b7280 !important;
-  padding-bottom: 0.5rem;
-  font-weight: 600;
-  padding: 0.5rem;
-  text-align: start;
-}
-
-tbody tr td {
-  padding: 0.5rem;
-  text-align: start;
-}
-
-tbody tr:hover {
-  background: #f8f9fa;
 }
 
 /* Button Styling */
@@ -105,6 +91,7 @@ tbody tr:hover {
   display: flex;
   align-items: center;
 }
+
 .v-list-attributes label input {
   margin-left: 5px;
 }
@@ -126,17 +113,10 @@ input[type="checkbox"] {
 You Can configure attrs as following:
 
 ```vue[app.vue]
-// In Setup script
-const state = reactive({
-  attrs: [
-    { name: "_index", label: "#", fix: true },
-    { name: "color",  width: "30%", },
-    { name: "status", type: "string", rowClick: false },
-    { name: "name", sortable: true },
-    { name: "actions", fix: true },
-  ],
-});
-
+// In Setup script const state = reactive({ attrs: [ { name: "_index", label:
+"#", fix: true }, { name: "color", width: "30%", }, { name: "status", type:
+"string", rowClick: false }, { name: "name", sortable: true }, { name:
+"actions", fix: true }, ], });
 ```
 
 **Attribute Configuration Properties:**

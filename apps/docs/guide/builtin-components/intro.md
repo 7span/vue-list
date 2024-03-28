@@ -2,6 +2,10 @@
 
 Vue List offers a set of ready-to-use components that serve as a higher-level layer of the library. These headless components simplify the integration of Vue List's core functionality into your project by providing basic configurations for common listing layouts. All these components seamlessly work within the `#default` slot of Vue List, allowing for easy customization and extension.
 
+> [!note] Note
+> `vue-list` is designed to be agnostic to the underlying data source technology.
+> It can work with various data providers like Axios, GraphQL, or Directus, allowing you to adapt it to your specific project needs.
+
 ## Features
 
 Vue List components offer almost all elements that needed to create listing layouts with the following features:
