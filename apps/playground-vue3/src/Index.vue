@@ -1,20 +1,22 @@
 <template>
-  <div>
-    <button @click="filters.tag++">TG</button>
+  <div id="app">
+    <div>
+      <p>Filters: {{ filters }}</p>
+      <p>Search: {{ search }}</p>
+      <input type="text" v-model="search" />
+    </div>
     <button @click="toggleSortOrder">Toggle Sort Order</button>
     <v-list
+      v-model:filters="filters"
       :per-page="18"
       :attrs="attrs"
-      endpoint="https://api.pagemaker.dev/api/v1/modules"
-      :filters="{ tag: filters.tag }"
+      endpoint="skills"
       :sort-by="sortBy"
       :sort-order="sortOrder"
       ref="list"
+      :search="search"
     >
       <template #default="{ selection, instance, loadingMore }">
-        <p>{{ selection }}</p>
-        <hr />
-
         <v-list-search />
         <v-list-table :rowClass="rowClass">
           <template #th_after="{ attr, sortBy, sortOrder }">
@@ -44,8 +46,9 @@
       </template>
     </v-list>
 
-    <button @click="filters.tag = 1">Tag 1</button>
-    <button @click="filters.tag = 2">Tag 2</button>
+    <button @click="$set(filters, 'tagId', 1)">Tag 1</button>
+    <button @click="$set(filters, 'tagId', 2)">Tag 2</button>
+    <button @click="clearState()">Clear State</button>
   </div>
 </template>
 
@@ -54,8 +57,9 @@ export default {
   data() {
     return {
       filters: {
-        tag: 1,
+        tagId: null,
       },
+      search: null,
       sortBy: "name",
       sortOrder: "desc",
       attrs: [
@@ -63,14 +67,18 @@ export default {
           name: "_index",
         },
         {
-          name: "select",
-        },
-        {
           name: "id",
           sortable: true,
         },
         {
+          name: "status",
+        },
+        {
           name: "name",
+          sortable: true,
+        },
+        {
+          name: "color",
         },
       ],
     };
@@ -87,6 +95,9 @@ export default {
     toggleSortOrder() {
       if (this.sortOrder === "asc") this.sortOrder = "desc";
       else this.sortOrder = "asc";
+    },
+    clearState() {
+      this.$refs.list.clearState();
     },
   },
 };

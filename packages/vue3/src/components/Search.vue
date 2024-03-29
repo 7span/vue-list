@@ -17,6 +17,7 @@ import child from "../mixins/child";
 
 export default {
   mixins: [child],
+  inject: ["setSearch"],
   props: {
     /**
      * Wait till this time to send an API request to avoid multiple requests when user is typing.
@@ -34,7 +35,7 @@ export default {
   },
   created() {
     this.set = debounce((value) => {
-      this.root.localSearch = value;
+      this.setSearch(value);
     }, this.debounceTime);
   },
 };
