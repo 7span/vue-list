@@ -8,5 +8,9 @@ export default {
     });
   },
   itemProps: {},
-  typeAdapters: {}
+  typeAdapters: {},
+  stateManager: {
+    set() {},
+    get() {},
+  },
 };

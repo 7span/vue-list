@@ -15,6 +15,7 @@
       :sort-order="sortOrder"
       ref="list"
       :search="search"
+      :request-payload="{ hehe: 'haha' }"
     >
       <template #default="{ selection, instance, loadingMore }">
         <v-list-search />

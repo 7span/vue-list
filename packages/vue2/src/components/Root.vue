@@ -17,6 +17,13 @@
       <!-- 
       @slot Loader to display when navigating to other page.
      -->
+      <slot v-if="loadingMore" name="loading-more" v-bind="scope">
+        <p>Loading More...</p>
+      </slot>
+
+      <!-- 
+      @slot Loader to display when navigating to other page.
+     -->
       <slot v-if="loadingPage" name="loading-page" v-bind="scope">
         <p>Loading Page...</p>
       </slot>
@@ -99,6 +106,7 @@ export default {
     },
 
     /**
+     * DO WE NEED THIS?
      * Additional parameters to pass when making an API request.
      * This prop does not have any local copy as it is just a forwarder.
      */
@@ -152,6 +160,14 @@ export default {
     attrsAdaptor: {
       type: Function,
       default: (data) => data,
+    },
+
+    /**
+     * Additional request payload while making requests.
+     * requestHandler will get this in the context with `payload` key
+     */
+    requestPayload: {
+      default: () => {},
     },
 
     /**
@@ -343,7 +359,7 @@ export default {
       };
     },
 
-    requestPayload() {
+    requestHandlerPayload() {
       return {
         params: this.params,
         filters: this.filters,
@@ -486,7 +502,7 @@ export default {
         newPage,
       });
 
-      this.getData(true);
+      this.getData();
     },
 
     setData(res) {
@@ -532,7 +548,7 @@ export default {
       }
     },
 
-    getData(payload) {
+    getData(payload = {}) {
       this.error = false;
       this.setLoader(true);
 
@@ -542,8 +558,11 @@ export default {
       handler({
         method: "get",
         endpoint: this.endpoint,
-        payload,
-        ...this.requestPayload,
+        payload: {
+          ...this.requestPayload,
+          ...payload,
+        },
+        ...this.requestHandlerPayload,
       })
         .then((res) => {
           this.response = res;
@@ -629,7 +648,7 @@ export default {
     setStateOnStateManager() {
       this.$vueList.options.stateManager.set(
         this.endpoint,
-        this.requestPayload
+        this.requestHandlerPayload
       );
     },
 
