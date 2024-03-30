@@ -348,16 +348,23 @@ export default {
         params: this.params,
         filters: this.filters,
         search: this.localSearch,
+        page: this.localPage,
+        perPage: this.localPerPage,
+        sortBy: this.localSortBy,
+        sortOrder: this.localSortOrder,
+        config: this.config,
+        attrSettings: this.attrSettings,
+
+        //To be deprecated in future
         pagination: {
           page: this.localPage,
           perPage: this.localPerPage,
         },
+        //To be deprecated in future
         sort: {
           by: this.localSortBy,
           order: this.localSortOrder,
         },
-        config: this.config,
-        attrSettings: this.attrSettings,
       };
     },
   },
@@ -450,8 +457,8 @@ export default {
       this.items = value;
     },
 
-    refresh() {
-      this.getData();
+    refresh(payload) {
+      this.getData(payload);
     },
 
     setPage(value) {
@@ -482,8 +489,8 @@ export default {
       this.getData(true);
     },
 
-    setData(res, appendData) {
-      if (appendData) {
+    setData(res) {
+      if (this.paginationMode == "infinite") {
         this.items = this.items.concat(res.items);
 
         /**
@@ -525,7 +532,7 @@ export default {
       }
     },
 
-    getData(appendData = false) {
+    getData(payload) {
       this.error = false;
       this.setLoader(true);
 
@@ -535,6 +542,7 @@ export default {
       handler({
         method: "get",
         endpoint: this.endpoint,
+        payload,
         ...this.requestPayload,
       })
         .then((res) => {
@@ -546,7 +554,7 @@ export default {
            */
           this.selection = [];
           this.$emit("res", res);
-          this.setData(res, appendData);
+          this.setData(res);
           this.setUrl();
           this.setLoader(false);
           this.serverPage = this.localPage;

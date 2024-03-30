@@ -49,6 +49,7 @@
     <button @click="$set(filters, 'tagId', 1)">Tag 1</button>
     <button @click="$set(filters, 'tagId', 2)">Tag 2</button>
     <button @click="clearState()">Clear State</button>
+    <button @click="$refs.list.refresh({ hi: 'hello' })">Refresh</button>
   </div>
 </template>
 
