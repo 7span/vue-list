@@ -9,12 +9,12 @@
      -->
     <slot
       name="select"
-      :change="change"
+      :change="setPage"
       :value="page"
       :options="options"
       :total="total"
     >
-      <select @input="change($event.target.value)" :value="page">
+      <select @input="setPage($event.target.value)" :value="page">
         <option v-for="(option, index) in options" :key="`option-${index}`">
           {{ option }}
         </option>
@@ -28,6 +28,8 @@ import child from "../mixins/child";
 
 export default {
   mixins: [child],
+  inject: ["setPage"],
+
   computed: {
     options() {
       const links = [];
@@ -51,12 +53,6 @@ export default {
 
     total() {
       return Math.ceil(this.count / this.perPage);
-    },
-  },
-
-  methods: {
-    change(number) {
-      this.root.changePage(number);
     },
   },
 };

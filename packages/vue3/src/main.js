@@ -17,19 +17,9 @@ const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions);
   const prefix = options.componentPrefix;
 
-  //Root Component
-  app.component(`${prefix}List`, {
-    data() {
-      return {
-        options,
-      };
-    },
-    provide: {
-      OPTIONS: options,
-    },
-    extends: Root,
-  });
+  app.config.globalProperties.$vueList = { options: options };
 
+  app.component(`${prefix}List`, Root);
   app.component(`${prefix}ListPagination`, Pagination);
   app.component(`${prefix}ListCounter`, Counter);
   app.component(`${prefix}ListPerPage`, PerPage);

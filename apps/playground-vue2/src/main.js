@@ -6,7 +6,8 @@ import router from "./router";
 
 Vue.config.productionTip = false;
 
-import plugin from "@7span/vue-list";
+import plugin from "@7span/vue-list/src/main";
+
 Vue.use(plugin, {
   stateManager: {
     set(endpoint, state) {
@@ -29,8 +30,18 @@ Vue.use(plugin, {
   },
 
   async requestHandler(requestData) {
-    const { endpoint, pagination, search, sort, filters } = requestData;
-    const { page, perPage } = pagination;
+    console.log({ requestData });
+    const {
+      endpoint,
+      search,
+      sort,
+      filters,
+      payload,
+      perPage,
+      page,
+      sortBy,
+      sortOrder,
+    } = requestData;
 
     //DIRECTUS COUNT
     const count = await axios
