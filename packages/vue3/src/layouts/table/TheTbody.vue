@@ -9,7 +9,9 @@
     item-key="name"
     tag="tbody"
   >
-    <slot name="body-start" />
+    <template #header>
+      <slot name="body-start" />
+    </template>
     <template #item="{ element, index }">
       <tr
         :class="[
@@ -20,7 +22,9 @@
         <slot name="body-row" :row="element" :rowIndex="index" />
       </tr>
     </template>
-    <slot name="body-end" />
+    <template #footer>
+      <slot name="body-end" />
+    </template>
   </Draggable>
 
   <template v-else>

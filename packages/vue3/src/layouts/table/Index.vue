@@ -41,6 +41,9 @@
       :is-selected="isSelected"
       :row-class="rowClass"
     >
+      <template #body-start>
+        <slot name="body-start" />
+      </template>
       <template #body-row="{ row, rowIndex }">
         <template v-for="(attr, colIndex) in body">
           <td
@@ -93,6 +96,10 @@
             </slot>
           </td>
         </template>
+      </template>
+
+      <template #body-end>
+        <slot name="body-end" />
       </template>
     </TheTbody>
   </table>
