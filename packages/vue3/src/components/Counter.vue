@@ -21,7 +21,7 @@ export default {
   mixins: [child],
   computed: {
     items() {
-      return this.root.localItems || [];
+      return this.root.items || [];
     },
 
     showing() {

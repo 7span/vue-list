@@ -8,8 +8,8 @@
       @binding {string} options.label A label to display for an option.
       @binding {int} options.value A value to set for an option.
      -->
-    <slot :value="perPage" :change="change" :options="serializedOptions">
-      <select :value="perPage" @input="change($event.target.value)">
+    <slot :value="perPage" :change="setPerPage" :options="serializedOptions">
+      <select :value="perPage" @input="setPerPage($event.target.value)">
         <option
           v-for="(option, index) in serializedOptions"
           :key="`option-${index}`"
@@ -27,10 +27,11 @@ import child from "../mixins/child";
 
 export default {
   mixins: [child],
+  inject: ["setPerPage"],
   props: {
     /**
      * An array of options which lets user select how many items they want to see in a list at a time.
-     * Provide an object with 'label' and 'value' keys to have a label diffrent then a value.
+     * Provide an object with 'label' and 'value' keys to have a label different then a value.
      */
     options: {
       type: Array,
@@ -53,11 +54,6 @@ export default {
           return item;
         }
       });
-    },
-  },
-  methods: {
-    change(value) {
-      this.root.changePerPage(value);
     },
   },
 };

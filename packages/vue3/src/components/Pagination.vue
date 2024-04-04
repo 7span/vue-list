@@ -20,9 +20,14 @@
       @binding {int} value Page number a button presents.
       @binding {boolean} isActive If a button is presenting a current page.
      -->
-      <slot name="page" :change="change" :value="item" :isActive="item == page">
+      <slot
+        name="page"
+        :change="setPage"
+        :value="item"
+        :isActive="item == page"
+      >
         <span v-if="item == page" :key="`page-${item}`">{{ item }}</span>
-        <button v-else :key="`page-${item}`" @click="change(item)">
+        <button v-else :key="`page-${item}`" @click="setPage(item)">
           {{ item }}
         </button>
       </slot>
@@ -64,8 +69,10 @@ export default {
     },
   },
 
+  inject: ["setPaginationMode", "setPage"],
+
   created() {
-    this.root.set("paginationMode", "paging");
+    this.setPaginationMode("paging");
   },
 
   computed: {
@@ -115,19 +122,16 @@ export default {
 
   methods: {
     prev() {
-      this.change(this.page - 1);
+      this.setPage(this.page - 1);
     },
     next() {
-      this.change(this.page + 1);
+      this.setPage(this.page + 1);
     },
     first() {
-      this.change(1);
+      this.setPage(1);
     },
     last() {
-      this.change(this.total);
-    },
-    change(number) {
-      this.root.changePage(number);
+      this.setPage(this.total);
     },
   },
 };
