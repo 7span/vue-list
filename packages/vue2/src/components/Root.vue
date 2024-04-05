@@ -629,6 +629,9 @@ export default {
      * @param {value} string A value to set
      */
     updateAttr(name, prop, value) {
+      if (!this.attrSettings[name]) {
+        this.$set(this.attrSettings, name, {});
+      }
       this.$set(this.attrSettings[name], prop, value);
       this.setStateOnStateManager();
     },

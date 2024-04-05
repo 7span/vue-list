@@ -1,6 +1,6 @@
 import "./tailwind.postcss";
 import "./custom.css";
-import VueList from "@7span/vue-list";
+import VueList from "@7span/vue-list/src/main.js";
 import DefaultTheme from "vitepress/theme";
 import axios from "axios";
 import qs from "qs";
@@ -11,6 +11,25 @@ export default {
   enhanceApp({ app }) {
     app.component("Draggable", Draggable);
     app.use(VueList, {
+      stateManager: {
+        set(endpoint, state) {
+          const key = `vue-list--${endpoint}`;
+          localStorage.setItem(key, JSON.stringify(state));
+        },
+
+        get(endpoint) {
+          const key = `vue-list--${endpoint}`;
+          try {
+            if (localStorage.getItem(key)) {
+              return JSON.parse(localStorage.getItem(key));
+            } else {
+              return null;
+            }
+          } catch {
+            return null;
+          }
+        },
+      },
       async requestHandler(requestData) {
         {
           const { endpoint, pagination, search, sort, filters } = requestData;

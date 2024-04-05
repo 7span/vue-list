@@ -378,7 +378,6 @@ export default {
     getState() {
       try {
         const oldState = this.$vueList.options.stateManager.get(this.endpoint);
-        console.log({ oldState });
         return {
           page: oldState?.pagination?.page || this.page,
           perPage: oldState?.pagination?.perPage || this.perPage,
@@ -596,6 +595,9 @@ export default {
      * @param {value} string A value to set
      */
     updateAttr(name, prop, value) {
+      if (!this.attrSettings[name]) {
+        this.attrSettings[name] = {};
+      }
       this.attrSettings[name][prop] = value;
       this.setStateOnStateManager();
     },

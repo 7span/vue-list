@@ -46,13 +46,11 @@
         <slot name="body-start" />
       </template>
       <template #body-row="{ row, rowIndex }">
-        <template v-for="(attr, colIndex) in body">
-          <td
-            v-if="attr.visible"
-            :key="key('body-col', colIndex)"
-            :class="tdClass(attr)"
-            @click="tdClick(attr, row)"
-          >
+        <template
+          v-for="(attr, colIndex) in body"
+          :key="key('body-col', colIndex)"
+        >
+          <td :class="tdClass(attr)" @click="tdClick(attr, row)">
             <!-- Override Slot -->
             <slot
               v-if="$slots[attr.name]"

@@ -7,11 +7,7 @@
     sort-order="asc"
   >
     <template #default>
-      <VListTable
-        :rowClass="() => []"
-        class="vpr-table vpr-table--row-click"
-        reorder
-      >
+      <VListTable :rowClass="() => []" reorder>
         <template #th_after="{ attr, sortBy, sortOrder }">
           <div v-if="attr.name == sortBy">
             <span v-if="sortOrder == 'asc'">
