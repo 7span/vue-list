@@ -30,7 +30,6 @@ Vue.use(plugin, {
   },
 
   async requestHandler(requestData) {
-    console.log({ requestData });
     const {
       endpoint,
       search,
