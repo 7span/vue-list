@@ -507,7 +507,7 @@ export default {
 
     setData(res) {
       if (this.paginationMode == "infinite") {
-        this.items = this.items.concat(res.items);
+        this.items = (this.items || []).concat(res.items);
 
         /**
          * @property {object} res - Response received from an API
@@ -629,6 +629,9 @@ export default {
      * @param {value} string A value to set
      */
     updateAttr(name, prop, value) {
+      if (!this.attrSettings[name]) {
+        this.$set(this.attrSettings, name, {});
+      }
       this.$set(this.attrSettings[name], prop, value);
       this.setStateOnStateManager();
     },
