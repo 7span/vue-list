@@ -507,7 +507,7 @@ export default {
 
     setData(res) {
       if (this.paginationMode == "infinite") {
-        this.items = this.items.concat(res.items);
+        this.items = (this.items || []).concat(res.items);
 
         /**
          * @property {object} res - Response received from an API
