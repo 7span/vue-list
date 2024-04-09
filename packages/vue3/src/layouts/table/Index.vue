@@ -38,7 +38,7 @@
 
     <TheTbody
       :reorder="reorder"
-      :rows="rows"
+      v-model="rows"
       :is-selected="isSelected"
       :row-class="rowClass"
     >

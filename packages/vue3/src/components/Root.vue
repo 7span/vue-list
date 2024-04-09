@@ -600,21 +600,6 @@ export default {
       }
     },
 
-    sort(e) {
-      const context = {
-        items: e,
-        endpoint: this.endpoint,
-        params: this.params,
-      };
-      //If sort listner is provided, use it
-      //Else execute the global callback
-      if (this.$attrs.sort) {
-        this.$emit("sort", context);
-      } else if (this.$vueList.options.sort) {
-        this.$vueList.options.sort(context);
-      }
-    },
-
     /**
      * Update the config of an attribute
      *

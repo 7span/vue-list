@@ -6,6 +6,7 @@ import router from "./router";
 import gql from "graphql-tag";
 import plugin from "@7span/vue-list/src/main";
 import { ApolloClient, InMemoryCache } from "@apollo/client/core";
+import Draggable from "vuedraggable";
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
@@ -13,6 +14,7 @@ const apolloClient = new ApolloClient({
 });
 
 const app = createApp(App);
+app.component("Draggable", Draggable);
 app.use(router);
 
 app.config.productionTip = false;
@@ -63,7 +65,6 @@ app.use(plugin, {
         },
       })
       .then(({ data }) => {
-        console.log(data);
         return {
           items: data.characters.results,
           count: data.characters.results.length,

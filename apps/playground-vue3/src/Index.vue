@@ -21,13 +21,14 @@
       ref="list"
       :search="search"
       :request-payload="{ query: query }"
+      @sort="onSort"
     >
       <template #default="{ selection, instance, loadingMore }">
         <div class="header">
           <v-list-search />
           <v-list-attributes />
         </div>
-        <v-list-table :rowClass="rowClass">
+        <v-list-table :rowClass="rowClass" reorder>
           <template #th_after="{ attr, sortBy, sortOrder }">
             <div v-if="attr.name == sortBy" style="margin-left: 2px">
               <span v-if="sortOrder == 'asc'">⬆️</span>
@@ -40,6 +41,9 @@
           <template #select="{ toggleSelect, isSelected }">
             <button v-if="isSelected" @click="toggleSelect()">Selected</button>
             <button v-else @click="toggleSelect()">Select</button>
+          </template>
+          <template #_drag>
+            <p class="v-list-table__drag cursor-grab">Drag</p>
           </template>
         </v-list-table>
 
@@ -108,10 +112,17 @@ export default {
         {
           name: "color",
         },
+        {
+          name: "_drag",
+          label: "Drag",
+        },
       ],
     };
   },
   methods: {
+    onSort(data) {
+      console.log("ON SORT", data);
+    },
     rowClass(row, rowIndex) {
       return [
         {

@@ -18,7 +18,8 @@
     "graphql-tag": "^2.12.6",
     "lodash-es": "^4.17.21",
     "qs": "^6.11.1",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-graphql": "^2.0.4",
