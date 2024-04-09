@@ -608,7 +608,7 @@ export default {
       };
       //If sort listner is provided, use it
       //Else execute the global callback
-      if (this.$listeners.sort) {
+      if (this.$attrs.sort) {
         this.$emit("sort", context);
       } else if (this.$vueList.options.sort) {
         this.$vueList.options.sort(context);
