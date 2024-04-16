@@ -5,7 +5,7 @@
   <Draggable
     v-if="reorder"
     handle=".v-list-table__drag"
-    v-model="rowsData"
+    v-model="value"
     item-key="name"
     tag="tbody"
   >
@@ -51,7 +51,7 @@ import { key } from "../../utils";
 export default {
   inject: ["reorder"],
   props: {
-    rows: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -64,10 +64,19 @@ export default {
       default: () => null,
     },
   },
+  computed: {
+    value: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit("update:modelValue", value);
+      },
+    },
+  },
   data() {
     return {
       key,
-      rowsData: this.rows,
     };
   },
 };
