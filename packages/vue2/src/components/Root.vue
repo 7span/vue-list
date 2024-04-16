@@ -258,6 +258,21 @@ export default {
 
       updateAttr: this.updateAttr,
       loadMore: this.loadMore,
+      attrs: this.serializedAttrs,
+
+      // https://v2.vuejs.org/v2/api/#provide-inject
+      // Provide Injects are not reactive
+      attrSettings: () => this.attrSettings,
+      items: () => this.items || [],
+      count: () => this.count,
+      localSortBy: () => this.localSortBy,
+      localSortOrder: () => this.localSortOrder,
+      localPage: () => this.localPage,
+      localPerPage: () => this.localPerPage,
+      loadingMore: () => this.loadingMore,
+      localSearch: () => this.localSearch,
+      selection: () => this.selection,
+      serverPage: () => this.serverPage,
     };
   },
 
@@ -326,10 +341,6 @@ export default {
       return Object.assign({}, this.filters);
     },
 
-    instance() {
-      return this;
-    },
-
     /**
      * When attrs is provided in props, the same attr.name is used to find column value from response.
      * If the attrs is not provided, we can get first item of response and get keys from there as fallback.
@@ -353,7 +364,6 @@ export default {
         isEmpty: this.isEmpty,
         refresh: this.refresh,
         selection: this.selection,
-        instance: this.instance,
         loadingPage: this.loadingPage,
         loadingMore: this.loadingMore,
       };
@@ -514,7 +524,7 @@ export default {
          */
         this.$emit("afterLoadMore", res);
       } else {
-        this.items = res.items;
+        this.$set(this, "items", res.items);
 
         /**
          * @property {object} res - Response received from an API

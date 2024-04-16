@@ -110,11 +110,9 @@
 
 <script>
 import { cloneDeep } from "lodash-es";
-import layout from "../../mixins/layout";
 import { key } from "../../utils";
 
 export default {
-  mixins: [layout],
   props: {
     reorder: {
       type: Boolean,
@@ -125,7 +123,19 @@ export default {
     },
   },
 
-  inject: ["setSelection", "setItems"],
+  inject: [
+    "setSelection",
+    "setItems",
+    "selection",
+    "setSort",
+    "items",
+    "attrs",
+    "attrSettings",
+    "localSortBy",
+    "localSortOrder",
+    "localPerPage",
+    "serverPage",
+  ],
 
   data() {
     return {
@@ -136,7 +146,7 @@ export default {
   },
 
   watch: {
-    attrSettings: {
+    _attrSettings: {
       deep: true,
       handler(newValue) {
         this.$set(this, "headers", []);
@@ -147,23 +157,39 @@ export default {
   },
 
   created() {
-    this.generateHeader(this.attrs, this.attrSettings, 0);
+    this.generateHeader(this.attrs, this._attrSettings, 0);
   },
 
   computed: {
+    _attrSettings() {
+      return this.attrSettings();
+    },
+
+    sortBy() {
+      return this.localSortBy();
+    },
+
+    sortOrder() {
+      return this.localSortOrder();
+    },
+
+    _selection() {
+      return this.selection();
+    },
+
     rows: {
       set(value) {
         this.$emit("reorder", value);
         this.setItems(value);
       },
       get() {
-        return cloneDeep(this.items);
+        return cloneDeep(this.items());
       },
     },
     selectionState() {
-      if (this.root.selection.length === this.rows.length) {
+      if (this._selection.length === this.rows.length) {
         return "all";
-      } else if (this.root.selection.length === 0) {
+      } else if (this._selection.length === 0) {
         return "none";
       } else {
         return "some";
@@ -312,7 +338,7 @@ export default {
     },
 
     toggleSelect(row) {
-      const selectedRows = [...this.root.selection];
+      const selectedRows = [...this._selection];
       const index = selectedRows.findIndex((item) => item.id === row.id);
       if (index > -1) {
         this.$delete(selectedRows, index);
@@ -324,7 +350,7 @@ export default {
     },
 
     isSelected(row) {
-      const selectedRows = [...this.root.selection];
+      const selectedRows = [...this._selection];
       const index = selectedRows.findIndex((item) => item.id === row.id);
       return index > -1;
     },
@@ -343,6 +369,20 @@ export default {
         default:
           break;
       }
+    },
+
+    sortItemsBy(by) {
+      let order;
+      if (this.sortOrder == "asc") {
+        order = "desc";
+      } else {
+        order = "asc";
+      }
+      this.setSort({ by: by.name, order });
+    },
+
+    itemIndex(index) {
+      return this.localPerPage() * (this.serverPage() - 1) + index + 1;
     },
   },
 };
