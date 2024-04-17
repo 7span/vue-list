@@ -27,7 +27,6 @@ Let's begin by setting up the plugin object. In your `main.js` or main entry fil
 ::: code-group
 
 ```js [main.js]
-// main.js
 import { createApp } from "vue";
 import "./style.css";
 import App from "./App.vue";
