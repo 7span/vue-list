@@ -238,7 +238,14 @@ export default {
   mounted() {
     this.setDefaultAttrSettings();
     const { filters } = this.getState();
-    this.$emit("update:filters", filters);
+
+    /**
+     * Emit filters only when there is an old state.
+     * If we don't check this, filters object will be overridden in the parent component.
+     */
+    if (filters) {
+      this.$emit("update:filters", filters);
+    }
 
     this.$nextTick(() => {
       this.init();
