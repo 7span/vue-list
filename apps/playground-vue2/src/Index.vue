@@ -12,7 +12,7 @@
       </div>
     </div>
     <v-list
-      :per-page="18"
+      :per-page="10"
       :attrs="attrs"
       endpoint="skills"
       :filters.sync="filters"
@@ -20,7 +20,8 @@
       :sort-order="sortOrder"
       ref="list"
       :search="search"
-      :request-payload="{ hehe: 'haha' }"
+      :request-payload="{ hehe: 'haha', version: 2 }"
+      :version="5"
     >
       <template #default="{ selection, instance, loadingMore }">
         <div class="header">
@@ -135,6 +136,9 @@ export default {
     };
   },
   methods: {
+    refresh() {
+      this.$refs.list.refresh({ hello: "hahhahahah" });
+    },
     rowClass(row, rowIndex) {
       return [
         {

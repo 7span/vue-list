@@ -8,15 +8,29 @@ Vue.config.productionTip = false;
 
 import plugin from "@7span/vue-list/src/main";
 
+function stateManagerKey(endpoint, state) {
+  return `vue-list--${endpoint}--${state?.version}`;
+}
+
 Vue.use(plugin, {
   stateManager: {
+    init(endpoint, state) {
+      const allKeys = `vue-list--${endpoint}--`;
+      const latestKey = stateManagerKey(endpoint, state);
+      const staleKeys = Object.keys(localStorage).filter(
+        (key) => key.startsWith(allKeys) && key != latestKey
+      );
+      staleKeys.forEach((key) => localStorage.removeItem(key));
+    },
+
     set(endpoint, state) {
-      const key = `vue-list--${endpoint}`;
+      const key = stateManagerKey(endpoint, state);
       localStorage.setItem(key, JSON.stringify(state));
     },
 
-    get(endpoint) {
-      const key = `vue-list--${endpoint}`;
+    get(endpoint, state) {
+      console.log({ state });
+      const key = stateManagerKey(endpoint, state);
       try {
         if (localStorage.getItem(key)) {
           return JSON.parse(localStorage.getItem(key));
