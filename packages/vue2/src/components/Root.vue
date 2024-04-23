@@ -32,10 +32,17 @@
       @slot If there was an error from an API
       @binding {object} error An errror returned from API
      -->
-      <slot v-if="error" name="error" :error="error" v-bind="scope">
+      <slot
+        v-if="error"
+        name="error"
+        :error="error"
+        v-bind="scope"
+        :clearState="clearState"
+      >
         <div>
           <p>There was an error while processing your request.</p>
           <p>{{ error }}</p>
+          <button @click="clearState">Reset Filters & State</button>
         </div>
       </slot>
 
@@ -79,11 +86,6 @@ export default {
      * An API endpoint to hit for getting data.
      */
     endpoint: String,
-
-    /**
-     * Static Config which will be passed to handler
-     */
-    config: Object,
 
     /**
      * Default page to load.
@@ -178,6 +180,14 @@ export default {
     requestHandler: {
       type: Function,
     },
+
+    /**
+     * Version is being used for stateManager
+     */
+    version: {
+      type: [String, Number],
+      default: 1,
+    },
   },
 
   data() {
@@ -229,21 +239,12 @@ export default {
     };
   },
 
-  created() {},
-
   /**
    * Once all the child components are ready and provided a proper state like "paginationMode"
    * call initialization of table.
    */
   mounted() {
-    this.setDefaultAttrSettings();
-    const { filters } = this.getState();
-    this.$emit("update:filters", filters);
-
-    this.$nextTick(() => {
-      this.init();
-      this.initializingState = false;
-    });
+    this.init();
   },
 
   provide() {
@@ -258,6 +259,21 @@ export default {
 
       updateAttr: this.updateAttr,
       loadMore: this.loadMore,
+      attrs: this.serializedAttrs,
+
+      // https://v2.vuejs.org/v2/api/#provide-inject
+      // Provide Injects are not reactive
+      attrSettings: () => this.attrSettings,
+      items: () => this.items || [],
+      count: () => this.count,
+      localSortBy: () => this.localSortBy,
+      localSortOrder: () => this.localSortOrder,
+      localPage: () => this.localPage,
+      localPerPage: () => this.localPerPage,
+      loadingMore: () => this.loadingMore,
+      localSearch: () => this.localSearch,
+      selection: () => this.selection,
+      serverPage: () => this.serverPage,
     };
   },
 
@@ -298,7 +314,7 @@ export default {
     },
 
     sortOrder(newValue) {
-      this.setSort({ by: this.localSortOrder, order: newValue });
+      this.setSort({ by: this.localSortBy, order: newValue });
     },
 
     selection: {
@@ -326,10 +342,6 @@ export default {
       return Object.assign({}, this.filters);
     },
 
-    instance() {
-      return this;
-    },
-
     /**
      * When attrs is provided in props, the same attr.name is used to find column value from response.
      * If the attrs is not provided, we can get first item of response and get keys from there as fallback.
@@ -353,7 +365,6 @@ export default {
         isEmpty: this.isEmpty,
         refresh: this.refresh,
         selection: this.selection,
-        instance: this.instance,
         loadingPage: this.loadingPage,
         loadingMore: this.loadingMore,
       };
@@ -368,8 +379,9 @@ export default {
         perPage: this.localPerPage,
         sortBy: this.localSortBy,
         sortOrder: this.localSortOrder,
-        config: this.config,
+        requestPayload: this.requestPayload,
         attrSettings: this.attrSettings,
+        version: this.version,
 
         //To be deprecated in future
         pagination: {
@@ -389,30 +401,57 @@ export default {
     init() {
       if (!this.endpoint) return;
 
-      const page = this.localPage || this.$route?.query?.page || this.page;
-      // Validate if page number is valid
-      // if invalid, just replace the query param and watcher will take care of request.
-      if (page < 1) {
-        const existingQueryParams = this.$route.query || {};
-        this.$router.replace({
-          query: {
-            ...existingQueryParams,
-            page: undefined,
-          },
-        });
-      } else {
-        this.setPage(page);
+      /**
+       * Init stateManager
+       * can be used to cleanup stale states
+       */
+      this.$vueList.options.stateManager.init(this.endpoint, {
+        requestPayload: this.requestPayload,
+        version: this.version,
+      });
+
+      this.setDefaultAttrSettings();
+      const { filters } = this.getState();
+
+      /**
+       * Emit filters only when there is an old state.
+       * If we don't check this, filters object will be overridden in the parent component.
+       */
+      if (filters) {
+        this.$emit("update:filters", filters);
       }
+
+      this.$nextTick(() => {
+        const page = this.localPage || this.$route?.query?.page || this.page;
+        // Validate if page number is valid
+        // if invalid, just replace the query param and watcher will take care of request.
+        if (page < 1) {
+          const existingQueryParams = this.$route.query || {};
+          this.$router.replace({
+            query: {
+              ...existingQueryParams,
+              page: undefined,
+            },
+          });
+        } else {
+          this.setPage(page);
+        }
+
+        this.initializingState = false;
+      });
     },
 
     getState() {
       try {
-        const oldState = this.$vueList.options.stateManager.get(this.endpoint);
+        const oldState = this.$vueList.options.stateManager.get(this.endpoint, {
+          requestPayload: this.requestPayload,
+          version: this.version,
+        });
         return {
           page: oldState?.pagination?.page || this.page,
           perPage: oldState?.pagination?.perPage || this.perPage,
-          sortBy: oldState?.sort.by || this.sortBy,
-          sortOrder: oldState?.sort.order || this.sortOrder,
+          sortBy: oldState?.sort?.by || this.sortBy,
+          sortOrder: oldState?.sort?.order || this.sortOrder,
           search: oldState?.search || this.search,
           attrSettings: oldState?.attrSettings,
           filters: oldState?.filters,
@@ -514,7 +553,7 @@ export default {
          */
         this.$emit("afterLoadMore", res);
       } else {
-        this.items = res.items;
+        this.$set(this, "items", res.items);
 
         /**
          * @property {object} res - Response received from an API
@@ -548,7 +587,7 @@ export default {
       }
     },
 
-    getData(payload = {}) {
+    getData(overridePayload = {}) {
       this.error = false;
       this.setLoader(true);
 
@@ -556,13 +595,9 @@ export default {
         this.requestHandler || this.$vueList.options.requestHandler;
 
       handler({
-        method: "get",
         endpoint: this.endpoint,
-        payload: {
-          ...this.requestPayload,
-          ...payload,
-        },
         ...this.requestHandlerPayload,
+        ...overridePayload,
       })
         .then((res) => {
           this.response = res;
@@ -641,7 +676,7 @@ export default {
     },
 
     clearState() {
-      this.$vueList.options.stateManager.set(this.endpoint);
+      this.$vueList.options.stateManager.set(this.endpoint, {});
     },
   },
 };

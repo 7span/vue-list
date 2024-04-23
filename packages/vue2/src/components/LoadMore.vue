@@ -5,7 +5,7 @@
       @binding {function} loadMore A function to call to load more items
       @binding {boolean} loading true when loadMore is called and waiting for API response.
      -->
-    <slot v-if="count > loaded" :loading="loadingMore" :loadMore="loadMore">
+    <slot v-if="count() > loaded" :loading="_loadingMore" :loadMore="loadMore">
       <button @click="loadMore">Load More</button>
     </slot>
 
@@ -19,32 +19,25 @@
 </template>
 
 <script>
-import child from "../mixins/child";
-
 /**
  * Provides infinite list where users can click on Load more and new items from
  * API will be appended in a list keeping previous items as it is.
 
  */
 export default {
-  mixins: [child],
-  inject: ["setPaginationMode", "loadMore"],
+  inject: ["setPaginationMode", "loadMore", "loadingMore", "items", "count"],
 
   created() {
     this.setPaginationMode("infinite");
   },
 
   computed: {
-    loadingMore() {
-      return this.root.loadingMore;
+    _loadingMore() {
+      return this.loadingMore();
     },
 
     loaded() {
-      return this.root.items?.length;
-    },
-
-    count() {
-      return this.root.count;
+      return (this.items() || []).length;
     },
   },
 };

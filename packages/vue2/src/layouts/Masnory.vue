@@ -19,11 +19,8 @@
 </template>
 
 <script>
-import layout from "../layout";
-
 export default {
   name: "layout-masnory",
-  mixins: [layout],
   data() {
     return {
       screenWidth: null,

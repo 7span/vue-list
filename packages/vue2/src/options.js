@@ -12,5 +12,6 @@ export default {
   stateManager: {
     set() {},
     get() {},
+    init() {},
   },
 };

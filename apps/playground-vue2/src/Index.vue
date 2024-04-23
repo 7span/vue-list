@@ -12,7 +12,7 @@
       </div>
     </div>
     <v-list
-      :per-page="18"
+      :per-page="10"
       :attrs="attrs"
       endpoint="skills"
       :filters.sync="filters"
@@ -20,12 +20,34 @@
       :sort-order="sortOrder"
       ref="list"
       :search="search"
-      :request-payload="{ hehe: 'haha' }"
+      :request-payload="{ hehe: 'haha', version: 2 }"
+      :version="5"
     >
       <template #default="{ selection, instance, loadingMore }">
         <div class="header">
           <v-list-search />
-          <v-list-attributes />
+
+          <!-- DEFAULT -->
+          <v-list-attributes> </v-list-attributes>
+
+          <!-- DEFAULT SLOT -->
+          <!-- <v-list-attributes>
+            <template #default="{attrs,settings,update}">
+              <p>{{ attrs }}</p>
+            </template>
+          </v-list-attributes> -->
+
+          <!-- ATTR SLOT -->
+          <!-- <v-list-attributes>
+            <template #attr="{attr,settings,update}">
+              <div>
+                <p>{{ attr }}</p>
+                <button @click="update('visible', !settings.visible)">
+                  {{ settings.visible }}
+                </button>
+              </div>
+            </template>
+          </v-list-attributes> -->
         </div>
         <v-list-table :rowClass="rowClass">
           <template #th_after="{ attr, sortBy, sortOrder }">
@@ -44,7 +66,9 @@
         </v-list-table>
 
         <div class="footer">
-          <v-list-counter />
+          <div>
+            <v-list-counter />
+          </div>
 
           <!--
             Use the following component to "enable" pagination.
@@ -89,6 +113,9 @@ export default {
       sortOrder: "desc",
       attrs: [
         {
+          name: "select",
+        },
+        {
           name: "_index",
         },
         {
@@ -109,6 +136,9 @@ export default {
     };
   },
   methods: {
+    refresh() {
+      this.$refs.list.refresh({ hello: "hahhahahah" });
+    },
     rowClass(row, rowIndex) {
       return [
         {
@@ -129,6 +159,10 @@ export default {
 </script>
 
 <style>
+body {
+  font-family: sans-serif;
+}
+
 .header {
   display: flex;
   justify-content: space-between;

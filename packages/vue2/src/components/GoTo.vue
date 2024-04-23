@@ -24,11 +24,8 @@
 </template>
 
 <script>
-import child from "../mixins/child";
-
 export default {
-  mixins: [child],
-  inject: ["setPage"],
+  inject: ["setPage", "localPage", "localPerPage", "count"],
 
   computed: {
     options() {
@@ -40,19 +37,11 @@ export default {
     },
 
     page() {
-      return this.root.localPage;
-    },
-
-    perPage() {
-      return this.root.localPerPage;
-    },
-
-    count() {
-      return this.root.count;
+      return this.localPage();
     },
 
     total() {
-      return Math.ceil(this.count / this.perPage);
+      return Math.ceil(this.count() / this.localPerPage());
     },
   },
 };
