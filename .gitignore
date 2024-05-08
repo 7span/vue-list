@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+/apps/docs/.vitepress/dist
+/packages/vue2/dist
 
 /tests/e2e/reports/
 selenium-debug.log
