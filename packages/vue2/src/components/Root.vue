@@ -422,7 +422,8 @@ export default {
       }
 
       this.$nextTick(() => {
-        const page = this.localPage || this.$route?.query?.page || this.page;
+        const page =
+          this.localPage || Number(this.$route?.query?.page) || this.page;
         // Validate if page number is valid
         // if invalid, just replace the query param and watcher will take care of request.
         if (page < 1) {
