@@ -192,14 +192,8 @@ export default {
 
   data() {
     const previousState = this.getState();
-    const {
-      page,
-      perPage,
-      sortBy,
-      sortOrder,
-      search,
-      attrSettings,
-    } = previousState;
+    const { page, perPage, sortBy, sortOrder, search, attrSettings } =
+      previousState;
 
     return {
       /**
@@ -327,8 +321,8 @@ export default {
     "$route.query.page"(newValue) {
       if (!newValue) {
         this.setPage(1);
-      } else if (this.localPage != newValue) {
-        this.setPage(newValue);
+      } else if (this.localPage !== Number(newValue)) {
+        this.setPage(Number(newValue));
       }
     },
   },
