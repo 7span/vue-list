@@ -306,7 +306,7 @@ export default {
       if (!newValue) {
         this.setPage(1);
       } else if (this.localPage != newValue) {
-        this.setPage(newValue);
+        this.setPage(Number(newValue));
       }
     },
   },

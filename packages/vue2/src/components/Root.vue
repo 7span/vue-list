@@ -192,14 +192,8 @@ export default {
 
   data() {
     const previousState = this.getState();
-    const {
-      page,
-      perPage,
-      sortBy,
-      sortOrder,
-      search,
-      attrSettings,
-    } = previousState;
+    const { page, perPage, sortBy, sortOrder, search, attrSettings } =
+      previousState;
 
     return {
       /**
@@ -328,7 +322,7 @@ export default {
       if (!newValue) {
         this.setPage(1);
       } else if (this.localPage != newValue) {
-        this.setPage(newValue);
+        this.setPage(Number(newValue));
       }
     },
   },
