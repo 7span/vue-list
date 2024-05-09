@@ -321,7 +321,7 @@ export default {
     "$route.query.page"(newValue) {
       if (!newValue) {
         this.setPage(1);
-      } else if (this.localPage != newValue) {
+      } else if (this.localPage !== Number(newValue)) {
         this.setPage(Number(newValue));
       }
     },
