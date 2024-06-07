@@ -12,7 +12,7 @@
       </div>
     </div>
     <v-list
-      :per-page="10"
+      :per-page="5"
       :attrs="attrs"
       endpoint="skills"
       :filters.sync="filters"
@@ -49,7 +49,7 @@
             </template>
           </v-list-attributes> -->
         </div>
-        <v-list-table :rowClass="rowClass">
+        <v-list-table>
           <template #th_after="{ attr, sortBy, sortOrder }">
             <div v-if="attr.name == sortBy" style="margin-left: 2px">
               <span v-if="sortOrder == 'asc'">⬆️</span>
@@ -74,7 +74,7 @@
             Use the following component to "enable" pagination.
             This will allow navigating through multiple pages of the list.
           -->
-          <v-list-pagination />
+          <!-- <v-list-pagination /> -->
 
           <!-- OR -->
 
@@ -82,7 +82,7 @@
             Use the following component to "load more" functionality.
             This will dynamically load additional items in the list.
           -->
-          <!-- <v-list-load-more /> -->
+          <v-list-load-more />
 
           <div>Go To: <v-list-go-to /></div>
           <div>Per Page: <v-list-per-page :parent="instance" /></div>

@@ -4,7 +4,7 @@
       <tr
         v-for="(row, rowIndex) in headers"
         :key="key('head-row', rowIndex)"
-        :class="[...rowClass(row, rowIndex)]"
+        :class="rowClass ? rowClass(row, rowIndex) : ''"
       >
         <template
           v-for="(col, colIndex) in row"

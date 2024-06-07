@@ -192,8 +192,14 @@ export default {
 
   data() {
     const previousState = this.getState();
-    const { page, perPage, sortBy, sortOrder, search, attrSettings } =
-      previousState;
+    const {
+      page,
+      perPage,
+      sortBy,
+      sortOrder,
+      search,
+      attrSettings,
+    } = previousState;
 
     return {
       /**
@@ -268,6 +274,7 @@ export default {
       localSearch: () => this.localSearch,
       selection: () => this.selection,
       serverPage: () => this.serverPage,
+      paginationMode: () => this.paginationMode,
     };
   },
 
@@ -541,7 +548,11 @@ export default {
 
     setData(res) {
       if (this.paginationMode == "infinite") {
-        this.items = (this.items || []).concat(res.items);
+        if (this.localPage == 1) {
+          this.items = res.items;
+        } else {
+          this.items = (this.items || []).concat(res.items);
+        }
 
         /**
          * @property {object} res - Response received from an API
@@ -664,10 +675,20 @@ export default {
     },
 
     setStateOnStateManager() {
-      this.$vueList.options.stateManager.set(
-        this.endpoint,
-        this.requestHandlerPayload
-      );
+      /**
+       * Determine the current page number for data fetching based on the pagination mode.
+       *  If the pagination mode is "infinite" (Load More), always set the page to 1 to avoid loading data based on any previously saved page state.
+       */
+
+      const data = { ...this.requestHandlerPayload };
+      if (this.paginationMode === "infinite") {
+        data.page = 1;
+
+        // TODO: Remove when pagination is deprecated
+        data.pagination.page = 1;
+      }
+
+      this.$vueList.options.stateManager.set(this.endpoint, data);
     },
 
     clearState() {

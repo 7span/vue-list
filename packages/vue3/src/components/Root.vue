@@ -178,6 +178,14 @@ export default {
     requestHandler: {
       type: Function,
     },
+
+    /**
+     * Version is being used for stateManager
+     */
+    version: {
+      type: [String, Number],
+      default: 1,
+    },
   },
 
   data() {
@@ -252,6 +260,8 @@ export default {
 
       updateAttr: this.updateAttr,
       loadMore: this.loadMore,
+
+      getPaginationMode: this.getPaginationMode,
     };
   },
 
@@ -364,6 +374,7 @@ export default {
         sortOrder: this.localSortOrder,
         config: this.config,
         attrSettings: this.attrSettings,
+        version: this.version,
 
         //To be deprecated in future
         pagination: {
@@ -383,6 +394,15 @@ export default {
     init() {
       if (!this.endpoint) return;
 
+      /**
+       * Init stateManager
+       * can be used to cleanup stale states
+       */
+      this.$vueList.options.stateManager.init(this.endpoint, {
+        requestPayload: this.requestPayload,
+        version: this.version,
+      });
+
       const page = this.localPage || this.$route?.query?.page || this.page;
       // Validate if page number is valid
       // if invalid, just replace the query param and watcher will take care of request.
@@ -401,7 +421,10 @@ export default {
 
     getState() {
       try {
-        const oldState = this.$vueList.options.stateManager.get(this.endpoint);
+        const oldState = this.$vueList.options.stateManager.get(this.endpoint, {
+          requestPayload: this.requestPayload,
+          version: this.version,
+        });
         return {
           page: oldState?.pagination?.page || this.page,
           perPage: oldState?.pagination?.perPage || this.perPage,
@@ -459,6 +482,10 @@ export default {
       this.paginationMode = value;
     },
 
+    getPaginationMode() {
+      return this.paginationMode;
+    },
+
     setSelection(value) {
       this.selection = value;
     },
@@ -501,7 +528,11 @@ export default {
 
     setData(res) {
       if (this.paginationMode == "infinite") {
-        this.items = (this.items || []).concat(res.items);
+        if (this.localPage == 1) {
+          this.items = res.items;
+        } else {
+          this.items = (this.items || []).concat(res.items);
+        }
 
         /**
          * @property {object} res - Response received from an API
@@ -628,10 +659,20 @@ export default {
     },
 
     setStateOnStateManager() {
-      this.$vueList.options.stateManager.set(
-        this.endpoint,
-        this.requestHandlerPayload
-      );
+      /**
+       * Determine the current page number for data fetching based on the pagination mode.
+       *  If the pagination mode is "infinite" (Load More), always set the page to 1 to avoid loading data based on any previously saved page state.
+       */
+
+      const data = { ...this.requestHandlerPayload };
+      if (this.paginationMode === "infinite") {
+        data.page = 1;
+
+        // TODO: Remove when pagination is deprecated
+        data.pagination.page = 1;
+      }
+
+      this.$vueList.options.stateManager.set(this.endpoint, data);
     },
 
     clearState() {

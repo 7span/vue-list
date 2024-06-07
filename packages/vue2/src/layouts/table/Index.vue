@@ -4,7 +4,7 @@
       <tr
         v-for="(row, rowIndex) in headers"
         :key="key('head-row', rowIndex)"
-        :class="[...rowClass(row, rowIndex)]"
+        :class="rowClass ? rowClass(row, rowIndex) : ''"
       >
         <template v-for="(col, colIndex) in row">
           <th
@@ -46,7 +46,7 @@
         :key="key('body-row', rowIndex)"
         :class="[
           { 'v-list-table__selected': isSelected(row) },
-          ...rowClass(row, rowIndex),
+          rowClass ? rowClass(row, rowIndex) : '',
         ]"
       >
         <template v-for="(attr, colIndex) in body">
@@ -135,6 +135,7 @@ export default {
     "localSortOrder",
     "localPerPage",
     "serverPage",
+    "paginationMode",
   ],
 
   data() {
@@ -295,7 +296,7 @@ export default {
         toggleSelect: () => this.toggleSelect(row),
         isSelected: this.isSelected(row),
         item: row,
-        rowIndex: this.itemIndex(rowIndex),
+        rowIndex: this.itemIndex(rowIndex, this.paginationMode),
         content: this.td(attr, row),
       };
     },
@@ -382,6 +383,9 @@ export default {
     },
 
     itemIndex(index) {
+      if (this.paginationMode) {
+        return index + 1;
+      }
       return this.localPerPage() * (this.serverPage() - 1) + index + 1;
     },
   },
