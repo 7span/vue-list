@@ -29,7 +29,6 @@ Vue.use(plugin, {
     },
 
     get(endpoint, state) {
-      console.log({ state });
       const key = stateManagerKey(endpoint, state);
       try {
         if (localStorage.getItem(key)) {

@@ -16,7 +16,7 @@
       <tr
         :class="[
           { 'v-list-table__selected': isSelected(element) },
-          ...rowClass(element, index),
+          rowClass ? rowClass(element, index) : '',
         ]"
       >
         <slot name="body-row" :row="element" :rowIndex="index" />
@@ -31,11 +31,11 @@
     <tbody>
       <slot name="body-start" />
       <tr
-        v-for="(row, rowIndex) in rows"
+        v-for="(row, rowIndex) in modelValue"
         :key="key('body-row', rowIndex)"
         :class="[
           { 'v-list-table__selected': isSelected(row) },
-          ...rowClass(row, rowIndex),
+          rowClass ? rowClass(row, rowIndex) : '',
         ]"
       >
         <slot name="body-row" :row="row" :rowIndex="rowIndex" />

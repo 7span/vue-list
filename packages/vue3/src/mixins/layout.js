@@ -2,7 +2,7 @@ import child from "./child";
 
 export default {
   mixins: [child],
-  inject: ["setSort"],
+  inject: ["setSort", "getPaginationMode"],
   computed: {
     items() {
       return this.root.items || [];
@@ -34,6 +34,9 @@ export default {
       this.setSort({ by: by.name, order });
     },
     itemIndex(index) {
+      if (this.getPaginationMode()) {
+        return index + 1;
+      }
       return this.root.localPerPage * (this.root.serverPage - 1) + index + 1;
     },
   },

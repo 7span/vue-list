@@ -3,30 +3,36 @@ import App from "./App.vue";
 import axios from "axios";
 import qs from "qs";
 import router from "./router";
-import gql from "graphql-tag";
-import plugin from "@7span/vue-list/src/main";
-import { ApolloClient, InMemoryCache } from "@apollo/client/core";
 import Draggable from "vuedraggable";
-
-const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
-  uri: "https://rickandmortyapi.com/graphql",
-});
-
+import plugin from "@7span/vue-list/src/main";
 const app = createApp(App);
 app.component("Draggable", Draggable);
 app.use(router);
 
 app.config.productionTip = false;
+
+function stateManagerKey(endpoint, state) {
+  return `vue-list--${endpoint}--${state?.version}`;
+}
+
 app.use(plugin, {
   stateManager: {
+    init(endpoint, state) {
+      const allKeys = `vue-list--${endpoint}--`;
+      const latestKey = stateManagerKey(endpoint, state);
+      const staleKeys = Object.keys(localStorage).filter(
+        (key) => key.startsWith(allKeys) && key != latestKey
+      );
+      staleKeys.forEach((key) => localStorage.removeItem(key));
+    },
+
     set(endpoint, state) {
-      const key = `vue-list--${endpoint}`;
+      const key = stateManagerKey(endpoint, state);
       localStorage.setItem(key, JSON.stringify(state));
     },
 
-    get(endpoint) {
-      const key = `vue-list--${endpoint}`;
+    get(endpoint, state) {
+      const key = stateManagerKey(endpoint, state);
       try {
         if (localStorage.getItem(key)) {
           return JSON.parse(localStorage.getItem(key));
@@ -39,63 +45,33 @@ app.use(plugin, {
     },
   },
   async requestHandler(requestData) {
-    const {
-      endpoint,
-      search,
-      sort,
-      filters,
-      payload,
-      perPage,
-      page,
-      sortBy,
-      sortOrder,
-    } = requestData;
+    const { endpoint, pagination, search, sort, filters } = requestData;
+    const { page, perPage } = pagination;
 
-    return apolloClient
-      .query({
-        query: gql`
-          ${payload.query}
-        `,
-        variables: {
+    //DIRECTUS COUNT
+    const count = await axios
+      .get(`https://crm.7span.in/items/${endpoint}?aggregate[countDistinct]=id`)
+      .then(({ data }) => data.data[0].countDistinct.id);
+
+    return axios
+      .get(`https://crm.7span.in/items/${endpoint}`, {
+        params: {
           page,
-          perPage,
-          search,
-          filters,
-          sort: sortBy,
+          limit: perPage,
+          search: search,
+          sort: (sort.order == "asc" ? "-" : "") + sort.by,
         },
+        paramsSerializer: (params) => qs.stringify(params),
       })
       .then(({ data }) => {
         return {
-          items: data.characters.results,
-          count: data.characters.results.length,
-          res: data.characters.results,
+          items: data.data,
+          count: count,
         };
+      })
+      .catch((err) => {
+        console.log(err);
       });
-
-    //DIRECTUS COUNT
-    // const count = await axios
-    //   .get(`https://crm.7span.in/items/${endpoint}?aggregate[countDistinct]=id`)
-    //   .then(({ data }) => data.data[0].countDistinct.id);
-
-    // return axios
-    //   .get(`https://crm.7span.in/items/${endpoint}`, {
-    //     params: {
-    //       page,
-    //       limit: perPage,
-    //       search: search,
-    //       sort: (sort.order == "asc" ? "-" : "") + sort.by,
-    //     },
-    //     paramsSerializer: (params) => qs.stringify(params),
-    //   })
-    //   .then(({ data }) => {
-    //     return {
-    //       items: data.data,
-    //       count: count,
-    //     };
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   },
 });
 
