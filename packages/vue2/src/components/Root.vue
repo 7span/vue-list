@@ -515,7 +515,11 @@ export default {
     },
 
     refresh(payload) {
-      this.getData(payload);
+      if (this.paginationMode == "infinite") {
+        this.setPage(1);
+      } else {
+        this.getData(payload);
+      }
     },
 
     setPage(value) {
