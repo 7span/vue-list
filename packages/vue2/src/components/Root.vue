@@ -515,12 +515,16 @@ export default {
     },
 
     refresh(payload) {
-      this.getData(payload);
+      if (this.paginationMode == "infinite") {
+        this.setPage(1, payload);
+      } else {
+        this.getData(payload);
+      }
     },
 
-    setPage(value) {
+    setPage(value, payload) {
       this.localPage = value;
-      this.getData();
+      this.getData(payload);
     },
 
     setPerPage(value) {
