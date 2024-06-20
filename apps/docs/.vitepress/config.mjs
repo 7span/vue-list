@@ -22,8 +22,6 @@ export default defineConfig({
         items: [
           { text: "What is Vue List?", link: "/guide/what-is-vue-list" },
           { text: "Getting Started", link: "/guide/getting-started" },
-
-          // { text: "Components", link: "/components/index.md" },
         ],
       },
       {
@@ -55,6 +53,10 @@ export default defineConfig({
             ],
           },
         ],
+      },
+      {
+        text: "Configuration",
+        items: [{ text: "State Manager", link: "/guide/config/state-manager" }],
       },
     ],
     search: {
