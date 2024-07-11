@@ -29,7 +29,7 @@
           <v-list-search />
           <v-list-attributes />
         </div>
-        <v-list-table>
+        <v-list-table rowLink="https://google.com">
           <template #th_after="{ attr, sortBy, sortOrder }">
             <div v-if="attr.name == sortBy" style="margin-left: 2px">
               <span v-if="sortOrder == 'asc'">⬆️</span>
