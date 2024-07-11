@@ -250,16 +250,6 @@ export default {
       return classList;
     },
 
-    // tdScope(attr, row, rowIndex) {
-    //   return {
-    //     toggleSelect: () => this.toggleSelect(row),
-    //     isSelected: this.isSelected(row),
-    //     item: row,
-    //     rowIndex: this.itemIndex(rowIndex),
-    //     content: this.td(attr, row),
-    //   };
-    // },
-
     thScope(col) {
       return {
         attr: col,
