@@ -51,32 +51,22 @@
           :key="key('body-col', colIndex)"
         >
           <td :class="tdClass(attr)" @click="tdClick(attr, row)">
-            <template v-if="!['_drag', 'select'].includes(attr.name)">
-              <a
-                v-if="typeof getRowLink(row) === 'string'"
-                :href="getRowLink(row)"
+            <router-link
+              v-if="rowLink && !['_drag', 'select'].includes(attr.name)"
+              :to="rowLink(row)"
+            >
+              <the-td
+                :attr="attr"
+                :is-selected="isSelected"
+                :td="td"
+                :row="row"
+                :row-index="rowIndex"
               >
-                <the-td
-                  :attr="attr"
-                  :is-selected="isSelected"
-                  :td="td"
-                  :row="row"
-                  :row-index="rowIndex"
-                />
-              </a>
-              <router-link
-                v-else-if="typeof getRowLink(row) === 'object'"
-                :to="getRowLink(row)"
-              >
-                <the-td
-                  :attr="attr"
-                  :is-selected="isSelected"
-                  :td="td"
-                  :row="row"
-                  :row-index="rowIndex"
-                />
-              </router-link>
-            </template>
+                <template v-slot:[attr.name]>
+                  <slot :name="attr.name" />
+                </template>
+              </the-td>
+            </router-link>
             <template v-else>
               <the-td
                 :attr="attr"
@@ -84,7 +74,11 @@
                 :td="td"
                 :row="row"
                 :row-index="rowIndex"
-              />
+              >
+                <template v-slot:[attr.name]>
+                  <slot :name="attr.name" />
+                </template>
+              </the-td>
             </template>
           </td>
         </template>
@@ -336,9 +330,6 @@ export default {
         default:
           break;
       }
-    },
-    getRowLink(row) {
-      return this.rowLink(row);
     },
   },
 };

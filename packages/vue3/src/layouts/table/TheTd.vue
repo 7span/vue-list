@@ -1,8 +1,17 @@
 <template>
   <div>
+    <!-- Index -->
+    <slot
+      v-if="attr.name == '_index'"
+      name="_index"
+      v-bind="tdScope(attr, row, rowIndex)"
+    >
+      {{ itemIndex(rowIndex) }}
+    </slot>
+
     <!-- Override Slot -->
     <slot
-      v-if="$slots[attr.name]"
+      v-else-if="$slots[attr.name]"
       :name="attr.name"
       v-bind="tdScope(attr, row, rowIndex)"
     >
@@ -15,15 +24,6 @@
       :is="$vueList.options.slots[attr.name]"
       v-bind="tdScope(attr, row, rowIndex)"
     />
-
-    <!-- Index -->
-    <slot
-      v-else-if="attr.name == '_index'"
-      name="_index"
-      v-bind="tdScope(attr, row, rowIndex)"
-    >
-      {{ itemIndex(rowIndex) }}
-    </slot>
 
     <!-- Drag Handle -->
     <slot
