@@ -55,27 +55,42 @@
             :class="tdClass(attr)"
             @click="tdClick(attr, row)"
           >
-            <a
-              :href="$attrs.rowLink"
-              v-if="$attrs.rowLink && attr.name != '_drag'"
-            >
-              <the-td
-                :attr="attr"
-                :is-selected="isSelected"
-                :td="td"
-                :row="row"
-                :rowIndex="rowIndex"
-                :itemIndex="itemIndex"
-              />
-            </a>
+            <template v-if="!['_drag', 'select'].includes(attr.name)">
+              <a
+                v-if="typeof getRowLink(row) == 'string'"
+                :href="getRowLink(row)"
+              >
+                <the-td
+                  :attr="attr"
+                  :is-selected="isSelected"
+                  :td="td"
+                  :row="row"
+                  :row-index="rowIndex"
+                  :item-index="itemIndex"
+                />
+              </a>
+              <router-link
+                v-else-if="typeof getRowLink(row) == 'object'"
+                :to="getRowLink(row)"
+              >
+                <the-td
+                  :attr="attr"
+                  :is-selected="isSelected"
+                  :td="td"
+                  :row="row"
+                  :row-index="rowIndex"
+                  :item-index="itemIndex"
+                />
+              </router-link>
+            </template>
             <the-td
               v-else
               :attr="attr"
               :is-selected="isSelected"
               :td="td"
               :row="row"
-              :rowIndex="rowIndex"
-              :itemIndex="itemIndex"
+              :row-index="rowIndex"
+              :item-index="itemIndex"
             />
           </td>
         </template>
@@ -98,6 +113,9 @@ export default {
       default: false,
     },
     rowClass: {
+      type: Function,
+    },
+    rowLink: {
       type: Function,
     },
   },
@@ -360,6 +378,10 @@ export default {
         return index + 1;
       }
       return this.localPerPage() * (this.serverPage() - 1) + index + 1;
+    },
+
+    getRowLink(row) {
+      return this.rowLink(row);
     },
   },
 };

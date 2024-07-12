@@ -51,27 +51,41 @@
           :key="key('body-col', colIndex)"
         >
           <td :class="tdClass(attr)" @click="tdClick(attr, row)">
-            <a
-              :href="$attrs.rowLink"
-              v-if="$attrs.rowLink && attr.name != '_drag'"
-            >
+            <template v-if="!['_drag', 'select'].includes(attr.name)">
+              <a
+                v-if="typeof getRowLink(row) === 'string'"
+                :href="getRowLink(row)"
+              >
+                <the-td
+                  :attr="attr"
+                  :is-selected="isSelected"
+                  :td="td"
+                  :row="row"
+                  :row-index="rowIndex"
+                />
+              </a>
+              <router-link
+                v-else-if="typeof getRowLink(row) === 'object'"
+                :to="getRowLink(row)"
+              >
+                <the-td
+                  :attr="attr"
+                  :is-selected="isSelected"
+                  :td="td"
+                  :row="row"
+                  :row-index="rowIndex"
+                />
+              </router-link>
+            </template>
+            <template v-else>
               <the-td
                 :attr="attr"
                 :is-selected="isSelected"
                 :td="td"
                 :row="row"
-                :rowIndex="rowIndex"
+                :row-index="rowIndex"
               />
-            </a>
-
-            <the-td
-              v-else
-              :attr="attr"
-              :is-selected="isSelected"
-              :td="td"
-              :row="row"
-              :rowIndex="rowIndex"
-            />
+            </template>
           </td>
         </template>
       </template>
@@ -102,6 +116,9 @@ export default {
       default: false,
     },
     rowClass: {
+      type: Function,
+    },
+    rowLink: {
       type: Function,
     },
   },
@@ -319,6 +336,9 @@ export default {
         default:
           break;
       }
+    },
+    getRowLink(row) {
+      return this.rowLink(row);
     },
   },
 };

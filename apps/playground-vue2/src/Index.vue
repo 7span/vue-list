@@ -49,7 +49,7 @@
             </template>
           </v-list-attributes> -->
         </div>
-        <v-list-table rowLink="https://google.com">
+        <v-list-table :row-link="rowClick">
           <template #th_after="{ attr, sortBy, sortOrder }">
             <div v-if="attr.name == sortBy" style="margin-left: 2px">
               <span v-if="sortOrder == 'asc'">⬆️</span>
@@ -132,10 +132,17 @@ export default {
         {
           name: "color",
         },
+        {
+          name: "_drag",
+          label: "Drag",
+        },
       ],
     };
   },
   methods: {
+    rowClick(row) {
+      return { name: "ge", params: { id: row.id } };
+    },
     refresh() {
       this.$refs.list.refresh({ hello: "hahhahahah" });
     },
