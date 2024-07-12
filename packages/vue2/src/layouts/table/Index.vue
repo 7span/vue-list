@@ -56,7 +56,7 @@
             @click="tdClick(attr, row)"
           >
             <router-link
-              v-if="rowLink && !['_drag', 'select'].includes(attr.name)"
+              v-if="rowLink && !['_drag'].includes(attr.name)"
               :to="rowLink(row)"
             >
               <the-td
@@ -374,15 +374,3 @@ export default {
   },
 };
 </script>
-<style>
-td {
-  position: relative;
-  padding: 8px;
-}
-
-td a::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-</style>
