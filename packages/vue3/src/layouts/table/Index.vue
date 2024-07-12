@@ -51,50 +51,35 @@
           :key="key('body-col', colIndex)"
         >
           <td :class="tdClass(attr)" @click="tdClick(attr, row)">
-            <!-- Override Slot -->
-            <slot
-              v-if="$slots[attr.name]"
-              :name="attr.name"
-              v-bind="tdScope(attr, row, rowIndex)"
+            <router-link
+              v-if="rowLink && !['_drag', 'select'].includes(attr.name)"
+              :to="rowLink(row)"
             >
-              {{ row[attr.name] }}
-            </slot>
-
-            <!-- Global Slot -->
-            <component
-              v-else-if="
-                $vueList.options.slots && $vueList.options.slots[attr.name]
-              "
-              :is="$vueList.options.slots[attr.name]"
-              v-bind="tdScope(attr, row, rowIndex)"
-            />
-
-            <!-- Index -->
-            <slot
-              v-else-if="attr.name == '_index'"
-              name="_index"
-              v-bind="tdScope(attr, row, rowIndex)"
-            >
-              {{ itemIndex(rowIndex) }}
-            </slot>
-
-            <!-- Drag Handle -->
-            <slot
-              v-else-if="attr.name == '_drag'"
-              name="_drag"
-              v-bind="tdScope(attr, row, rowIndex)"
-            >
-              <span class="v-list-table__drag">Drag</span>
-            </slot>
-
-            <!-- Default Slot -->
-            <slot
-              v-else
-              :name="attr.name"
-              v-bind="tdScope(attr, row, rowIndex)"
-            >
-              {{ td(attr, row) }}
-            </slot>
+              <the-td
+                :attr="attr"
+                :is-selected="isSelected"
+                :td="td"
+                :row="row"
+                :row-index="rowIndex"
+              >
+                <template v-slot:[attr.name]>
+                  <slot :name="attr.name" />
+                </template>
+              </the-td>
+            </router-link>
+            <template v-else>
+              <the-td
+                :attr="attr"
+                :is-selected="isSelected"
+                :td="td"
+                :row="row"
+                :row-index="rowIndex"
+              >
+                <template v-slot:[attr.name]>
+                  <slot :name="attr.name" />
+                </template>
+              </the-td>
+            </template>
           </td>
         </template>
       </template>
@@ -111,10 +96,12 @@ import { cloneDeep } from "lodash-es";
 import layout from "../../mixins/layout";
 import { key } from "../../utils";
 import TheTbody from "./TheTbody.vue";
+import TheTd from "./TheTd.vue";
 
 export default {
   components: {
     TheTbody,
+    TheTd,
   },
   mixins: [layout],
   props: {
@@ -123,6 +110,9 @@ export default {
       default: false,
     },
     rowClass: {
+      type: Function,
+    },
+    rowLink: {
       type: Function,
     },
   },
@@ -271,16 +261,6 @@ export default {
       return classList;
     },
 
-    tdScope(attr, row, rowIndex) {
-      return {
-        toggleSelect: () => this.toggleSelect(row),
-        isSelected: this.isSelected(row),
-        item: row,
-        rowIndex: this.itemIndex(rowIndex),
-        content: this.td(attr, row),
-      };
-    },
-
     thScope(col) {
       return {
         attr: col,
@@ -354,3 +334,16 @@ export default {
   },
 };
 </script>
+
+<style>
+td {
+  position: relative;
+  padding: 8px;
+}
+
+td a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+</style>
