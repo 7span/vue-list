@@ -52,8 +52,8 @@
         >
           <td :class="tdClass(attr)" @click="tdClick(attr, row)">
             <a
-              :href="this.$attrs.rowLink"
-              v-if="this.$attrs.rowLink && attr.name != '_drag'"
+              :href="$attrs.rowLink"
+              v-if="$attrs.rowLink && attr.name != '_drag'"
             >
               <the-td
                 :attr="attr"
@@ -323,3 +323,16 @@ export default {
   },
 };
 </script>
+
+<style>
+td {
+  position: relative;
+  padding: 8px;
+}
+
+td a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+</style>
