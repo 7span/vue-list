@@ -194,7 +194,7 @@ export default {
      */
     paginationHistory: {
       type: Boolean,
-      default: false,
+      default: true,
     }
   },
 
