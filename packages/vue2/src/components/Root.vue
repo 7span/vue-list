@@ -188,6 +188,14 @@ export default {
       type: [String, Number],
       default: 1,
     },
+
+    /**
+     * Enable / Disable Routes for pagination history
+     */
+    paginationHistory: {
+      type: Boolean,
+      default: true,
+    }
   },
 
   data() {
@@ -383,6 +391,7 @@ export default {
         requestPayload: this.requestPayload,
         attrSettings: this.attrSettings,
         version: this.version,
+        paginationHistory: this.paginationHistory,
 
         //To be deprecated in future
         pagination: {
@@ -584,7 +593,8 @@ export default {
       if (
         this.$router &&
         this.paginationMode == "paging" &&
-        this.$route.query.page != this.localPage
+        this.$route.query.page != this.localPage &&
+        this.paginationHistory
       ) {
         //Maintain already existing query params in URL
         const existingQueryParams = this.$route.query || {};
