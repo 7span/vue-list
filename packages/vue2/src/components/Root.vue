@@ -190,11 +190,11 @@ export default {
     },
 
     /**
-     * Enable Routes for pagination or not
+     * Enable / Disable Routes for pagination history
      */
     paginationHistory: {
       type: Boolean,
-      default: true,
+      default: false,
     }
   },
 
