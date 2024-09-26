@@ -391,6 +391,7 @@ export default {
         requestPayload: this.requestPayload,
         attrSettings: this.attrSettings,
         version: this.version,
+        paginationHistory: this.paginationHistory,
 
         //To be deprecated in future
         pagination: {
