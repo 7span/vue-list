@@ -1,9 +1,9 @@
 <template>
   <div class="v-list-search">
-    <slot :value="root.localSearch" :set="set">
+    <slot :value="search" :set="set">
       <input
         type="text"
-        :value="root.localSearch"
+        :value="search"
         @input="set($event.target.value)"
         placeholder="Search"
       />
@@ -13,11 +13,9 @@
 
 <script>
 import { debounce } from "lodash-es";
-import child from "../mixins/child";
 
 export default {
-  mixins: [child],
-  inject: ["setSearch"],
+  inject: ["setSearch", "localSearch"],
   props: {
     /**
      * Wait till this time to send an API request to avoid multiple requests when user is typing.
@@ -32,6 +30,11 @@ export default {
       debounce,
       set: null,
     };
+  },
+  computed: {
+    search() {
+      return this.localSearch();
+    },
   },
   created() {
     this.set = debounce((value) => {

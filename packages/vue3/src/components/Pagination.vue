@@ -46,14 +46,11 @@
 </template>
 
 <script>
-import child from "../mixins/child";
-
 /**
  * Display a pagination bar with clickable page numbers to allow users to navigate.
  */
 
 export default {
-  mixins: [child],
   props: {
     /**
      * Number of buttons to display in pagination.
@@ -66,7 +63,13 @@ export default {
     },
   },
 
-  inject: ["setPaginationMode", "setPage"],
+  inject: [
+    "setPaginationMode",
+    "setPage",
+    "localPage",
+    "localPerPage",
+    "count",
+  ],
 
   created() {
     this.setPaginationMode("paging");
@@ -77,7 +80,7 @@ export default {
       return {
         page: this.page,
         perPage: this.perPage,
-        count: this.count,
+        count: this._count,
         total: this.total,
         pagesToDisplay: this.pagesToDisplay,
         halfWay: this.halfWay,
@@ -92,19 +95,19 @@ export default {
     },
 
     page() {
-      return this.root.localPage;
+      return this.localPage();
     },
 
     perPage() {
-      return this.root.localPerPage;
+      return this.localPerPage();
     },
 
-    count() {
-      return this.root.count;
+    _count() {
+      return this.count();
     },
 
     total() {
-      return Math.ceil(this.count / this.perPage);
+      return Math.ceil(this._count / this.perPage);
     },
 
     halfWay() {
@@ -127,7 +130,7 @@ export default {
     },
 
     hasNext() {
-      return this.page * this.perPage < this.count;
+      return this.page * this.perPage < this._count;
     },
 
     hasPrev() {

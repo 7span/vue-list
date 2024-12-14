@@ -260,8 +260,21 @@ export default {
 
       updateAttr: this.updateAttr,
       loadMore: this.loadMore,
+      attrs: this.serializedAttrs,
 
-      getPaginationMode: this.getPaginationMode,
+      // Provide Injects are not reactive
+      attrSettings: () => this.attrSettings,
+      items: () => this.items || [],
+      count: () => this.count,
+      localSortBy: () => this.localSortBy,
+      localSortOrder: () => this.localSortOrder,
+      localPage: () => this.localPage,
+      localPerPage: () => this.localPerPage,
+      loadingMore: () => this.loadingMore,
+      localSearch: () => this.localSearch,
+      selection: () => this.selection,
+      serverPage: () => this.serverPage,
+      paginationMode: () => this.paginationMode,
     };
   },
 
@@ -480,10 +493,6 @@ export default {
 
     setPaginationMode(value) {
       this.paginationMode = value;
-    },
-
-    getPaginationMode() {
-      return this.paginationMode;
     },
 
     setSelection(value) {

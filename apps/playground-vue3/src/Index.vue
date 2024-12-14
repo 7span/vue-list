@@ -13,7 +13,7 @@
     </div>
     <v-list
       v-model:filters="filters"
-      :per-page="5"
+      :per-page="10"
       :attrs="attrs"
       endpoint="skills"
       :sort-by="sortBy"
@@ -24,8 +24,8 @@
       @sort="onSort"
       :version="5"
     >
-      <template #loading-more> HELLO! </template>
-      <template #default="{ selection, instance, loadingMore }">
+      <template #loading-more> ///HELLO! </template>
+      <template #default="{ selection, loadingMore }">
         <div class="header">
           <v-list-search />
           <v-list-attributes />
@@ -56,7 +56,7 @@
             Use the following component to "enable" pagination.
             This will allow navigating through multiple pages of the list.
           -->
-          <!-- <v-list-pagination /> -->
+          <v-list-pagination />
 
           <!-- OR -->
 
@@ -64,10 +64,10 @@
             Use the following component to "load more" functionality.
             This will dynamically load additional items in the list.
           -->
-          <v-list-load-more />
+          <!-- <v-list-load-more /> -->
 
           <div>Go To: <v-list-go-to /></div>
-          <div>Per Page: <v-list-per-page :parent="instance" /></div>
+          <div>Per Page: <v-list-per-page /></div>
         </div>
 
         <p>{{ loadingMore }}</p>
