@@ -1,49 +1,46 @@
 <template>
   <div class="v-list-pagination">
-    <!--
+    <slot v-bind="scope">
+      <!--
       @slot Render a previous button
       @binding {function} prev Got to previous page.
       @binding {boolean} hasPrev If previous page is available or not.
      -->
-    <slot name="first" :first="first" :hasPrev="hasPrev">
-      <button :disabled="!hasPrev" @click="first">First</button>
-    </slot>
+      <slot name="first" v-bind="scope">
+        <button :disabled="!hasPrev" @click="first">First</button>
+      </slot>
 
-    <slot name="prev" :prev="prev" :hasPrev="hasPrev">
-      <button :disabled="!hasPrev" @click="prev">Prev</button>
-    </slot>
+      <slot name="prev" v-bind="scope">
+        <button :disabled="!hasPrev" @click="prev">Prev</button>
+      </slot>
 
-    <template v-for="item in pagesToDisplay">
-      <!--
+      <template v-for="item in pagesToDisplay">
+        <!--
       @slot Render an interface to display a page button.
       @binding {function} change Call it to change a page.
       @binding {int} value Page number a button presents.
       @binding {boolean} isActive If a button is presenting a current page.
      -->
-      <slot
-        name="page"
-        :change="setPage"
-        :value="item"
-        :isActive="item == page"
-      >
-        <span v-if="item == page" :key="`page-${item}`">{{ item }}</span>
-        <button v-else :key="`page-${item}`" @click="setPage(item)">
-          {{ item }}
-        </button>
-      </slot>
-    </template>
+        <slot name="page" :value="item" :isActive="item == page" v-bind="scope">
+          <span v-if="item == page" :key="`page-${item}`">{{ item }}</span>
+          <button v-else :key="`page-${item}`" @click="setPage(item)">
+            {{ item }}
+          </button>
+        </slot>
+      </template>
 
-    <!--
+      <!--
       @slot Render a next button
       @binding {function} prev Got to next page.
       @binding {boolean} hasPrev If next page is available or not.
      -->
-    <slot name="next" :next="next" :hasNext="hasNext">
-      <button :disabled="!hasNext" @click="next">Next</button>
-    </slot>
+      <slot name="next" v-bind="scope">
+        <button :disabled="!hasNext" @click="next">Next</button>
+      </slot>
 
-    <slot name="last" :last="last" :hasNext="hasNext">
-      <button :disabled="!hasNext" @click="last">Last</button>
+      <slot name="last" v-bind="scope">
+        <button :disabled="!hasNext" @click="last">Last</button>
+      </slot>
     </slot>
   </div>
 </template>
@@ -76,6 +73,24 @@ export default {
   },
 
   computed: {
+    scope() {
+      return {
+        page: this.page,
+        perPage: this.perPage,
+        count: this.count,
+        total: this.total,
+        pagesToDisplay: this.pagesToDisplay,
+        halfWay: this.halfWay,
+        hasNext: this.hasNext,
+        hasPrev: this.hasPrev,
+        prev: this.prev,
+        next: this.next,
+        first: this.first,
+        last: this.last,
+        change: this.setPage,
+      };
+    },
+
     page() {
       return this.root.localPage;
     },

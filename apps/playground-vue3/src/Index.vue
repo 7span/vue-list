@@ -24,6 +24,7 @@
       @sort="onSort"
       :version="5"
     >
+      <template #loading-more> HELLO! </template>
       <template #default="{ selection, instance, loadingMore }">
         <div class="header">
           <v-list-search />
