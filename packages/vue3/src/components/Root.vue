@@ -1,52 +1,53 @@
 <template>
   <div class="v-list">
-    <!-- 
+    <slot name="root" v-bind="scope">
+      <!-- 
       @slot Header Slot
      -->
-    <slot name="header" v-bind="scope" />
+      <slot name="header" v-bind="scope" />
 
-    <!-- 
+      <!-- 
       @slot Loader to display when a component is loading for the first time.
      -->
-    <slot v-if="loading" name="loading" v-bind="scope">
-      <p>Loading...</p>
-    </slot>
-
-    <!-- CONTENT -->
-    <template v-else>
-      <!-- 
-      @slot Loader to display when navigating to other page.
-     -->
-      <slot v-if="loadingMore" name="loading-more" v-bind="scope">
-        <p>Loading More...</p>
+      <slot v-if="loading" name="loading" v-bind="scope">
+        <p>Loading...</p>
       </slot>
 
-      <!-- 
+      <!-- CONTENT -->
+      <template v-else>
+        <!-- 
       @slot Loader to display when navigating to other page.
      -->
-      <slot v-if="loadingPage" name="loading-page" v-bind="scope">
-        <p>Loading Page...</p>
-      </slot>
+        <slot v-if="loadingMore" name="loading-more" v-bind="scope">
+          <p>Loading More...</p>
+        </slot>
 
-      <!-- 
+        <!-- 
+      @slot Loader to display when navigating to other page.
+     -->
+        <slot v-if="loadingPage" name="loading-page" v-bind="scope">
+          <p>Loading Page...</p>
+        </slot>
+
+        <!-- 
       @slot If there was an error from an API
       @binding {object} error An errror returned from API
      -->
-      <slot v-if="error" name="error" :error="error" v-bind="scope">
-        <div>
-          <p>There was an error while processing your request.</p>
-          <p>{{ error }}</p>
-        </div>
-      </slot>
+        <slot v-if="error" name="error" :error="error" v-bind="scope">
+          <div>
+            <p>There was an error while processing your request.</p>
+            <p>{{ error }}</p>
+          </div>
+        </slot>
 
-      <!-- 
+        <!-- 
       @slot When API returned no items.
      -->
-      <slot v-else-if="isEmpty" name="empty" v-bind="scope">
-        <p>No data found!</p>
-      </slot>
+        <slot v-else-if="isEmpty" name="empty" v-bind="scope">
+          <p>No data found!</p>
+        </slot>
 
-      <!-- 
+        <!-- 
       @slot Render a UI to list items.
       @binding {array} items List if items
       @binding {object} response A latest response from an API
@@ -56,13 +57,14 @@
       @binding {boolean} isEmpty If there are no items returned by API.
       @binding {function} refresh Refresh the listing by using the same parameters.
      -->
-      <slot v-else v-bind="scope" />
-    </template>
+        <slot v-else v-bind="scope" />
+      </template>
 
-    <!-- 
+      <!-- 
       @slot Footer Slot
      -->
-    <slot name="footer" v-bind="scope" />
+      <slot name="footer" v-bind="scope" />
+    </slot>
   </div>
 </template>
 
@@ -343,10 +345,6 @@ export default {
       return Object.assign({}, this.filters);
     },
 
-    instance() {
-      return this;
-    },
-
     /**
      * When attrs is provided in props, the same attr.name is used to find column value from response.
      * If the attrs is not provided, we can get first item of response and get keys from there as fallback.
@@ -370,9 +368,11 @@ export default {
         isEmpty: this.isEmpty,
         refresh: this.refresh,
         selection: this.selection,
-        instance: this.instance,
         loadingPage: this.loadingPage,
         loadingMore: this.loadingMore,
+        error: this.error,
+        serializedAttrs: this.serializedAttrs,
+        requestHandlerPayload: this.requestHandlerPayload,
       };
     },
 
