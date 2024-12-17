@@ -317,7 +317,7 @@ export default {
     },
 
     sortOrder(newValue) {
-      this.setSort({ by: this.localSortOrder, order: newValue });
+      this.setSort({ by: this.localSortBy, order: newValue });
     },
 
     selection: {
@@ -632,13 +632,13 @@ export default {
         this.loadingPage = false;
         this.loadingMore = false;
       } else {
-        if (this.paginationMode == "infinite") {
-          this.loadingMore = true;
+        if (this.isFirstRequest) {
+          this.loading = true;
         } else {
-          if (this.isFirstRequest) {
-            this.loading = true;
+          if (this.paginationMode == "infinite") {
+            this.loadingMore = true;
           } else {
-            this.loadingPage = true;
+            this.loading = true;
           }
         }
       }
