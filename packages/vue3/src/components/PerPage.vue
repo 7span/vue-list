@@ -23,11 +23,8 @@
 </template>
 
 <script>
-import child from "../mixins/child";
-
 export default {
-  mixins: [child],
-  inject: ["setPerPage"],
+  inject: ["setPerPage", "localPerPage"],
   props: {
     /**
      * An array of options which lets user select how many items they want to see in a list at a time.
@@ -41,7 +38,7 @@ export default {
 
   computed: {
     perPage() {
-      return this.root.localPerPage;
+      return this.localPerPage();
     },
     serializedOptions() {
       return this.options.map((item) => {

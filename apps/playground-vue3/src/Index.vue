@@ -13,7 +13,7 @@
     </div>
     <v-list
       v-model:filters="filters"
-      :per-page="5"
+      :per-page="10"
       :attrs="attrs"
       endpoint="skills"
       :sort-by="sortBy"
@@ -24,7 +24,8 @@
       @sort="onSort"
       :version="5"
     >
-      <template #default="{ selection, instance, loadingMore }">
+      <template #loading-more> ///HELLO! </template>
+      <template #default="{ selection, loadingMore }">
         <div class="header">
           <v-list-search />
           <v-list-attributes />
@@ -66,7 +67,7 @@
           <!-- <v-list-load-more /> -->
 
           <div>Go To: <v-list-go-to /></div>
-          <div>Per Page: <v-list-per-page :parent="instance" /></div>
+          <div>Per Page: <v-list-per-page /></div>
         </div>
 
         <p>{{ loadingMore }}</p>
