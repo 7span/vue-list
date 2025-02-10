@@ -57,11 +57,13 @@ Vue.use(plugin, {
 
     //DIRECTUS COUNT
     const count = await axios
-      .get(`https://crm.7span.in/items/${endpoint}?aggregate[countDistinct]=id`)
+      .get(
+        `https://everest.7span.in/items/${endpoint}?aggregate[countDistinct]=id`
+      )
       .then(({ data }) => data.data[0].countDistinct.id);
 
     return axios
-      .get(`https://crm.7span.in/items/${endpoint}`, {
+      .get(`https://everest.7span.in/items/${endpoint}`, {
         params: {
           page,
           limit: perPage,
