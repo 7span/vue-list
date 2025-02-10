@@ -295,7 +295,7 @@ export default {
 
     tdClass(attr) {
       const classList = [...this.columnClass(attr)];
-      if (this.$attrs.rowClick && attr.rowClick !== false)
+      if (this.$attrs.onRowClick && attr.rowClick !== false)
         classList.push("v-list-table__click");
       return classList;
     },
