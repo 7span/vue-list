@@ -392,6 +392,15 @@ export default {
     },
 
     itemIndex(index) {
+      /**
+       * Determines the correct index based on pagination mode.
+       * this.paginationMode() returns "infinite" when using load more, and "paging" when using traditional pagination.
+       * For "infinite" mode, simply return the incremented index since data is appended continuously.
+       * For "paging" mode, calculate the index based on the current page and the number of items per page.
+       */
+      if (this.paginationMode() === "infinite") {
+        return index + 1;
+      }
       return this.localPerPage() * (this.serverPage() - 1) + index + 1;
     },
   },

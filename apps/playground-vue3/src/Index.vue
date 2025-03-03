@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    VUE 3
     <div class="filters-container">
       <div class="filters">
         <p>Filters: {{ filters }}</p>
