@@ -1,5 +1,5 @@
 {
-  "name": "vue-list-vue3-playground",
+  "name": "@7span/vue-list",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,8 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
