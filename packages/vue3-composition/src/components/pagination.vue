@@ -1,147 +1,113 @@
 <template>
   <div class="v-list-pagination">
     <slot v-bind="scope">
-      <!--
-      @slot Render a previous button
-      @binding {function} prev Got to previous page.
-      @binding {boolean} hasPrev If previous page is available or not.
-     -->
       <slot name="first" v-bind="scope">
-        <button :disabled="!hasPrev" @click="first">First</button>
+        <button type="button" :disabled="!hasPrev" @click="first">First</button>
       </slot>
 
       <slot name="prev" v-bind="scope">
-        <button :disabled="!hasPrev" @click="prev">Prev</button>
+        <button type="button" :disabled="!hasPrev" @click="prev">Prev</button>
       </slot>
 
       <template v-for="item in pagesToDisplay">
-        <!--
-      @slot Render an interface to display a page button.
-      @binding {function} change Call it to change a page.
-      @binding {int} value Page number a button presents.
-      @binding {boolean} isActive If a button is presenting a current page.
-     -->
-        <slot name="page" :value="item" :isActive="item == page" v-bind="scope">
-          <span v-if="item == page" :key="`page-${item}`">{{ item }}</span>
-          <button v-else :key="`page-${item}`" @click="setPage(item)">
+        <slot name="page" :value="item" :isActive="item == localPage" v-bind="scope">
+          <span v-if="item == localPage" :key="`page-active-${item}`">{{ item }}</span>
+          <button type="button" v-else :key="`page-${item}`" @click="setPage(item)">
             {{ item }}
           </button>
         </slot>
       </template>
 
-      <!--
-      @slot Render a next button
-      @binding {function} prev Got to next page.
-      @binding {boolean} hasPrev If next page is available or not.
-     -->
       <slot name="next" v-bind="scope">
-        <button :disabled="!hasNext" @click="next">Next</button>
+        <button type="button" :disabled="!hasNext" @click="next">Next</button>
       </slot>
 
       <slot name="last" v-bind="scope">
-        <button :disabled="!hasNext" @click="last">Last</button>
+        <button type="button" :disabled="!hasNext" @click="last">Last</button>
       </slot>
     </slot>
   </div>
 </template>
 
-<script>
+<script setup>
 /**
  * Display a pagination bar with clickable page numbers to allow users to navigate.
  */
 
-export default {
-  props: {
+import { inject, computed } from 'vue'
+const setPage = inject('setPage')
+const localPage = inject('localPage')
+const localPerPage = inject('localPerPage')
+const count = inject('count')
+
+const props = defineProps({
+  pageLinks: {
     /**
-     * Number of buttons to display in pagination.
-     * Current Page will be center and other pages will be added in start and end.
-     * Odd number is recommended
+     * Number of page buttons to display in the pagination component.
+     * The current page will be centered with additional pages shown on both sides.
+     * An odd number is recommended for balanced display.
      */
-    pageLinks: {
-      type: Number,
-      default: 5,
-    },
+    type: Number,
+    default: 5,
   },
+})
 
-  inject: ['setPaginationMode', 'setPage', 'localPage', 'localPerPage', 'count'],
+const total = computed(() => {
+  return Math.ceil(count.value / localPerPage.value)
+})
 
-  created() {
-    this.setPaginationMode('paging')
-  },
+const halfWay = computed(() => {
+  return Math.floor(props.pageLinks / 2)
+})
 
-  computed: {
-    scope() {
-      return {
-        page: this.page,
-        perPage: this.perPage,
-        count: this._count,
-        total: this.total,
-        pagesToDisplay: this.pagesToDisplay,
-        halfWay: this.halfWay,
-        hasNext: this.hasNext,
-        hasPrev: this.hasPrev,
-        prev: this.prev,
-        next: this.next,
-        first: this.first,
-        last: this.last,
-        change: this.setPage,
-      }
-    },
+const hasNext = computed(() => {
+  return localPage.value * localPerPage.value < count.value
+})
 
-    page() {
-      return this.localPage()
-    },
+const hasPrev = computed(() => {
+  return localPage.value != 1
+})
 
-    perPage() {
-      return this.localPerPage()
-    },
+const pagesToDisplay = computed(() => {
+  const pages = Array.apply(null, Array(Math.min(props.pageLinks, total.value)))
 
-    _count() {
-      return this.count()
-    },
+  if (localPage.value <= halfWay.value) {
+    return pages.map((value, index) => index + 1)
+  } else if (total.value - localPage.value < halfWay.value) {
+    return pages.map((value, index) => total.value - index).reverse()
+  } else {
+    return pages.map((value, index) => localPage.value - halfWay.value + index)
+  }
+})
 
-    total() {
-      return Math.ceil(this._count / this.perPage)
-    },
+const scope = computed(() => {
+  return {
+    page: localPage,
+    perPage: localPerPage,
+    count: count,
+    total: total,
+    pagesToDisplay: pagesToDisplay,
+    halfWay: halfWay,
+    hasNext: hasNext,
+    hasPrev: hasPrev,
+    prev: prev,
+    next: next,
+    first: first,
+    last: last,
+    change: setPage,
+  }
+})
 
-    halfWay() {
-      return Math.floor(this.pageLinks / 2)
-    },
-
-    pagesToDisplay() {
-      const pages = Array.apply(null, Array(Math.min(this.pageLinks, this.total)))
-
-      if (this.page <= this.halfWay) {
-        return pages.map((value, index) => index + 1)
-      } else if (this.total - this.page < this.halfWay) {
-        return pages.map((value, index) => this.total - index).reverse()
-      } else {
-        return pages.map((value, index) => this.page - this.halfWay + index)
-      }
-    },
-
-    hasNext() {
-      return this.page * this.perPage < this._count
-    },
-
-    hasPrev() {
-      return this.page != 1
-    },
-  },
-
-  methods: {
-    prev() {
-      this.setPage(this.page - 1)
-    },
-    next() {
-      this.setPage(this.page + 1)
-    },
-    first() {
-      this.setPage(1)
-    },
-    last() {
-      this.setPage(this.total)
-    },
-  },
+function prev() {
+  setPage(localPage.value - 1)
+}
+function next() {
+  setPage(localPage.value + 1)
+}
+function first() {
+  setPage(1)
+}
+function last() {
+  setPage(total.value)
 }
 </script>

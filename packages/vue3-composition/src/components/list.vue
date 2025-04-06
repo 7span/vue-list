@@ -1,30 +1,6 @@
 <template>
   <div class="v-list">
-    <slot name="root" v-bind="scope">
-      <slot name="header" v-bind="scope" />
-      <slot v-if="loading" name="loading" v-bind="scope">
-        <p>Loading...</p>
-      </slot>
-      <template v-else>
-        <slot v-if="loadingMore" name="loading-more" v-bind="scope">
-          <p>Loading More...</p>
-        </slot>
-        <slot v-if="loadingPage" name="loading-page" v-bind="scope">
-          <p>Loading Page...</p>
-        </slot>
-        <slot v-if="error" name="error" :error="error" v-bind="scope">
-          <div>
-            <p>There was an error while processing your request.</p>
-            <p>{{ error }}</p>
-          </div>
-        </slot>
-        <slot v-else-if="isEmpty" name="empty" v-bind="scope">
-          <p>No data found!</p>
-        </slot>
-        <slot v-else v-bind="scope" />
-      </template>
-      <slot name="footer" v-bind="scope" />
-    </slot>
+    <slot v-bind="scope" />
   </div>
 </template>
 
@@ -86,6 +62,7 @@ const props = defineProps({
      * The actual state will be in localSortOrder.
      */
     type: String,
+    default: 'desc',
     validator(value) {
       return ['asc', 'desc'].includes(value)
     },
@@ -129,6 +106,19 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+
+  paginationMode: {
+    /**
+     * Pagination mode:
+     * 1. pagination: Standard pagination with page numbers
+     * 3. loadMore: Manual load more button
+     */
+    type: String,
+    default: 'pagination',
+    validator(value) {
+      return ['pagination', 'loadMore'].includes(value)
+    },
+  },
 })
 
 const emit = defineEmits(['onItemSelect', 'onResponse', 'afterPageChange', 'afterLoadMore'])
@@ -151,11 +141,11 @@ function getState() {
     })
 
     /**
-     * For infinite pagination mode, reset page to 1 since we always
+     * For loadMore pagination mode, reset page to 1 since we always
      * load from the beginning in "load more" scenarios
      */
     let page
-    if (paginationMode.value == 'infinite') {
+    if (props.paginationMode == 'loadMore') {
       page = 1
     } else {
       // Always give priority to query param over localState.
@@ -198,11 +188,7 @@ const selection = ref([])
 const error = ref(false)
 const response = ref()
 const count = ref(0)
-const paginationMode = ref()
-const isFirstRequest = ref(true)
 const loading = ref(false)
-const loadingMore = ref(false)
-const loadingPage = ref(false)
 const initializingState = ref(true)
 
 /**
@@ -212,7 +198,7 @@ const initializingState = ref(true)
  * The attr.name is used as key to find corresponding values in the response data
  */
 const serializedAttrs = computed(() => {
-  const attrs = props.attrs.value || Object.keys(items.value?.[0] || {})
+  const attrs = props.attrs || Object.keys(items.value?.[0] || {})
   return attrSerializer(attrs)
 })
 
@@ -222,13 +208,13 @@ const serializedAttrs = computed(() => {
 const statePayload = computed(() => {
   return {
     version: props.version,
-    search: localSearch,
-    page: localPage,
-    perPage: localPerPage,
-    sortBy: localSortBy,
-    sortOrder: localSortOrder,
-    filters: filters,
-    attrSettings: attrSettings,
+    search: localSearch.value,
+    page: localPage.value,
+    perPage: localPerPage.value,
+    sortBy: localSortBy.value,
+    sortOrder: localSortOrder.value,
+    filters: filters.value,
+    attrSettings: attrSettings.value,
   }
 })
 
@@ -243,8 +229,6 @@ const scope = computed(() => {
     response: response,
     loading: loading,
     selection: selection,
-    loadingMore: loadingMore,
-    loadingPage: loadingPage,
     error: error,
 
     //computed
@@ -257,28 +241,13 @@ const scope = computed(() => {
   }
 })
 
+const isLoadMore = computed(() => {
+  return props.paginationMode == 'loadMore'
+})
+
 function setPage(value, payload) {
   localPage.value = value
   getData(payload)
-}
-
-function setLoader(value) {
-  if (!value) {
-    isFirstRequest.value = false
-    loading.value = false
-    loadingPage.value = false
-    loadingMore.value = false
-  } else {
-    if (isFirstRequest.value) {
-      loading.value = true
-    } else {
-      if (paginationMode.value == 'infinite') {
-        loadingMore.value = true
-      } else {
-        loading.value = true
-      }
-    }
-  }
 }
 
 function updateStateManager() {
@@ -287,7 +256,7 @@ function updateStateManager() {
 
 function setItems(res) {
   emit('onResponse', res)
-  if (paginationMode.value == 'infinite') {
+  if (isLoadMore.value) {
     items.value = items.value.concat(res.items)
     emit('afterLoadMore', res)
   } else {
@@ -308,16 +277,12 @@ function setSort({ by, order }) {
   setPage(1)
 }
 
-function setPaginationMode(value) {
-  paginationMode.value = value
-}
-
 function setSelection(value) {
   selection.value = value
 }
 
 function refresh(payload) {
-  if (paginationMode.value == 'infinite') {
+  if (isLoadMore.value) {
     setPage(1, payload)
   } else {
     getData(payload)
@@ -361,11 +326,7 @@ function clearState() {
  * Query params are only updated for pages > 1 to maintain expected browser navigation.
  */
 function updateUrl() {
-  if (
-    paginationMode.value == 'paging' &&
-    route.query.page != localPage.value &&
-    props.paginationHistory
-  ) {
+  if (!isLoadMore.value && route.query.page != localPage.value && props.paginationHistory) {
     router.push({
       query: {
         ...(route.query || {}), // Keep already existing query params in URL
@@ -377,7 +338,7 @@ function updateUrl() {
 
 function getData(payload = {}) {
   error.value = false
-  setLoader(true)
+  loading.value = true
 
   requestHandler({
     method: 'get',
@@ -387,7 +348,7 @@ function getData(payload = {}) {
       ...props.requestPayload,
       ...payload,
     },
-    ...statePayload,
+    ...statePayload.value,
   })
     .then((res) => {
       response.value = res
@@ -403,6 +364,8 @@ function getData(payload = {}) {
 
       //Setting this will update the index in the UI.
       confirmedPage.value = localPage.value
+
+      initializingState.value = false
     })
     .catch((err) => {
       error.value = err
@@ -410,7 +373,7 @@ function getData(payload = {}) {
       throw new Error(err)
     })
     .finally(() => {
-      setLoader(false)
+      loading.value = false
     })
 }
 
@@ -430,32 +393,36 @@ watch(selection, (newValue, oldValue) => {
   emit('onItemSelect', newValue, oldValue)
 })
 
-watch(route.query.page, (newValue) => {
-  if (!newValue) {
-    setPage(1)
-  } else if (localPage.value !== Number(newValue)) {
-    setPage(Number(newValue))
-  }
-})
+watch(
+  () => route.query.page,
+  (newValue) => {
+    if (!newValue) {
+      setPage(1)
+    } else if (localPage.value !== Number(newValue)) {
+      setPage(Number(newValue))
+    }
+  },
+)
 
 // Provide State
 provide('attrSettings', attrSettings)
 provide('items', items)
 provide('count', count)
+provide('error', error)
 provide('localSortBy', localSortBy)
 provide('localSortOrder', localSortOrder)
 provide('localPage', localPage)
 provide('localPerPage', localPerPage)
-provide('loadingMore', loadingMore)
+provide('loading', loading)
 provide('localSearch', localSearch)
 provide('selection', selection)
 provide('confirmedPage', confirmedPage)
-provide('paginationMode', paginationMode)
+provide('paginationMode', props.paginationMode)
+provide('initializingState', initializingState)
 
 // Provide Methods
 provide('setSearch', setSearch)
 provide('setSort', setSort)
-provide('setPaginationMode', setPaginationMode)
 provide('setSelection', setSelection)
 provide('setItems', setItems)
 provide('setPage', setPage)
@@ -487,5 +454,4 @@ globalOptions.stateManager.init(props.endpoint, {
 })
 
 setPage(localPage.value)
-initializingState.value = false
 </script>

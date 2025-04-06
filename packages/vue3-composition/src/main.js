@@ -1,17 +1,21 @@
 import defaultOptions from './options'
 
 //Components
-import Root from './components/Root.vue'
-import Pagination from './components/Pagination.vue'
-import Counter from './components/Counter.vue'
-import PerPage from './components/PerPage.vue'
-import Attributes from './components/Attributes.vue'
-import Search from './components/Search.vue'
-import LoadMore from './components/LoadMore.vue'
-import GoTo from './components/GoTo.vue'
+import Root from './components/list.vue'
+import Items from './components/items.vue'
+import InitialLoader from './components/initial-loader.vue'
+import Loader from './components/loader.vue'
+import Err from './components/error.vue'
+import Pagination from './components/pagination.vue'
+import Counter from './components/counter.vue'
+import PerPage from './components/per-page.vue'
+import Attributes from './components/attributes.vue'
+import Search from './components/search.vue'
+import LoadMore from './components/load-more.vue'
+import GoTo from './components/go-to.vue'
 
 //Layout
-import Table from './layouts/table/Index.vue'
+// import Table from './layouts/table/Index.vue'
 
 const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions)
@@ -20,14 +24,18 @@ const install = (app, userOptions = {}) => {
   app.provide('vueList', options)
 
   app.component(`${prefix}List`, Root)
+  app.component(`${prefix}ListInitialLoader`, InitialLoader)
+  app.component(`${prefix}ListLoader`, Loader)
+  app.component(`${prefix}ListItems`, Items)
+  app.component(`${prefix}ListError`, Err)
   app.component(`${prefix}ListPagination`, Pagination)
   app.component(`${prefix}ListCounter`, Counter)
   app.component(`${prefix}ListPerPage`, PerPage)
   app.component(`${prefix}ListAttributes`, Attributes)
   app.component(`${prefix}ListSearch`, Search)
   app.component(`${prefix}ListLoadMore`, LoadMore)
-  app.component(`${prefix}ListTable`, Table)
   app.component(`${prefix}ListGoTo`, GoTo)
+  // app.component(`${prefix}ListTable`, Table)
 }
 
 const plugin = {

@@ -1,40 +1,30 @@
 <template>
   <div class="v-list-search">
-    <slot :value="search" :set="set">
-      <input type="text" :value="search" @input="set($event.target.value)" placeholder="Search" />
+    <slot :value="localSearch" :set="set">
+      <input
+        type="text"
+        :value="localSearch"
+        @input="set($event.target.value)"
+        placeholder="Search"
+      />
     </slot>
   </div>
 </template>
 
-<script>
+<script setup>
 import { debounce } from 'lodash-es'
+import { inject } from 'vue'
+const setSearch = inject('setSearch')
+const localSearch = inject('localSearch')
 
-export default {
-  inject: ['setSearch', 'localSearch'],
-  props: {
-    /**
-     * Wait till this time to send an API request to avoid multiple requests when user is typing.
-     */
-    debounceTime: {
-      type: Number,
-      default: 1000,
-    },
+const props = defineProps({
+  debounceTime: {
+    type: Number,
+    default: 1000,
   },
-  data() {
-    return {
-      debounce,
-      set: null,
-    }
-  },
-  computed: {
-    search() {
-      return this.localSearch()
-    },
-  },
-  created() {
-    this.set = debounce((value) => {
-      this.setSearch(value)
-    }, this.debounceTime)
-  },
-}
+})
+
+const set = debounce((value) => {
+  setSearch(value)
+}, props.debounceTime)
 </script>

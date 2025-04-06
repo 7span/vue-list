@@ -7,7 +7,7 @@
             <span>{{ attr.label }}</span>
             <input
               type="checkbox"
-              :checked="_attrSettings?.[attr.name]?.visible"
+              :checked="attrSettings?.[attr.name]?.visible"
               @change="updateAttr(attr.name, 'visible', $event.target.checked)"
             />
           </label>
