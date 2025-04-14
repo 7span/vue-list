@@ -1,16 +1,9 @@
-<script setup>
-import Counters from './counters.vue';
-
-</script>
-
 # Counters Component
 
 ## Overview
 
 - Displays the counter of total items and displayed items in a list.
 - Use `VListCounter` component inside the **#default** slot of the wrapper component.
-
-<Counters/>
 
 ## Example
 

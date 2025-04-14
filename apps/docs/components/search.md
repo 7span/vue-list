@@ -1,3 +1,13 @@
+# Components
+
+## Overview
+
+- `VListSearch` component provids a search input field to filter the displayed list items based on user input.
+- To utilize `VListSearch` component, integrate it within the **#default** slot of the wrapper component.
+
+## Example
+
+```vue {11} [app.vue]
 <template>
   <VList
     :attrs="state.attrs"
@@ -51,3 +61,16 @@ table {
   padding: 3px;
 }
 </style>
+```
+
+## Props
+
+| Prop name    | Description                                                                                | Type   | Values | Default |
+| ------------ | ------------------------------------------------------------------------------------------ | ------ | ------ | ------- |
+| debounceTime | Wait till this time to send an API request to avoid multiple requests when user is typing. | number | -      | 1000    |
+
+## Slots
+
+| Name    | Description | Bindings |
+| ------- | ----------- | -------- |
+| default |             | <br>     |

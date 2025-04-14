@@ -1,16 +1,9 @@
-<script setup>
-import Pagination from './pagination.vue';
-
-</script>
-
 # Pagination Component
 
 ## Overview
 
 - Display a pagination bar with clickable page numbers, allowing users to navigate through a list of items.
 - To utilize `VListPagination` component, integrate it within the **#default** slot of the wrapper component.
-
-<Pagination/>
 
 ## Example
 

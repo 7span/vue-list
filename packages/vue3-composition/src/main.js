@@ -13,6 +13,7 @@ import Attributes from './components/attributes.vue'
 import Search from './components/search.vue'
 import LoadMore from './components/load-more.vue'
 import GoTo from './components/go-to.vue'
+import Refresh from './components/refresh.vue'
 
 //Layout
 // import Table from './layouts/table/Index.vue'
@@ -23,18 +24,19 @@ const install = (app, userOptions = {}) => {
 
   app.provide('vueList', options)
 
-  app.component(`${prefix}List`, Root)
-  app.component(`${prefix}ListInitialLoader`, InitialLoader)
-  app.component(`${prefix}ListLoader`, Loader)
-  app.component(`${prefix}ListItems`, Items)
-  app.component(`${prefix}ListError`, Err)
-  app.component(`${prefix}ListPagination`, Pagination)
-  app.component(`${prefix}ListCounter`, Counter)
-  app.component(`${prefix}ListPerPage`, PerPage)
-  app.component(`${prefix}ListAttributes`, Attributes)
-  app.component(`${prefix}ListSearch`, Search)
-  app.component(`${prefix}ListLoadMore`, LoadMore)
-  app.component(`${prefix}ListGoTo`, GoTo)
+  app.component(`${prefix}VueList`, Root)
+  app.component(`${prefix}VueListInitialLoader`, InitialLoader)
+  app.component(`${prefix}VueListLoader`, Loader)
+  app.component(`${prefix}VueListItems`, Items)
+  app.component(`${prefix}VueListError`, Err)
+  app.component(`${prefix}VueListPagination`, Pagination)
+  app.component(`${prefix}VueListCounter`, Counter)
+  app.component(`${prefix}VueListPerPage`, PerPage)
+  app.component(`${prefix}VueListAttributes`, Attributes)
+  app.component(`${prefix}VueListSearch`, Search)
+  app.component(`${prefix}VueListLoadMore`, LoadMore)
+  app.component(`${prefix}VueListGoTo`, GoTo)
+  app.component(`${prefix}VueListRefresh`, Refresh)
   // app.component(`${prefix}ListTable`, Table)
 }
 

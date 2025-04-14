@@ -1,17 +1,9 @@
-<script setup>
-import PerPage from './per-page.vue';
-import PerPageProps from './per-page-props.vue';
-
-</script>
-
 # Per Page Component
 
 ## Overview
 
 - `VListPerPage` component provides a pagination bar with clickable page numbers, allowing users to navigate through the list easily.
 - To utilize `VListPerPage` component, integrate it within the **#default** slot of the wrapper component.
-
-<PerPage/>
 
 ## Example
 

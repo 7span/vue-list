@@ -1,68 +1,71 @@
 <template>
   <div class="py">
     <UContainer>
-      <VList endpoint="skills" :per-page="5" pagination-mode="pagination">
+      <VueList endpoint="skills" :per-page="5" pagination-mode="pagination">
         <template #default>
           <div class="grid grid-cols-3 h-screen gap-5 p-5">
             <div class="col-span-2 overflow-y-auto p-1">
-              <VListInitialLoader />
-              <VListLoader />
-              <VListError />
-              <VListItems>
+              <VueListInitialLoader />
+              <VueListLoader />
+              <VueListError />
+              <VueListItems>
                 <template #item="{ item }">
                   <UCard> {{ item.name }} </UCard>
                 </template>
-              </VListItems>
+              </VueListItems>
             </div>
             <div class="col-span-1 overflow-y-auto p-1">
               <UAccordion :items="components">
                 <template #pagination>
-                  <VListPagination />
-                  <VListPagination v-slot="data">
+                  <VueListPagination />
+                  <VueListPagination v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VListPagination>
+                  </VueListPagination>
                 </template>
                 <template #loadmore>
-                  <VListLoadMore />
-                  <VListLoadMore v-slot="data">
+                  <VueListLoadMore />
+                  <VueListLoadMore v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VListLoadMore>
+                  </VueListLoadMore>
                 </template>
                 <template #search>
-                  <VListSearch />
-                  <VListSearch v-slot="data">
+                  <VueListSearch />
+                  <VueListSearch v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VListSearch>
+                  </VueListSearch>
                 </template>
                 <template #counter>
-                  <VListCounter />
-                  <VListCounter v-slot="data">
+                  <VueListCounter />
+                  <VueListCounter v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VListCounter>
+                  </VueListCounter>
                 </template>
                 <template #goto>
-                  <VListGoTo />
-                  <VListGoTo v-slot="data">
+                  <VueListGoTo />
+                  <VueListGoTo v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VListGoTo>
+                  </VueListGoTo>
                 </template>
                 <template #perpage>
-                  <VListPerPage />
-                  <VListPerPage v-slot="data">
+                  <VueListPerPage />
+                  <VueListPerPage v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VListPerPage>
+                  </VueListPerPage>
                 </template>
                 <template #attributes>
-                  <VListAttributes />
-                  <VListAttributes v-slot="data">
+                  <VueListAttributes />
+                  <VueListAttributes v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VListAttributes>
+                  </VueListAttributes>
+                </template>
+                <template #refresh>
+                  <VueListRefresh />
                 </template>
               </UAccordion>
             </div>
           </div>
         </template>
-      </VList>
+      </VueList>
     </UContainer>
   </div>
 </template>
@@ -96,6 +99,10 @@ const components = [
   {
     label: 'Attributes',
     slot: 'attributes',
+  },
+  {
+    label: 'Refresh',
+    slot: 'refresh',
   },
 ]
 </script>

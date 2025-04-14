@@ -1,3 +1,13 @@
+# Goto Component
+
+## Overview
+
+- Facilitates navigation to a specific page or item in the list.
+- Use `VListGoTo` component inside the **#default** slot of the wrapper component.
+
+## Example
+
+```vue {14} [app.vue]
 <template>
   <VList
     :attrs="state.attrs"
@@ -9,8 +19,9 @@
     <template #default>
       <VListTable :rowClass="() => []"> </VListTable>
 
-      <!-- Integration of VListCounter component -->
-      <VListCounter />
+      <!-- Integration of VListGoTo component -->
+      <span>Go To Page :</span>
+      <VListGoTo />
     </template>
   </VList>
 </template>
@@ -27,14 +38,4 @@ const state = reactive({
   ],
 });
 </script>
-
-<style scoped>
-/* Tabel Styling */
-table {
-  width: 100%;
-}
-
-.vp-doc table {
-  display: table;
-}
-</style>
+```

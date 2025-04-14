@@ -16,13 +16,10 @@ const props = defineProps({
   endpoint: {
     type: String,
   },
-  config: {
-    type: Object,
-  },
-  requestPayload: {
+  meta: {
     /**
      * Additional request payload while making requests.
-     * requestHandler will get this in the context with `payload` key
+     * requestHandler will get this in the context with `meta` key
      */
     default: () => {},
   },
@@ -121,10 +118,39 @@ const props = defineProps({
   },
 })
 
+const isLoadMore = computed(() => {
+  return props.paginationMode == 'loadMore'
+})
+
 const emit = defineEmits(['onItemSelect', 'onResponse', 'afterPageChange', 'afterLoadMore'])
 const filters = defineModel('filters')
 const globalOptions = inject('vueList')
 const requestHandler = props.requestHandler || globalOptions.requestHandler
+
+const localPage = ref(props.page)
+const localPerPage = ref(props.perPage)
+const localSortBy = ref(props.sortBy)
+const localSortOrder = ref(props.sortOrder)
+const localSearch = ref(props.search)
+const attrSettings = ref()
+
+/**
+ * Context Object
+ */
+const context = computed(() => {
+  return {
+    endpoint: props.endpoint,
+    version: props.version,
+    meta: props.meta,
+    search: localSearch.value,
+    page: localPage.value,
+    perPage: localPerPage.value,
+    sortBy: localSortBy.value,
+    sortOrder: localSortOrder.value,
+    filters: filters.value,
+    attrSettings: attrSettings.value,
+  }
+})
 
 /**
  * Local reactive state variables that mirror the props.
@@ -135,31 +161,15 @@ const requestHandler = props.requestHandler || globalOptions.requestHandler
  */
 function getState() {
   try {
-    const oldState = globalOptions.stateManager.get(props.endpoint, {
-      requestPayload: props.requestPayload,
-      version: props.version,
-    })
-
-    /**
-     * For loadMore pagination mode, reset page to 1 since we always
-     * load from the beginning in "load more" scenarios
-     */
-    let page
-    if (props.paginationMode == 'loadMore') {
-      page = 1
-    } else {
-      // Always give priority to query param over localState.
-      page = Number(route.query.page) || oldState?.pagination?.page || props.page
-    }
-
+    const oldState = globalOptions.stateManager.get(context.value)
     return {
-      page,
-      perPage: oldState?.pagination?.perPage || props.perPage,
-      sortBy: oldState?.sortBy || props.sortBy,
-      sortOrder: oldState?.sortOrder || props.sortOrder,
-      search: oldState?.search || props.search,
+      page: oldState?.page,
+      perPage: oldState?.perPage,
+      sortBy: oldState?.sortBy,
+      sortOrder: oldState?.sortOrder,
+      search: oldState?.search,
       attrSettings: oldState?.attrSettings,
-      filters: oldState?.filters || props.filters,
+      filters: oldState?.filters,
     }
   } catch (err) {
     console.error(err)
@@ -168,13 +178,26 @@ function getState() {
 }
 const state = getState()
 
-const localPage = ref(state.page)
-const localPerPage = ref(state.perPage)
-const localSortBy = ref(state.sortBy)
-const localSortOrder = ref(state.sortOrder)
-const localSearch = ref(state.search)
-const attrSettings = ref(state.attrSettings)
-filters.value = state.filters
+/**
+ * For loadMore pagination mode, reset page to 1 since we always
+ * load from the beginning in "load more" scenarios
+ */
+if (isLoadMore.value) {
+  localPage.value = 1
+} else if (route.query.page) {
+  // Always give priority to query param over localState.
+  localPage.value = Number(route.query.page)
+} else if (state.page != null) {
+  localPage.value = state.page
+} else {
+  //The default value is set in the ref already.
+}
+state.perPage != null && (localPerPage.value = state.perPage)
+state.sortBy != null && (localSortBy.value = state.sortBy)
+state.sortOrder != null && (localSortOrder.value = state.sortOrder)
+state.search != null && (localSearch.value = state.search)
+state.attrSettings != null && (attrSettings.value = state.attrSettings)
+state.filters != null && (filters.value = state.filters)
 
 /**
  * confirmedPage is only updated after a successful response for the requested page.
@@ -202,22 +225,6 @@ const serializedAttrs = computed(() => {
   return attrSerializer(attrs)
 })
 
-/**
- * Only add keys which are meant to be saved into the state manager.
- */
-const statePayload = computed(() => {
-  return {
-    version: props.version,
-    search: localSearch.value,
-    page: localPage.value,
-    perPage: localPerPage.value,
-    sortBy: localSortBy.value,
-    sortOrder: localSortOrder.value,
-    filters: filters.value,
-    attrSettings: attrSettings.value,
-  }
-})
-
 const isEmpty = computed(() => {
   return items.value?.length == 0
 })
@@ -234,24 +241,20 @@ const scope = computed(() => {
     //computed
     serializedAttrs: serializedAttrs,
     isEmpty: isEmpty,
-    statePayload: statePayload,
+    context: context,
 
     //methods
     refresh: refresh,
   }
 })
 
-const isLoadMore = computed(() => {
-  return props.paginationMode == 'loadMore'
-})
-
-function setPage(value, payload) {
+function setPage(value, addContext) {
   localPage.value = value
-  getData(payload)
+  getData(addContext)
 }
 
 function updateStateManager() {
-  globalOptions.stateManager.set(props.endpoint, statePayload.value)
+  globalOptions.stateManager.set(context.value)
 }
 
 function setItems(res) {
@@ -281,11 +284,11 @@ function setSelection(value) {
   selection.value = value
 }
 
-function refresh(payload) {
+function refresh(addContext) {
   if (isLoadMore.value) {
-    setPage(1, payload)
+    setPage(1, addContext)
   } else {
-    getData(payload)
+    getData(addContext)
   }
 }
 
@@ -314,10 +317,6 @@ function updateAttr(name, prop, value) {
   updateStateManager()
 }
 
-function clearState() {
-  globalOptions.stateManager.set(props.endpoint)
-}
-
 /**
  * Updates URL query parameters for pagination.
  *
@@ -336,19 +335,13 @@ function updateUrl() {
   }
 }
 
-function getData(payload = {}) {
+function getData(addContext = {}) {
   error.value = false
   loading.value = true
 
   requestHandler({
-    method: 'get',
-    endpoint: props.endpoint,
-    config: props.config,
-    payload: {
-      ...props.requestPayload,
-      ...payload,
-    },
-    ...statePayload.value,
+    ...context.value,
+    ...addContext,
   })
     .then((res) => {
       response.value = res
@@ -419,6 +412,7 @@ provide('selection', selection)
 provide('confirmedPage', confirmedPage)
 provide('paginationMode', props.paginationMode)
 provide('initializingState', initializingState)
+provide('attrs', serializedAttrs)
 
 // Provide Methods
 provide('setSearch', setSearch)
@@ -429,7 +423,7 @@ provide('setPage', setPage)
 provide('setPerPage', setPerPage)
 provide('updateAttr', updateAttr)
 provide('loadMore', loadMore)
-provide('attrs', serializedAttrs)
+provide('refresh', refresh)
 
 /**
  * If stateManager does not provide attrSettings,
@@ -448,10 +442,7 @@ if (!attrSettings.value) {
  * Initialize the state manager.
  * This step allows cleaning up stale states when version changes.
  */
-globalOptions.stateManager.init(props.endpoint, {
-  requestPayload: props.requestPayload,
-  version: props.version,
-})
+globalOptions.stateManager.init(context.value)
 
 setPage(localPage.value)
 </script>

@@ -3,7 +3,7 @@ import { version } from "../package.json";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Vue List",
+  title: "VueList",
   description: "Vue List Documentation",
   themeConfig: {
     siteTitle: "Vue List",
@@ -20,40 +20,40 @@ export default defineConfig({
       {
         text: "Introduction",
         items: [
-          { text: "What is Vue List?", link: "/guide/what-is-vue-list" },
-          { text: "Getting Started", link: "/guide/getting-started" },
-
-          // { text: "Components", link: "/components/index.md" },
+          { text: "Why Vue List?", link: "/introduction/why-vue-list" },
+          { text: "Getting Started", link: "/introduction/getting-started" },
+        ],
+      },
+      {
+        text: "Configuration",
+        items: [
+          { text: "Options", link: "/configuration/options" },
+          { text: "Request Handler", link: "/configuration/request-handler" },
+          { text: "State Manager", link: "/configuration/state-manager" },
+          { text: "Context Object", link: "/configuration/context-object" },
         ],
       },
       {
         text: "Components",
         items: [
           {
-            text: "Intro to Components",
-            link: "/guide/builtin-components/intro",
+            text: "Introduction",
+            link: "/components/intro",
           },
-          {
-            text: "Components",
-            collapsed: false,
-            items: [
-              { text: "Root", link: "/components/root/root.md" },
-              { text: "Table", link: "/components/table/table.md" },
-              {
-                text: "Attributes",
-                link: "/components/attributes/attributes.md",
-              },
-              { text: "Counters", link: "/components/counters/counters.md" },
-              { text: "GoTo Page", link: "/components/goto-page/goto-page.md" },
-              { text: "Load More", link: "/components/load-more/load-more.md" },
-              {
-                text: "Pagination",
-                link: "/components/pagination/pagination.md",
-              },
-              { text: "Per Page", link: "/components/per-page/per-page.md" },
-              { text: "Search", link: "/components/search/search.md" },
-            ],
-          },
+          { text: "VueList", link: "/components/vue-list" },
+          { text: "VueListAttributes", link: "/components/attributes" },
+          { text: "VueListCounter", link: "/components/counter" },
+          { text: "VueListGoTo", link: "/components/go-to" },
+          { text: "VueListLoadMore", link: "/components/load-more" },
+          { text: "VueListPagination", link: "/components/pagination" },
+          { text: "VueListPerPage", link: "/components/per-page" },
+          { text: "VueListSearch", link: "/components/search" },
+          { text: "VueListItems", link: "/components/vue-list" },
+          { text: "VueListEmpty", link: "/components/vue-list" },
+          { text: "VueListError", link: "/components/vue-list" },
+          { text: "VueListInitialLoader", link: "/components/vue-list" },
+          { text: "VueListLoader", link: "/components/vue-list" },
+          { text: "VueListRefresh", link: "/components/vue-list" },
         ],
       },
     ],

@@ -1,17 +1,9 @@
-<script setup>
-import LoadMore from './load-more.vue';
-import LoadMoreSlots from './load-more-slots.vue';
-
-</script>
-
 # Load More Component
 
 ## Overview
 
 - Provides functionality for infinite scrolling in a list, allowing users to load additional items from an API seamlessly.
 - To utilize `VListLoadMore` component, integrate it within the **#default** slot of the wrapper component.
-
-<LoadMore/>
 
 ## Example
 

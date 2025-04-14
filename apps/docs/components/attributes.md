@@ -1,8 +1,3 @@
-<script setup>
-import Attributes from './attributes.vue';
-
-</script>
-
 # Attributes Component
 
 ## Overview

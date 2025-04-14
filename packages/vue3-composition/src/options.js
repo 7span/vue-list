@@ -1,5 +1,5 @@
 export default {
-  componentPrefix: 'V',
+  componentPrefix: '',
   requestHandler() {
     return new Promise((resolve, reject) => {
       resolve({
