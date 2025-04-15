@@ -3,12 +3,14 @@ import { version } from "../package.json";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Vue List",
+  title: "VueList",
   description: "Vue List Documentation",
+  head: [["link", { rel: "icon", href: "/logo.svg" }]],
+  srcDir: "src",
   themeConfig: {
-    siteTitle: "Vue List",
-    logo: "logo.svg",
-    nav: [{ text: "Home", link: "/index.md" }],
+    siteTitle: "VueList",
+    logo: "/logo.svg",
+    nav: [{ text: "Home", link: "/src/index.md" }],
     lastUpdated: {
       text: "Updated at",
       formatOptions: {
@@ -16,44 +18,47 @@ export default defineConfig({
         timeStyle: "medium",
       },
     },
+    outline: [2, 3],
     sidebar: [
       {
-        text: "Introduction",
+        text: "👋 Introduction",
         items: [
-          { text: "What is Vue List?", link: "/guide/what-is-vue-list" },
-          { text: "Getting Started", link: "/guide/getting-started" },
-
-          // { text: "Components", link: "/components/index.md" },
+          { text: "Why Vue List?", link: "/introduction/why-vue-list" },
+          {
+            text: "Getting Started",
+            link: "/introduction/getting-started",
+          },
         ],
       },
       {
-        text: "Components",
+        text: "⚙️ Configuration",
+        items: [
+          { text: "Options", link: "/configuration/options" },
+          { text: "Request Handler", link: "/configuration/request-handler" },
+          { text: "State Manager", link: "/configuration/state-manager" },
+          { text: "Context Object", link: "/configuration/context-object" },
+        ],
+      },
+      {
+        text: "🧩 Components",
         items: [
           {
-            text: "Intro to Components",
-            link: "/guide/builtin-components/intro",
+            text: "Introduction",
+            link: "/components/intro",
           },
-          {
-            text: "Components",
-            collapsed: false,
-            items: [
-              { text: "Root", link: "/components/root/root.md" },
-              { text: "Table", link: "/components/table/table.md" },
-              {
-                text: "Attributes",
-                link: "/components/attributes/attributes.md",
-              },
-              { text: "Counters", link: "/components/counters/counters.md" },
-              { text: "GoTo Page", link: "/components/goto-page/goto-page.md" },
-              { text: "Load More", link: "/components/load-more/load-more.md" },
-              {
-                text: "Pagination",
-                link: "/components/pagination/pagination.md",
-              },
-              { text: "Per Page", link: "/components/per-page/per-page.md" },
-              { text: "Search", link: "/components/search/search.md" },
-            ],
-          },
+          { text: "VueList", link: "/components/vue-list" },
+          { text: "VueListItems", link: "/components/items" },
+          { text: "VueListPagination", link: "/components/pagination" },
+          { text: "VueListLoadMore", link: "/components/load-more" },
+          { text: "VueListInitialLoader", link: "/components/initial-loader" },
+          { text: "VueListLoader", link: "/components/loader" },
+          { text: "VueListSummary", link: "/components/summary" },
+          { text: "VueListGoTo", link: "/components/go-to" },
+          { text: "VueListPerPage", link: "/components/per-page" },
+          { text: "VueListSearch", link: "/components/search" },
+          { text: "VueListEmpty", link: "/components/empty" },
+          { text: "VueListError", link: "/components/error" },
+          { text: "VueListRefresh", link: "/components/refresh" },
         ],
       },
     ],
@@ -65,7 +70,7 @@ export default defineConfig({
     ],
     footer: {
       message: `Version ${version}`,
-      copyright: "© 7Span Internet Private Limited. All rights reserved, 2024.",
+      copyright: "🧑‍💻 Built By 7Span.",
     },
   },
 });
