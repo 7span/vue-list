@@ -32,11 +32,11 @@ const install = (app, userOptions = {}) => {
   app.component(`${prefix}VueListPagination`, Pagination)
   app.component(`${prefix}VueListSummary`, Summary)
   app.component(`${prefix}VueListPerPage`, PerPage)
-  app.component(`${prefix}VueListAttributes`, Attributes)
   app.component(`${prefix}VueListSearch`, Search)
   app.component(`${prefix}VueListLoadMore`, LoadMore)
   app.component(`${prefix}VueListGoTo`, GoTo)
   app.component(`${prefix}VueListRefresh`, Refresh)
+  app.component(`${prefix}VueListAttributes`, Attributes)
   // app.component(`${prefix}ListTable`, Table)
 }
 

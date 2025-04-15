@@ -8,8 +8,6 @@ export default {
       })
     })
   },
-  itemProps: {},
-  typeAdapters: {},
   stateManager: {
     set() {},
     get() {},
