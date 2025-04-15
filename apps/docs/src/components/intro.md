@@ -35,7 +35,7 @@ Instead, it gives you a set of composable components that expose useful state an
 
 ## Notes
 
-- <VueList\> must be the root component to manage the list context.
+- `<VueList>` must be the root component to manage the list context.
 - All child components consume the internal state automatically — no need to pass props.
 - You can wrap child components with custom markup, layouts, or UI frameworks like Tailwind, Vuetify, etc.
 - You don’t have to use every child component — use only what you need.

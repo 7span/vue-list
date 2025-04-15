@@ -94,7 +94,7 @@ const props = defineProps({
     type: [String, Number],
     default: 1,
   },
-  paginationHistory: {
+  hasPaginationHistory: {
     /**
      * #TODO: Rename this?
      * Enable pagination history in URL.
@@ -149,6 +149,7 @@ const context = computed(() => {
     sortOrder: localSortOrder.value,
     filters: filters.value,
     attrSettings: attrSettings.value,
+    isRefresh: false, // This will be sent as true when refresh is called.
   }
 })
 
@@ -211,7 +212,7 @@ const selection = ref([])
 const error = ref(false)
 const response = ref()
 const count = ref(0)
-const loading = ref(false)
+const isLoading = ref(false)
 const initializingState = ref(true)
 
 /**
@@ -234,7 +235,7 @@ const scope = computed(() => {
     //state
     items: items,
     response: response,
-    loading: loading,
+    isLoading: isLoading,
     selection: selection,
     error: error,
 
@@ -284,7 +285,7 @@ function setSelection(value) {
   selection.value = value
 }
 
-function refresh(addContext) {
+function refresh(addContext = { isRefresh: true }) {
   if (isLoadMore.value) {
     setPage(1, addContext)
   } else {
@@ -325,7 +326,7 @@ function updateAttr(name, prop, value) {
  * Query params are only updated for pages > 1 to maintain expected browser navigation.
  */
 function updateUrl() {
-  if (!isLoadMore.value && route.query.page != localPage.value && props.paginationHistory) {
+  if (!isLoadMore.value && route.query.page != localPage.value && props.hasPaginationHistory) {
     router.push({
       query: {
         ...(route.query || {}), // Keep already existing query params in URL
@@ -337,7 +338,7 @@ function updateUrl() {
 
 function getData(addContext = {}) {
   error.value = false
-  loading.value = true
+  isLoading.value = true
 
   requestHandler({
     ...context.value,
@@ -366,7 +367,7 @@ function getData(addContext = {}) {
       throw new Error(err)
     })
     .finally(() => {
-      loading.value = false
+      isLoading.value = false
     })
 }
 
@@ -406,7 +407,7 @@ provide('localSortBy', localSortBy)
 provide('localSortOrder', localSortOrder)
 provide('localPage', localPage)
 provide('localPerPage', localPerPage)
-provide('loading', loading)
+provide('isLoading', isLoading)
 provide('localSearch', localSearch)
 provide('selection', selection)
 provide('confirmedPage', confirmedPage)

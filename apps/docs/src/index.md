@@ -3,9 +3,11 @@ layout: home
 
 hero:
   name: VueList
-  text: Simplified API-based list rendering.
-  tagline: Build listing layouts faster by abstracting away the boilerplate of API calls, pagination, and state management
-
+  text: Simplified API-based list rendering
+  tagline: Build listing layouts faster by abstracting away the boilerplate of API calls, pagination, and state management.
+  image:
+    src: /hero.svg
+    alt: VitePress
   actions:
     - theme: brand
       text: Get Started

@@ -1,6 +1,6 @@
 <template>
   <div class="v-list-per-page">
-    <slot :value="localPerPage" :change="setPerPage" :options="serializedOptions">
+    <slot :perPage="localPerPage" :setPerPage="setPerPage" :options="serializedOptions">
       <select :value="localPerPage" @input="setPerPage($event.target.value)">
         <option
           v-for="(option, index) in serializedOptions"

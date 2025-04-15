@@ -1,7 +1,7 @@
 <template>
   <div class="v-list-counter">
-    <slot :showing="items.length" :count="count" :from="from" :to="to">
-      <span> Showing {{ items.length }} items out of {{ count }} </span>
+    <slot :visibleCount="items.length" :count="count" :from="from" :to="to">
+      <span> Showing {{ items.length }} items ({{ from }} - {{ to }}) out of {{ count }} </span>
     </slot>
   </div>
 </template>

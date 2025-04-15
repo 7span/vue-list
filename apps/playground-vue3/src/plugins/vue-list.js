@@ -58,29 +58,38 @@ export default {
       sort = (sortOrder == 'asc' ? '-' : '') + sortBy
     }
 
-    //DIRECTUS COUNT
-    const count = await ofetch(
-      `https://everest.7span.in/items/${endpoint}?aggregate[countDistinct]=id`,
-    ).then(({ data }) => data[0].countDistinct.id)
+    const requests = [
+      //DIRECTUS COUNT
+      ofetch(`https://everest.7span.in/items/${endpoint}?aggregate[countDistinct]=id`).then(
+        ({ data }) => data[0].countDistinct.id,
+      ),
 
-    return ofetch(`https://everest.7span.in/items/${endpoint}`, {
-      params: {
-        page,
-        limit: perPage,
-        search: search,
-        sort,
-        // filters: filters,
-      },
-      paramsSerializer: (params) => qs.stringify(params),
-    })
-      .then(({ data }) => {
+      //DIRECTUS DATA
+      ofetch(`https://everest.7span.in/items/${endpoint}`, {
+        params: {
+          page,
+          limit: perPage,
+          search: search,
+          sort,
+          // filters: filters,
+        },
+      }).then(({ data }) => {
+        return data
+      }),
+    ]
+
+    return Promise.all(requests)
+      .then(([count, items]) => {
         return {
-          items: data,
-          count: count,
+          items,
+          count,
         }
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((error) => {
+        console.error({ error })
+        const err = new Error('Failed to fetch data')
+        err.name = 'NetworkError'
+        throw err
       })
   },
 }

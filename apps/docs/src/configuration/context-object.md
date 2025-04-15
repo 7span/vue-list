@@ -18,6 +18,7 @@ It contains everything VueList knows about the current list view, bundled into a
   filters: Object,
   search: String,
   meta: Object,
+  isRefresh:Boolean
 }
 ```
 
@@ -92,3 +93,12 @@ It contains everything VueList knows about the current list view, bundled into a
 
   - Useful for passing extra data to the requestHandler
   - Can be used to customize the list based on specific requirements
+
+## 🔄 `isRefresh`
+
+- type: `Boolean`
+
+  When the refresh is triggered from `<VueListRefresh>` or `refresh` method is called, this value is true.
+
+  - Use this to skip cache layers and force hit APIs, or show special loading states.
+  - Offer a retry option without changing filters or pagination.

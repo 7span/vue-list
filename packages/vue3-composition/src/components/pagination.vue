@@ -9,14 +9,16 @@
         <button type="button" :disabled="!hasPrev" @click="prev">Prev</button>
       </slot>
 
-      <template v-for="item in pagesToDisplay">
-        <slot name="page" :value="item" :isActive="item == localPage" v-bind="scope">
-          <span v-if="item == localPage" :key="`page-active-${item}`">{{ item }}</span>
-          <button type="button" v-else :key="`page-${item}`" @click="setPage(item)">
-            {{ item }}
-          </button>
-        </slot>
-      </template>
+      <slot name="pages" v-bind="scope">
+        <template v-for="item in pagesToDisplay">
+          <slot name="page" :page="item" :isActive="item == localPage" v-bind="scope">
+            <span v-if="item == localPage" :key="`page-active-${item}`">{{ item }}</span>
+            <button type="button" v-else :key="`page-${item}`" @click="setPage(item)">
+              {{ item }}
+            </button>
+          </slot>
+        </template>
+      </slot>
 
       <slot name="next" v-bind="scope">
         <button type="button" :disabled="!hasNext" @click="next">Next</button>
@@ -52,7 +54,7 @@ const props = defineProps({
   },
 })
 
-const total = computed(() => {
+const pagesCount = computed(() => {
   return Math.ceil(count.value / localPerPage.value)
 })
 
@@ -69,12 +71,12 @@ const hasPrev = computed(() => {
 })
 
 const pagesToDisplay = computed(() => {
-  const pages = Array.apply(null, Array(Math.min(props.pageLinks, total.value)))
+  const pages = Array.apply(null, Array(Math.min(props.pageLinks, pagesCount.value)))
 
   if (localPage.value <= halfWay.value) {
     return pages.map((value, index) => index + 1)
-  } else if (total.value - localPage.value < halfWay.value) {
-    return pages.map((value, index) => total.value - index).reverse()
+  } else if (pagesCount.value - localPage.value < halfWay.value) {
+    return pages.map((value, index) => pagesCount.value - index).reverse()
   } else {
     return pages.map((value, index) => localPage.value - halfWay.value + index)
   }
@@ -84,17 +86,17 @@ const scope = computed(() => {
   return {
     page: localPage,
     perPage: localPerPage,
-    count: count,
-    total: total,
-    pagesToDisplay: pagesToDisplay,
-    halfWay: halfWay,
-    hasNext: hasNext,
-    hasPrev: hasPrev,
-    prev: prev,
-    next: next,
-    first: first,
-    last: last,
-    change: setPage,
+    count,
+    pagesCount,
+    pagesToDisplay,
+    halfWay,
+    hasNext,
+    hasPrev,
+    prev,
+    next,
+    first,
+    last,
+    setPage,
   }
 })
 
@@ -108,6 +110,6 @@ function first() {
   setPage(1)
 }
 function last() {
-  setPage(total.value)
+  setPage(pagesCount.value)
 }
 </script>

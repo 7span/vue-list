@@ -7,7 +7,12 @@
             <div class="col-span-2 overflow-y-auto p-1">
               <VueListInitialLoader />
               <VueListLoader />
+
               <VueListError />
+              <VueListError v-slot="{ error }">
+                <pre>{{ error.name }}</pre>
+                <pre>{{ error.message }}</pre>
+              </VueListError>
               <VueListItems>
                 <template #item="{ item }">
                   <UCard> {{ item.name }} </UCard>
@@ -34,11 +39,11 @@
                     <pre class="text-xs">{{ data }}</pre>
                   </VueListSearch>
                 </template>
-                <template #counter>
-                  <VueListCounter />
-                  <VueListCounter v-slot="data">
+                <template #summary>
+                  <VueListSummary />
+                  <VueListSummary v-slot="data">
                     <pre class="text-xs">{{ data }}</pre>
-                  </VueListCounter>
+                  </VueListSummary>
                 </template>
                 <template #goto>
                   <VueListGoTo />
@@ -85,8 +90,8 @@ const components = [
     slot: 'search',
   },
   {
-    label: 'Counter',
-    slot: 'counter',
+    label: 'Summary',
+    slot: 'summary',
   },
   {
     label: 'Go To',

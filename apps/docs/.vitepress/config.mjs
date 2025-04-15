@@ -5,10 +5,12 @@ import { version } from "../package.json";
 export default defineConfig({
   title: "VueList",
   description: "Vue List Documentation",
+  head: [["link", { rel: "icon", href: "/logo.svg" }]],
+  srcDir: "src",
   themeConfig: {
-    siteTitle: "Vue List",
-    logo: "logo.svg",
-    nav: [{ text: "Home", link: "/index.md" }],
+    siteTitle: "VueList",
+    logo: "/logo.svg",
+    nav: [{ text: "Home", link: "/src/index.md" }],
     lastUpdated: {
       text: "Updated at",
       formatOptions: {
@@ -16,16 +18,20 @@ export default defineConfig({
         timeStyle: "medium",
       },
     },
+    outline: [2, 3],
     sidebar: [
       {
-        text: "Introduction",
+        text: "👋 Introduction",
         items: [
           { text: "Why Vue List?", link: "/introduction/why-vue-list" },
-          { text: "Getting Started", link: "/introduction/getting-started" },
+          {
+            text: "Getting Started",
+            link: "/introduction/getting-started",
+          },
         ],
       },
       {
-        text: "Configuration",
+        text: "⚙️ Configuration",
         items: [
           { text: "Options", link: "/configuration/options" },
           { text: "Request Handler", link: "/configuration/request-handler" },
@@ -34,26 +40,25 @@ export default defineConfig({
         ],
       },
       {
-        text: "Components",
+        text: "🧩 Components",
         items: [
           {
             text: "Introduction",
             link: "/components/intro",
           },
           { text: "VueList", link: "/components/vue-list" },
-          { text: "VueListAttributes", link: "/components/attributes" },
-          { text: "VueListCounter", link: "/components/counter" },
-          { text: "VueListGoTo", link: "/components/go-to" },
-          { text: "VueListLoadMore", link: "/components/load-more" },
+          { text: "VueListItems", link: "/components/items" },
           { text: "VueListPagination", link: "/components/pagination" },
+          { text: "VueListLoadMore", link: "/components/load-more" },
+          { text: "VueListInitialLoader", link: "/components/initial-loader" },
+          { text: "VueListLoader", link: "/components/loader" },
+          { text: "VueListSummary", link: "/components/summary" },
+          { text: "VueListGoTo", link: "/components/go-to" },
           { text: "VueListPerPage", link: "/components/per-page" },
           { text: "VueListSearch", link: "/components/search" },
-          { text: "VueListItems", link: "/components/vue-list" },
-          { text: "VueListEmpty", link: "/components/vue-list" },
-          { text: "VueListError", link: "/components/vue-list" },
-          { text: "VueListInitialLoader", link: "/components/vue-list" },
-          { text: "VueListLoader", link: "/components/vue-list" },
-          { text: "VueListRefresh", link: "/components/vue-list" },
+          { text: "VueListEmpty", link: "/components/empty" },
+          { text: "VueListError", link: "/components/error" },
+          { text: "VueListRefresh", link: "/components/refresh" },
         ],
       },
     ],
@@ -65,7 +70,7 @@ export default defineConfig({
     ],
     footer: {
       message: `Version ${version}`,
-      copyright: "© 7Span Internet Private Limited. All rights reserved, 2024.",
+      copyright: "🧑‍💻 Built By 7Span.",
     },
   },
 });

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!initializingState && loading" class="v-list-loader">
+  <div v-if="!initializingState && isLoading" class="v-list-loader">
     <slot>
       <p>Loading...</p>
     </slot>
@@ -8,6 +8,6 @@
 
 <script setup>
 import { inject } from 'vue'
-const loading = inject('loading')
+const isLoading = inject('isLoading')
 const initializingState = inject('initializingState')
 </script>

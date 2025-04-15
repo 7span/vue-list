@@ -1,13 +1,13 @@
 <template>
-  <div v-if="!loading && !items.length" class="v-list-error">
-    <slot>
-      <p>No data found!</p>
+  <div v-if="error && !isLoading" class="v-list-error">
+    <slot :error="error">
+      <pre>{{ error }}</pre>
     </slot>
   </div>
 </template>
 
 <script setup>
 import { inject } from 'vue'
-const items = inject('items')
-const loading = inject('loading')
+const error = inject('error')
+const isLoading = inject('isLoading')
 </script>

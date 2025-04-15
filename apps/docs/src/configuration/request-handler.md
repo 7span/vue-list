@@ -82,6 +82,11 @@ app.use(VueList, {
           items: res.data,
           count: res.count,
         };
+      }).catch(error=>{
+        // Handle error
+        const err = new Error('Failed to fetch data')
+        err.name = 'NetworkError'
+        throw err
       });
   },
 });
@@ -89,6 +94,10 @@ app.use(VueList, {
 
 :::
 
-## Error Handling (WIP)
+## Error Handling
 
-You can handle errors inside the `requestHandler` and return fallbacks, or let the promise reject and handle loading/error state in your app’s UI. VueList won't crash if the handler throws — you can decide how to surface that error.
+The `requestHandler` function is expected to return a Promise. If that promise is rejected, VueList catches the failure and passes the error object down to `<VueListError>`.
+
+::: warning Heads up!
+If you include a catch block in the `requestHandler` function but don't explicitly throw the error, VueList won't be able to detect and handle the error appropriately.
+:::

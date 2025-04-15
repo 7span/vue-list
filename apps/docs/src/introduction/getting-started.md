@@ -73,7 +73,7 @@ app.mount("#app");
 
 ## Using in Components
 
-Once the plugin is configured, you can use the `<VueList>` component anywhere in your app to power listing views. VueList handles the reactive state (pagination, filters, loading, etc.) - you handle the markup.
+Once the plugin is configured, you can use the `<VueList>` component anywhere in your app to power listing views. VueList handles the reactive state (pagination, filters, isLoading, etc.) - you handle the markup.
 
 ::: code-group
 

@@ -2,14 +2,14 @@
 
 When installing VueList, you can pass an options object to customize its behavior. These options allow you to define global behavior like how API requests are handled or how state is persisted.
 
-## `componentPrefix`
+### `componentPrefix`
 
 - Type: `string`
-- Default: `'V'`
+- Default: `''`
 
 Adds a prefix to the globally registered components (e.g., VList if the prefix is 'V'). Useful to avoid naming conflicts or to follow a naming convention in your app.
 
-## `requestHandler`
+### `requestHandler`
 
 - Type: `Function`
 
@@ -17,7 +17,7 @@ Global request handler function used to fetch data. Receives an object with `end
 
 Read more about [Request Handler](/configuration/request-handler.md).
 
-## `stateManager`
+### `stateManager`
 
 - Type: `Function`
 

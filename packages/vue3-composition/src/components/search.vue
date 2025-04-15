@@ -1,6 +1,6 @@
 <template>
   <div class="v-list-search">
-    <slot :value="localSearch" :set="set">
+    <slot :search="localSearch" :setSearch="set">
       <input
         type="text"
         :value="localSearch"

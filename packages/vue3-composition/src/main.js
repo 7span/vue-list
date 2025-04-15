@@ -7,7 +7,7 @@ import InitialLoader from './components/initial-loader.vue'
 import Loader from './components/loader.vue'
 import Err from './components/error.vue'
 import Pagination from './components/pagination.vue'
-import Counter from './components/counter.vue'
+import Summary from './components/summary.vue'
 import PerPage from './components/per-page.vue'
 import Attributes from './components/attributes.vue'
 import Search from './components/search.vue'
@@ -30,7 +30,7 @@ const install = (app, userOptions = {}) => {
   app.component(`${prefix}VueListItems`, Items)
   app.component(`${prefix}VueListError`, Err)
   app.component(`${prefix}VueListPagination`, Pagination)
-  app.component(`${prefix}VueListCounter`, Counter)
+  app.component(`${prefix}VueListSummary`, Summary)
   app.component(`${prefix}VueListPerPage`, PerPage)
   app.component(`${prefix}VueListAttributes`, Attributes)
   app.component(`${prefix}VueListSearch`, Search)

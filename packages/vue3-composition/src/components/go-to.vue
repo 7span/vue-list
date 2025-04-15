@@ -1,8 +1,8 @@
 <template>
   <div class="v-list-go-to">
-    <slot :change="setPage" :value="localPage" :options="options" :total="total">
+    <slot :setPage="setPage" :page="localPage" :pages="pages" :pagesCount="pagesCount">
       <select @input="setPage($event.target.value)" :value="localPage">
-        <option v-for="(option, index) in options" :key="`option-${index}`">
+        <option v-for="(option, index) in pages" :key="`option-${index}`">
           {{ option }}
         </option>
       </select>
@@ -17,11 +17,11 @@ const localPage = inject('localPage')
 const localPerPage = inject('localPerPage')
 const count = inject('count')
 
-const total = computed(() => {
+const pagesCount = computed(() => {
   return Math.ceil(count.value / localPerPage.value)
 })
 
-const options = computed(() => {
-  return Array.from({ length: total.value }, (_, i) => i + 1)
+const pages = computed(() => {
+  return Array.from({ length: pagesCount.value }, (_, i) => i + 1)
 })
 </script>
