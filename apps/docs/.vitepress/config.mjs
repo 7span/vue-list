@@ -4,7 +4,9 @@ import { version } from "../package.json";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "VueList",
-  description: "Vue List Documentation",
+  description:
+    "Simplified API-based list rendering. Build listing layouts faster by abstracting away the boilerplate of API calls, pagination, and state management.",
+  base: "/open-source/vue-list/",
   head: [["link", { rel: "icon", href: "/logo.svg" }]],
   srcDir: "src",
   themeConfig: {
