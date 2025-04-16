@@ -12,7 +12,7 @@ export default defineConfig({
   themeConfig: {
     siteTitle: "VueList",
     logo: "/logo.svg",
-    nav: [{ text: "Home", link: "/src/index.md" }],
+    nav: [{ text: "Home", link: "/index.md" }],
     lastUpdated: {
       text: "Updated at",
       formatOptions: {
@@ -72,7 +72,7 @@ export default defineConfig({
     ],
     footer: {
       message: `Version ${version}`,
-      copyright: "🧑‍💻 Built By 7Span.",
+      copyright: "🧑‍💻 Built @7Span.",
     },
   },
 });
