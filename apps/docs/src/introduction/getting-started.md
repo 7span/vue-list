@@ -79,23 +79,23 @@ Once the plugin is configured, you can use the `<VueList>` component anywhere in
 
 ```vue [users.vue]
 <template>
-  <VList endpoint="users" :per-page="5" pagination-mode="pagination">
+  <VueList endpoint="users" :per-page="5" pagination-mode="pagination">
     <template #default>
-      <VListInitialLoader />
-      <VListLoader />
-      <VListError />
-      <VListItems #default="{items}">
+      <VueListInitialLoader />
+      <VueListLoader />
+      <VueListError />
+      <VueListItems #default="{items}">
         <!-- Render your list items here -->
         <pre>{{ items }}</pre>
-      </VListItems>
-      <VListInitialLoader />
-      <VListLoader />
-      <VListError />
-      <VListItems />
-      <VListPagination />
-      <VListPagination />
+      </VueListItems>
+      <VueListInitialLoader />
+      <VueListLoader />
+      <VueListError />
+      <VueListItems />
+      <VueListPagination />
+      <VueListPagination />
     </template>
-  </VList>
+  </VueList>
 </template>
 ```
 

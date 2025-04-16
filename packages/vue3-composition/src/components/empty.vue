@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isLoading && !items.length && !error" class="v-list-empty">
+  <div v-if="!isLoading && !items.length && !error" class="vue-list__empty">
     <slot>
       <p>No data found!</p>
     </slot>

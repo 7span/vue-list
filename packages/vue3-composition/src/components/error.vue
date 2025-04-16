@@ -1,5 +1,5 @@
 <template>
-  <div v-if="error && !isLoading" class="v-list-error">
+  <div v-if="error && !isLoading" class="vue-list__error">
     <slot :error="error">
       <pre>{{ error }}</pre>
     </slot>

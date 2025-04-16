@@ -5,11 +5,11 @@ It gives you full control over how the button (or UI) looks while handling the l
 
 ```vue
 <template>
-  <VListLoadMore>
+  <VueListLoadMore>
     <template #default="{ loadMore, isLoading, hasMoreItems }">
       <!-- Render your load more button here -->
     </template>
-  </VListLoadMore>
+  </VueListLoadMore>
 </template>
 ```
 

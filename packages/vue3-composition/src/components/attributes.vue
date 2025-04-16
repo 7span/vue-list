@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-attributes">
+  <div class="vue-list__attributes">
     <slot name="default" :update="updateAttr" :attrs="attrs" :settings="attrSettings">
       <template v-for="(attr, index) in attrs">
         <slot :update="updateAttr" :attr="attr">

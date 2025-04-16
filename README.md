@@ -1,21 +1,21 @@
-# VueList
+# 🗂️ VueList
 
-Simplified API-based list rendering
+Simplified API-based list rendering.
 
 Build listing layouts faster by abstracting away the boilerplate of API calls, pagination, and state management.
 
-✅ Headless
-✅ Centralized Request Handling
-✅ Reactive
-✅ State Manager
+✅ Headless\
+✅ Centralized Request Handling\
+✅ Reactive\
+✅ State Manager\
 ✅ Opinionated
 
 Listing pages are everywhere — users, products, orders. And every time, you write the same boilerplate:
 `page`, `perPage`, `filters`, `isLoading`, `data`, `error`... again and again.
 
-✨ VueList eliminates this repetition ✨
+**VueList eliminates this repetition.**
 
-Write less. List more!
+Write less. List more ✨
 
 ## ⚙️ Configuring the Plugin
 
@@ -57,27 +57,27 @@ app.use(VueList, {
 });
 ```
 
-## ✨ Using in Components
+## 🧩 Using in Components
 
 ```vue
 <template>
-  <VList endpoint="users" :per-page="5" pagination-mode="pagination">
+  <VueList endpoint="users" :per-page="5" pagination-mode="pagination">
     <template #default>
-      <VListInitialLoader />
-      <VListLoader />
-      <VListError />
-      <VListItems #default="{items}">
+      <VueListInitialLoader />
+      <VueListLoader />
+      <VueListError />
+      <VueListItems #default="{items}">
         <!-- Render your list items here -->
         <pre>{{ items }}</pre>
-      </VListItems>
-      <VListInitialLoader />
-      <VListLoader />
-      <VListError />
-      <VListItems />
-      <VListPagination />
-      <VListPagination />
+      </VueListItems>
+      <VueListInitialLoader />
+      <VueListLoader />
+      <VueListError />
+      <VueListItems />
+      <VueListPagination />
+      <VueListPagination />
     </template>
-  </VList>
+  </VueList>
 </template>
 ```
 

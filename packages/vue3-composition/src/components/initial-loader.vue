@@ -1,5 +1,5 @@
 <template>
-  <div v-if="initializingState && isLoading" class="v-list-initial-loader">
+  <div v-if="initializingState && isLoading" class="vue-list__initial-loader">
     <slot>
       <p>Initial Loading...</p>
     </slot>

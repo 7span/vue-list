@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-pagination">
+  <div class="vue-list__pagination">
     <slot v-bind="scope">
       <slot name="first" v-bind="scope">
         <button type="button" :disabled="!hasPrev" @click="first">First</button>

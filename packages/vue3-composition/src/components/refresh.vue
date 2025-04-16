@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-refresh">
+  <div class="vue-list__refresh">
     <slot :isLoading="isLoading" :refresh="refresh">
       <button @click="refresh({ isRefresh: true })">
         {{ isLoading ? 'Loading...' : 'Refresh' }}

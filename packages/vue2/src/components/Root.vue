@@ -80,7 +80,6 @@
 import { startCase, isEqual } from "lodash-es";
 
 export default {
-  name: "VList",
   props: {
     /**
      * An API endpoint to hit for getting data.
@@ -195,7 +194,7 @@ export default {
     paginationHistory: {
       type: Boolean,
       default: true,
-    }
+    },
   },
 
   data() {

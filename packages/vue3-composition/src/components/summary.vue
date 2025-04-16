@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-counter">
+  <div class="vue-list__counter">
     <slot :visibleCount="items.length" :count="count" :from="from" :to="to">
       <span> Showing {{ items.length }} items ({{ from }} - {{ to }}) out of {{ count }} </span>
     </slot>

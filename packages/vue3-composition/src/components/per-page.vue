@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-per-page">
+  <div class="vue-list__per-page">
     <slot :perPage="localPerPage" :setPerPage="setPerPage" :options="serializedOptions">
       <select :value="localPerPage" @input="setPerPage($event.target.value)">
         <option

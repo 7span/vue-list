@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-load-more">
+  <div class="vue-list__load-more">
     <slot :isLoading="isLoading" :loadMore="loadMore" :hasMoreItems="hasMoreItems">
       <button v-if="hasMoreItems" @click="loadMore">Load More</button>
       <p v-else>— That's all —</p>

@@ -7,7 +7,7 @@ When installing VueList, you can pass an options object to customize its behavio
 - Type: `string`
 - Default: `''`
 
-Adds a prefix to the globally registered components (e.g., VList if the prefix is 'V'). Useful to avoid naming conflicts or to follow a naming convention in your app.
+Adds a prefix to the globally registered components. Useful to avoid naming conflicts or to follow a naming convention in your app.
 
 ### `requestHandler`
 

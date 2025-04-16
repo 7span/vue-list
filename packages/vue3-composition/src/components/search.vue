@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-search">
+  <div class="vue-list__search">
     <slot :search="localSearch" :setSearch="set">
       <input
         type="text"

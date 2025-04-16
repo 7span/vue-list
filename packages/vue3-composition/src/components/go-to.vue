@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-go-to">
+  <div class="vue-list__go-to">
     <slot :setPage="setPage" :page="localPage" :pages="pages" :pagesCount="pagesCount">
       <select @input="setPage($event.target.value)" :value="localPage">
         <option v-for="(option, index) in pages" :key="`option-${index}`">

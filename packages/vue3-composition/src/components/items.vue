@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list-items">
+  <div class="vue-list__items">
     <slot name="default" :items="items">
       <div v-for="(item, index) in items" :key="index">
         <slot name="item" :item="item" :index="index">
