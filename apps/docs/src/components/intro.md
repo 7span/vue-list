@@ -19,10 +19,6 @@ Instead, it gives you a set of composable components that expose useful state an
         <!-- Render your list items here -->
         <pre>{{ items }}</pre>
       </VueListItems>
-      <VueListInitialLoader />
-      <VueListLoader />
-      <VueListError />
-      <VueListItems />
       <VueListPagination />
       <VueListLoadMore />
       <VueListRefresh />

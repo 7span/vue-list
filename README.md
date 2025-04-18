@@ -70,10 +70,6 @@ app.use(VueList, {
         <!-- Render your list items here -->
         <pre>{{ items }}</pre>
       </VueListItems>
-      <VueListInitialLoader />
-      <VueListLoader />
-      <VueListError />
-      <VueListItems />
       <VueListPagination />
       <VueListPagination />
     </template>
