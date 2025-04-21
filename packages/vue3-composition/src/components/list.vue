@@ -252,6 +252,10 @@ const scope = computed(() => {
 function setPage(value, addContext) {
   localPage.value = value
   getData(addContext)
+
+  if (isLoadMore.value) {
+    items.value = []
+  }
 }
 
 function updateStateManager() {
@@ -261,14 +265,7 @@ function updateStateManager() {
 function setItems(res) {
   emit('onResponse', res)
   if (isLoadMore.value) {
-    if (localSearch.value.length) {
-      // Append items directly if search is applied on 'loadMore' mode.
-      items.value = res.items
-    } else {
-      items.value = []
-
-      items.value = items.value.concat(res.items)
-    }
+    items.value = items.value.concat(res.items)
     emit('afterLoadMore', res)
   } else {
     items.value = res.items
