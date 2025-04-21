@@ -14,6 +14,7 @@ import Search from './components/search.vue'
 import LoadMore from './components/load-more.vue'
 import GoTo from './components/go-to.vue'
 import Refresh from './components/refresh.vue'
+import Empty from './components/empty.vue'
 
 //Layout
 // import Table from './layouts/table/Index.vue'
@@ -37,6 +38,7 @@ const install = (app, userOptions = {}) => {
   app.component(`${prefix}VueListGoTo`, GoTo)
   app.component(`${prefix}VueListRefresh`, Refresh)
   app.component(`${prefix}VueListAttributes`, Attributes)
+  app.component(`${prefix}VueListEmpty`, Empty)
   // app.component(`${prefix}ListTable`, Table)
 }
 
