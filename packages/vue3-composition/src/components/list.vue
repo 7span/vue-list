@@ -233,16 +233,16 @@ const isEmpty = computed(() => {
 const scope = computed(() => {
   return {
     //state
-    items: items,
-    response: response,
-    isLoading: isLoading,
-    selection: selection,
-    error: error,
+    items: items.value,
+    response: response.value,
+    isLoading: isLoading.value,
+    selection: selection.value,
+    error: error.value,
 
     //computed
-    serializedAttrs: serializedAttrs,
-    isEmpty: isEmpty,
-    context: context,
+    serializedAttrs: serializedAttrs.value,
+    isEmpty: isEmpty.value,
+    context: context.value,
 
     //methods
     refresh: refresh,
@@ -261,7 +261,12 @@ function updateStateManager() {
 function setItems(res) {
   emit('onResponse', res)
   if (isLoadMore.value) {
-    items.value = items.value.concat(res.items)
+    if (localPage.value === 1) {
+      items.value = res.items
+    } else {
+      items.value = items.value.concat(res.items)
+    }
+
     emit('afterLoadMore', res)
   } else {
     items.value = res.items
