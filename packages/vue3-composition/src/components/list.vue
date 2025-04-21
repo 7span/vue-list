@@ -450,4 +450,28 @@ if (!attrSettings.value) {
 globalOptions.stateManager.init(context.value)
 
 setPage(localPage.value)
+
+/**
+  Expose the state and methods to the parent component.
+  This allows parent components to access the state and methods
+  without directly manipulating the internal state of the component.
+*/
+defineExpose({
+  // States
+  items,
+  response,
+  isLoading,
+  error,
+  count,
+  selection,
+
+  // Methods
+  setPage,
+  setPerPage,
+  setSort,
+  setSearch,
+  setSelection,
+  refresh,
+  loadMore,
+})
 </script>

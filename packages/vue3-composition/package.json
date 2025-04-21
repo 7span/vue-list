@@ -1,6 +1,6 @@
 {
   "name": "@7span/vue-list",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
