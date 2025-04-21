@@ -1,6 +1,6 @@
 <template>
   <div class="vue-list__search">
-    <slot :search="localSearch" :setSearch="set">
+    <slot v-bind="scope">
       <input
         type="text"
         :value="localSearch"
@@ -13,7 +13,7 @@
 
 <script setup>
 import { debounce } from 'lodash-es'
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 const setSearch = inject('setSearch')
 const localSearch = inject('localSearch')
 
@@ -27,4 +27,14 @@ const props = defineProps({
 const set = debounce((value) => {
   setSearch(value)
 }, props.debounceTime)
+
+const scope = computed(() => {
+  return {
+    // Injected State
+    search: localSearch.value,
+
+    // Methods
+    setSearch: set,
+  }
+})
 </script>

@@ -84,14 +84,17 @@ const pagesToDisplay = computed(() => {
 
 const scope = computed(() => {
   return {
-    page: localPage,
-    perPage: localPerPage,
-    count,
-    pagesCount,
-    pagesToDisplay,
-    halfWay,
-    hasNext,
-    hasPrev,
+    // States
+    page: localPage.value,
+    perPage: localPerPage.value,
+    count: count.value,
+    pagesCount: pagesCount.value,
+    pagesToDisplay: pagesToDisplay.value,
+    halfWay: halfWay.value,
+    hasNext: hasNext.value,
+    hasPrev: hasPrev.value,
+
+    // Methods
     prev,
     next,
     first,

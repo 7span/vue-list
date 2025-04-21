@@ -1,6 +1,6 @@
 <template>
   <div class="vue-list__counter">
-    <slot :visibleCount="items.length" :count="count" :from="from" :to="to">
+    <slot v-bind="scope">
       <span> Showing {{ items.length }} items ({{ from }} - {{ to }}) out of {{ count }} </span>
     </slot>
   </div>
@@ -23,5 +23,14 @@ const from = computed(() => {
 const to = computed(() => {
   const calculatedTo = localPage.value * localPerPage.value
   return calculatedTo > count.value ? count.value : calculatedTo
+})
+
+const scope = computed(() => {
+  return {
+    visibleCount: items.value.length,
+    count: count.value,
+    from: from.value,
+    to: to.value,
+  }
 })
 </script>

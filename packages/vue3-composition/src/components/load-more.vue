@@ -1,6 +1,6 @@
 <template>
   <div class="vue-list__load-more">
-    <slot :isLoading="isLoading" :loadMore="loadMore" :hasMoreItems="hasMoreItems">
+    <slot v-bind="scope">
       <button v-if="hasMoreItems" @click="loadMore">Load More</button>
       <p v-else>— That's all —</p>
     </slot>
@@ -18,7 +18,21 @@ const loadMore = inject('loadMore')
 const isLoading = inject('isLoading')
 const items = inject('items')
 const count = inject('count')
+
 const hasMoreItems = computed(() => {
-  return count > items.length
+  return count.value > items.value.length
+})
+
+const scope = computed(() => {
+  return {
+    // Injected state
+    isLoading: isLoading.value,
+
+    // Injected methods
+    loadMore,
+
+    // Computed properties
+    hasMoreItems: hasMoreItems.value,
+  }
 })
 </script>
