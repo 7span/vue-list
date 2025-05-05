@@ -26,6 +26,10 @@ const updateAttr = inject('updateAttr')
 const attrs = inject('attrs')
 const attrSettings = inject('attrSettings')
 
+defineOptions({
+  name: 'VueListAttributes',
+})
+
 const scope = computed(() => {
   return {
     // Injected states

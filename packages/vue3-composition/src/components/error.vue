@@ -10,4 +10,8 @@
 import { inject } from 'vue'
 const error = inject('error')
 const isLoading = inject('isLoading')
+
+defineOptions({
+  name: 'VueListError',
+})
 </script>

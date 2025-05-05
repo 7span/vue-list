@@ -12,6 +12,10 @@ import { attrSerializer } from '../utils'
 const route = useRoute()
 const router = useRouter()
 
+defineOptions({
+  name: 'VueList',
+})
+
 const props = defineProps({
   endpoint: {
     type: String,
@@ -230,12 +234,18 @@ const isEmpty = computed(() => {
   return items.value?.length == 0
 })
 
+const isInitialLoading = computed(() => {
+  return isLoading.value && initializingState.value
+})
+
 const scope = computed(() => {
   return {
     //state
     items: items.value,
+    count: count.value,
     response: response.value,
     isLoading: isLoading.value,
+    isInitialLoading: isInitialLoading.value,
     selection: selection.value,
     error: error.value,
 
@@ -418,6 +428,7 @@ provide('selection', selection)
 provide('confirmedPage', confirmedPage)
 provide('paginationMode', props.paginationMode)
 provide('initializingState', initializingState)
+provide('isInitialLoading', isInitialLoading)
 provide('attrs', serializedAttrs)
 
 // Provide Methods

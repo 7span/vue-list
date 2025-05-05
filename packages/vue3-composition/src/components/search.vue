@@ -17,6 +17,10 @@ import { computed, inject } from 'vue'
 const setSearch = inject('setSearch')
 const localSearch = inject('localSearch')
 
+defineOptions({
+  name: 'VueListSearch',
+})
+
 const props = defineProps({
   debounceTime: {
     type: Number,

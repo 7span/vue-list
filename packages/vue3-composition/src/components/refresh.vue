@@ -13,6 +13,10 @@ import { inject, computed } from 'vue'
 const refresh = inject('refresh')
 const isLoading = inject('isLoading')
 
+defineOptions({
+  name: 'VueListRefresh',
+})
+
 const scope = computed(() => {
   return {
     // Injected state

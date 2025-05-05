@@ -16,9 +16,6 @@ import GoTo from './components/go-to.vue'
 import Refresh from './components/refresh.vue'
 import Empty from './components/empty.vue'
 
-//Layout
-// import Table from './layouts/table/Index.vue'
-
 const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions)
   const prefix = options.componentPrefix

@@ -17,6 +17,10 @@ const localPage = inject('localPage')
 const localPerPage = inject('localPerPage')
 const count = inject('count')
 
+defineOptions({
+  name: 'VueListGoTo',
+})
+
 const pagesCount = computed(() => {
   return Math.ceil(count.value / localPerPage.value)
 })

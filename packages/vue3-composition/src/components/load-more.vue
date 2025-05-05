@@ -19,6 +19,10 @@ const isLoading = inject('isLoading')
 const items = inject('items')
 const count = inject('count')
 
+defineOptions({
+  name: 'VueListLoadMore',
+})
+
 const hasMoreItems = computed(() => {
   return count.value > items.value.length
 })

@@ -16,6 +16,10 @@ const count = inject('count')
 const localPage = inject('localPage')
 const localPerPage = inject('localPerPage')
 
+defineOptions({
+  name: 'VueListSummary',
+})
+
 const from = computed(() => {
   return localPage.value * localPerPage.value - localPerPage.value + 1
 })

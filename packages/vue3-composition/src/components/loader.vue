@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!initializingState && isLoading" class="vue-list__loader">
+  <div v-if="isLoading && !isInitialLoading" class="vue-list__loader">
     <slot>
       <p>Loading...</p>
     </slot>
@@ -9,5 +9,9 @@
 <script setup>
 import { inject } from 'vue'
 const isLoading = inject('isLoading')
-const initializingState = inject('initializingState')
+const isInitialLoading = inject('isInitialLoading')
+
+defineOptions({
+  name: 'VueListLoader',
+})
 </script>

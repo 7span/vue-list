@@ -19,6 +19,10 @@ import { inject, computed } from 'vue'
 const setPerPage = inject('setPerPage')
 const localPerPage = inject('localPerPage')
 
+defineOptions({
+  name: 'VueListPerPage',
+})
+
 const props = defineProps({
   options: {
     /**

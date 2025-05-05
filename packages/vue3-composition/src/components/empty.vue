@@ -11,4 +11,8 @@ import { inject } from 'vue'
 const items = inject('items')
 const isLoading = inject('isLoading')
 const error = inject('error')
+
+defineOptions({
+  name: 'VueListEmpty',
+})
 </script>

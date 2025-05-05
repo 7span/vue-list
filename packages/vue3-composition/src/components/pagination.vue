@@ -42,6 +42,10 @@ const localPage = inject('localPage')
 const localPerPage = inject('localPerPage')
 const count = inject('count')
 
+defineOptions({
+  name: 'VueListPagination',
+})
+
 const props = defineProps({
   pageLinks: {
     /**
