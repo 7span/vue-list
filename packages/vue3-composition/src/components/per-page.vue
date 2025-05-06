@@ -1,6 +1,6 @@
 <template>
   <div class="vue-list__per-page">
-    <slot :perPage="localPerPage" :setPerPage="setPerPage" :options="serializedOptions">
+    <slot v-bind="scope">
       <select :value="localPerPage" @input="setPerPage($event.target.value)">
         <option
           v-for="(option, index) in serializedOptions"
@@ -18,6 +18,10 @@
 import { inject, computed } from 'vue'
 const setPerPage = inject('setPerPage')
 const localPerPage = inject('localPerPage')
+
+defineOptions({
+  name: 'VueListPerPage',
+})
 
 const props = defineProps({
   options: {
@@ -41,5 +45,18 @@ const serializedOptions = computed(() => {
       return item
     }
   })
+})
+
+const scope = computed(() => {
+  return {
+    // Injected state
+    perPage: localPerPage.value,
+
+    // Computed properties
+    options: serializedOptions.value,
+
+    // Injected methods
+    setPerPage: setPerPage,
+  }
 })
 </script>

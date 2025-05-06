@@ -1,6 +1,6 @@
 <template>
   <div class="vue-list__go-to">
-    <slot :setPage="setPage" :page="localPage" :pages="pages" :pagesCount="pagesCount">
+    <slot v-bind="scope">
       <select @input="setPage($event.target.value)" :value="localPage">
         <option v-for="(option, index) in pages" :key="`option-${index}`">
           {{ option }}
@@ -17,11 +17,29 @@ const localPage = inject('localPage')
 const localPerPage = inject('localPerPage')
 const count = inject('count')
 
+defineOptions({
+  name: 'VueListGoTo',
+})
+
 const pagesCount = computed(() => {
   return Math.ceil(count.value / localPerPage.value)
 })
 
 const pages = computed(() => {
   return Array.from({ length: pagesCount.value }, (_, i) => i + 1)
+})
+
+const scope = computed(() => {
+  return {
+    // Injected states
+    page: localPage.value,
+
+    // Computed properties
+    pages: pages.value,
+    pagesCount: pagesCount.value,
+
+    // Injected methods
+    setPage: setPage,
+  }
 })
 </script>

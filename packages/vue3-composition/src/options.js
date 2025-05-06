@@ -1,16 +1,20 @@
+export const defaultRequestHandler = () => {
+  return new Promise((resolve) => {
+    resolve({
+      items: [],
+      count: 0,
+    })
+  })
+}
+
+export const defaultStateManager = {
+  set() {},
+  get() {},
+  init() {},
+}
+
 export default {
   componentPrefix: '',
-  requestHandler() {
-    return new Promise((resolve, reject) => {
-      resolve({
-        items: [],
-        count: 0,
-      })
-    })
-  },
-  stateManager: {
-    set() {},
-    get() {},
-    init() {},
-  },
+  requestHandler: defaultRequestHandler,
+  stateManager: defaultStateManager,
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="vue-list__attributes">
-    <slot name="default" :update="updateAttr" :attrs="attrs" :settings="attrSettings">
+    <slot name="default" v-bind="scope">
       <template v-for="(attr, index) in attrs">
         <slot :update="updateAttr" :attr="attr">
           <label :key="`attr-${index}`">
@@ -21,8 +21,23 @@
 /**
  * Display all the attributes you provided and render a UI to modify those attributes.
  */
-import { inject } from 'vue'
+import { inject, computed } from 'vue'
 const updateAttr = inject('updateAttr')
 const attrs = inject('attrs')
 const attrSettings = inject('attrSettings')
+
+defineOptions({
+  name: 'VueListAttributes',
+})
+
+const scope = computed(() => {
+  return {
+    // Injected states
+    attrs: attrs.value,
+    settings: attrSettings.value,
+
+    // Injected methods
+    update: updateAttr,
+  }
+})
 </script>

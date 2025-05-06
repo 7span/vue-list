@@ -1,6 +1,6 @@
 <template>
   <div class="vue-list__refresh">
-    <slot :isLoading="isLoading" :refresh="refresh">
+    <slot v-bind="scope">
       <button @click="refresh({ isRefresh: true })">
         {{ isLoading ? 'Loading...' : 'Refresh' }}
       </button>
@@ -9,7 +9,21 @@
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, computed } from 'vue'
 const refresh = inject('refresh')
 const isLoading = inject('isLoading')
+
+defineOptions({
+  name: 'VueListRefresh',
+})
+
+const scope = computed(() => {
+  return {
+    // Injected state
+    isLoading: isLoading.value,
+
+    // Injected methods
+    refresh,
+  }
+})
 </script>

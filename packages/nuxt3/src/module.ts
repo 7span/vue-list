@@ -3,12 +3,8 @@ import {
   addPlugin,
   addComponent,
   createResolver,
+  addComponentsDir,
 } from "@nuxt/kit";
-
-import defaultOptions from "@7span/vue-list/src/options.js";
-
-// Module options TypeScript interface definition
-export interface ModuleOptions {}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -16,8 +12,7 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: "nuxtList",
   },
 
-  // Default configuration options of the Nuxt module
-  defaults: defaultOptions,
+  defaults: {},
   setup(options, nuxt) {
     console.log("nuxtList module options", options);
     const resolver = createResolver(import.meta.url);
@@ -28,10 +23,11 @@ export default defineNuxtModule<ModuleOptions>({
       mode: "all",
     });
 
-    // From a library
-    addComponent({
-      name: "VueList", // name of the component to be used in vue templates
-      filePath: "@7span/vue-list/src/components/list.vue",
-    });
+    // addComponent({
+    //   name: "VueList", // name of the component to be used in vue templates
+    //   filePath: resolver.resolve(
+    //     "../../vue3-composition/src/components/list.vue"
+    //   ),
+    // });
   },
 });

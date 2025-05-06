@@ -12,6 +12,10 @@ import { attrSerializer } from '../utils'
 const route = useRoute()
 const router = useRouter()
 
+defineOptions({
+  name: 'VueList',
+})
+
 const props = defineProps({
   endpoint: {
     type: String,
@@ -124,7 +128,7 @@ const isLoadMore = computed(() => {
 
 const emit = defineEmits(['onItemSelect', 'onResponse', 'afterPageChange', 'afterLoadMore'])
 const filters = defineModel('filters')
-const globalOptions = inject('vueList')
+const globalOptions = inject('vueListOptions')
 const requestHandler = props.requestHandler || globalOptions.requestHandler
 
 const localPage = ref(props.page)
@@ -185,9 +189,9 @@ const state = getState()
  */
 if (isLoadMore.value) {
   localPage.value = 1
-} else if (route.query.page) {
+} else if (route?.query.page) {
   // Always give priority to query param over localState.
-  localPage.value = Number(route.query.page)
+  localPage.value = Number(route?.query.page)
 } else if (state.page != null) {
   localPage.value = state.page
 } else {
@@ -230,19 +234,25 @@ const isEmpty = computed(() => {
   return items.value?.length == 0
 })
 
+const isInitialLoading = computed(() => {
+  return isLoading.value && initializingState.value
+})
+
 const scope = computed(() => {
   return {
     //state
-    items: items,
-    response: response,
-    isLoading: isLoading,
-    selection: selection,
-    error: error,
+    items: items.value,
+    count: count.value,
+    response: response.value,
+    isLoading: isLoading.value,
+    isInitialLoading: isInitialLoading.value,
+    selection: selection.value,
+    error: error.value,
 
     //computed
-    serializedAttrs: serializedAttrs,
-    isEmpty: isEmpty,
-    context: context,
+    serializedAttrs: serializedAttrs.value,
+    isEmpty: isEmpty.value,
+    context: context.value,
 
     //methods
     refresh: refresh,
@@ -261,7 +271,12 @@ function updateStateManager() {
 function setItems(res) {
   emit('onResponse', res)
   if (isLoadMore.value) {
-    items.value = items.value.concat(res.items)
+    if (localPage.value === 1) {
+      items.value = res.items
+    } else {
+      items.value = items.value.concat(res.items)
+    }
+
     emit('afterLoadMore', res)
   } else {
     items.value = res.items
@@ -326,10 +341,10 @@ function updateAttr(name, prop, value) {
  * Query params are only updated for pages > 1 to maintain expected browser navigation.
  */
 function updateUrl() {
-  if (!isLoadMore.value && route.query.page != localPage.value && props.hasPaginationHistory) {
-    router.push({
+  if (!isLoadMore.value && route?.query.page != localPage.value && props.hasPaginationHistory) {
+    router?.push({
       query: {
-        ...(route.query || {}), // Keep already existing query params in URL
+        ...(route?.query || {}), // Keep already existing query params in URL
         page: localPage.value,
       },
     })
@@ -388,7 +403,7 @@ watch(selection, (newValue, oldValue) => {
 })
 
 watch(
-  () => route.query.page,
+  () => route?.query.page,
   (newValue) => {
     if (!newValue) {
       setPage(1)
@@ -413,6 +428,7 @@ provide('selection', selection)
 provide('confirmedPage', confirmedPage)
 provide('paginationMode', props.paginationMode)
 provide('initializingState', initializingState)
+provide('isInitialLoading', isInitialLoading)
 provide('attrs', serializedAttrs)
 
 // Provide Methods
@@ -446,4 +462,28 @@ if (!attrSettings.value) {
 globalOptions.stateManager.init(context.value)
 
 setPage(localPage.value)
+
+/**
+  Expose the state and methods to the parent component.
+  This allows parent components to access the state and methods
+  without directly manipulating the internal state of the component.
+*/
+defineExpose({
+  // States
+  items,
+  response,
+  isLoading,
+  error,
+  count,
+  selection,
+
+  // Methods
+  setPage,
+  setPerPage,
+  setSort,
+  setSearch,
+  setSelection,
+  refresh,
+  loadMore,
+})
 </script>

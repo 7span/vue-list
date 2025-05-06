@@ -1,6 +1,7 @@
 import defaultOptions from './options'
 
 //Components
+import Provider from './components/provider.vue'
 import Root from './components/list.vue'
 import Items from './components/items.vue'
 import InitialLoader from './components/initial-loader.vue'
@@ -14,16 +15,15 @@ import Search from './components/search.vue'
 import LoadMore from './components/load-more.vue'
 import GoTo from './components/go-to.vue'
 import Refresh from './components/refresh.vue'
-
-//Layout
-// import Table from './layouts/table/Index.vue'
+import Empty from './components/empty.vue'
 
 const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions)
   const prefix = options.componentPrefix
 
-  app.provide('vueList', options)
+  app.provide('vueListOptions', options)
 
+  app.component(`${prefix}VueListProvider`, Provider)
   app.component(`${prefix}VueList`, Root)
   app.component(`${prefix}VueListInitialLoader`, InitialLoader)
   app.component(`${prefix}VueListLoader`, Loader)
@@ -37,6 +37,7 @@ const install = (app, userOptions = {}) => {
   app.component(`${prefix}VueListGoTo`, GoTo)
   app.component(`${prefix}VueListRefresh`, Refresh)
   app.component(`${prefix}VueListAttributes`, Attributes)
+  app.component(`${prefix}VueListEmpty`, Empty)
   // app.component(`${prefix}ListTable`, Table)
 }
 
