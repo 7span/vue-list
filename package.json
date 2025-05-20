@@ -4,5 +4,10 @@
   "private": true,
   "engines": {
     "node": ">=18.0.0"
+  },
+  "scripts": {
+    "play:nuxt3": "pnpm --filter nuxt3-playground dev",
+    "prepack:nuxt3": "pnpm --filter @7span/nuxt-list prepack",
+    "play:vue3": "pnpm --filter vue-list-vue3-playground dev"
   }
 }

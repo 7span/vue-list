@@ -15,14 +15,16 @@ import LoadMore from './components/load-more.vue'
 import GoTo from './components/go-to.vue'
 import Refresh from './components/refresh.vue'
 import Empty from './components/empty.vue'
+import Provider from './components/provider.vue'
 
 const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions)
   const prefix = options.componentPrefix
 
-  app.provide('vueList', options)
+  app.provide('vueListOptions', options)
 
   app.component(`${prefix}VueList`, Root)
+  app.component(`${prefix}VueListProvider`, Provider)
   app.component(`${prefix}VueListInitialLoader`, InitialLoader)
   app.component(`${prefix}VueListLoader`, Loader)
   app.component(`${prefix}VueListItems`, Items)

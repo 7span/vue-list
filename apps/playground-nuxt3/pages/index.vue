@@ -2,18 +2,21 @@
   <div>
     <h1>Hello! Nuxt3 SSR</h1>
 
-    <VueList
-      endpoint="skills"
-      :per-page="5"
-      pagination-mode="pagination"
-      :request-handler="requestHandler"
-    >
-      <template #default="{ items,refresh }">
-        <button @click="refresh">Refresh</button>
-        <VueListLoader />
-        <pre>{{ items }}</pre>
-      </template>
-    </VueList>
+    <VueListProvider>
+      <VueList
+        endpoint="skills"
+        :per-page="5"
+        pagination-mode="pagination"
+        :request-handler="requestHandler"
+      >
+        <template #default="{ items,refresh }">
+          <button @click="refresh">Refresh</button>
+          <VueListLoader />
+          <pre>{{ items }}</pre>
+          <VueListPagination />
+        </template>
+      </VueList>
+    </VueListProvider>
   </div>
 </template>
 

@@ -128,7 +128,7 @@ const isLoadMore = computed(() => {
 
 const emit = defineEmits(['onItemSelect', 'onResponse', 'afterPageChange', 'afterLoadMore'])
 const filters = defineModel('filters')
-const globalOptions = inject('vueList')
+const globalOptions = inject('vueListOptions')
 const requestHandler = props.requestHandler || globalOptions.requestHandler
 
 const localPage = ref(props.page)
@@ -259,9 +259,9 @@ const scope = computed(() => {
   }
 })
 
-function setPage(value, addContext) {
+async function setPage(value, addContext) {
   localPage.value = value
-  getData(addContext)
+  return await getData(addContext)
 }
 
 function updateStateManager() {
@@ -351,11 +351,11 @@ function updateUrl() {
   }
 }
 
-function getData(addContext = {}) {
+async function getData(addContext = {}) {
   error.value = false
   isLoading.value = true
 
-  requestHandler({
+  return await requestHandler({
     ...context.value,
     ...addContext,
   })
@@ -375,6 +375,10 @@ function getData(addContext = {}) {
       confirmedPage.value = localPage.value
 
       initializingState.value = false
+
+      return {
+        response: res,
+      }
     })
     .catch((err) => {
       error.value = err
@@ -461,7 +465,7 @@ if (!attrSettings.value) {
  */
 globalOptions.stateManager.init(context.value)
 
-setPage(localPage.value)
+await setPage(localPage.value)
 
 /**
   Expose the state and methods to the parent component.
