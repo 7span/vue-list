@@ -24,5 +24,6 @@ const props = defineProps({
 provide('vueListOptions', {
   requestHandler: props.requestHandler,
   stateManager: props.stateManager,
+  isNuxt: true,
 })
 </script>
