@@ -18,5 +18,5 @@ const props = defineProps(_props)
 
 const { setPage, scope } = useVueList(props, globalOptions)
 
-setPage(1)
+await setPage(1)
 </script>

@@ -16,6 +16,7 @@ import LoadMore from './components/load-more.vue'
 import GoTo from './components/go-to.vue'
 import Refresh from './components/refresh.vue'
 import Empty from './components/empty.vue'
+import NuxtList from './components/nuxt-list.vue'
 
 const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions)
@@ -38,6 +39,7 @@ const install = (app, userOptions = {}) => {
   app.component(`${prefix}VueListRefresh`, Refresh)
   app.component(`${prefix}VueListAttributes`, Attributes)
   app.component(`${prefix}VueListEmpty`, Empty)
+  app.component(`${prefix}VueListNuxtList`, NuxtList)
   // app.component(`${prefix}ListTable`, Table)
 }
 
