@@ -128,7 +128,7 @@ const isLoadMore = computed(() => {
 
 const emit = defineEmits(['onItemSelect', 'onResponse', 'afterPageChange', 'afterLoadMore'])
 const filters = defineModel('filters')
-const globalOptions = inject('vueList')
+const globalOptions = inject('vueListOptions')
 const requestHandler = props.requestHandler || globalOptions.requestHandler
 
 const localPage = ref(props.page)
@@ -351,39 +351,47 @@ function updateUrl() {
   }
 }
 
-function getData(addContext = {}) {
+async function getData(addContext = {}) {
   error.value = false
   isLoading.value = true
 
-  requestHandler({
-    ...context.value,
-    ...addContext,
-  })
-    .then((res) => {
-      response.value = res
-
-      //Update the state manager as page is changed
-      updateStateManager()
-
-      //Reset the state as page is changed
-      selection.value = []
-
-      setItems(res)
-      updateUrl()
-
-      //Setting this will update the index in the UI.
-      confirmedPage.value = localPage.value
-
-      initializingState.value = false
+  if (import.meta.server) {
+    useAsyncData('api-call', () => {
+      console.log('requestHandler > >', context.value)
+      return requestHandler({
+        ...context.value,
+        ...addContext,
+      })
+    }).then(({ data }) => {
+      onResponse(data.value)
     })
-    .catch((err) => {
-      error.value = err
-      // Re-throw error to allow error handling at options level
-      throw new Error(err)
+  } else if (!items.value.length) {
+    requestHandler({
+      ...context.value,
+      ...addContext,
+    }).then((res) => {
+      onResponse(res)
     })
-    .finally(() => {
-      isLoading.value = false
-    })
+  }
+}
+
+function onResponse(data) {
+  response.value = data
+
+  //Update the state manager as page is changed
+  updateStateManager()
+
+  //Reset the state as page is changed
+  selection.value = []
+
+  setItems(data)
+  updateUrl()
+
+  //Setting this will update the index in the UI.
+  confirmedPage.value = localPage.value
+
+  initializingState.value = false
+  isLoading.value = false
 }
 
 /**

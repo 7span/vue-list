@@ -1,7 +1,9 @@
 import defaultOptions from './options'
 
 //Components
-import Root from './components/list.vue'
+import VueRoot from './components/vue-list.vue'
+import NuxtRoot from './components/nuxt-list.vue'
+import Provider from './components/provider.vue'
 import Items from './components/items.vue'
 import InitialLoader from './components/initial-loader.vue'
 import Loader from './components/loader.vue'
@@ -20,9 +22,11 @@ const install = (app, userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions)
   const prefix = options.componentPrefix
 
-  app.provide('vueList', options)
+  app.provide('vueListOptions', options)
 
-  app.component(`${prefix}VueList`, Root)
+  app.component(`${prefix}VueList`, VueRoot)
+  app.component(`${prefix}VueNuxtList`, NuxtRoot)
+  app.component(`${prefix}VueListProvider`, Provider)
   app.component(`${prefix}VueListInitialLoader`, InitialLoader)
   app.component(`${prefix}VueListLoader`, Loader)
   app.component(`${prefix}VueListItems`, Items)
