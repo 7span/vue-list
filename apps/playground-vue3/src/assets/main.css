@@ -1,2 +1,6 @@
 @import 'tailwindcss';
 @import '@nuxt/ui-pro';
+
+button {
+  @apply bg-blue-950 hover:bg-blue-900 text-white py-0.5 px-1 m-1 rounded cursor-pointer;
+}

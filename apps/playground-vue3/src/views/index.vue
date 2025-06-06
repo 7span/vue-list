@@ -1,5 +1,6 @@
 <template>
   <div class="py">
+    <h1 class="text-center font-bold text-xl py-10">Vue List</h1>
     <UContainer>
       <VueList endpoint="skills" :per-page="5" pagination-mode="pagination">
         <template #default>

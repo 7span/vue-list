@@ -1,31 +1,134 @@
 <template>
   <div>
-    <h1>Hello! Nuxt3 SSR</h1>
+    <h1 class="text-center font-bold text-xl py-10">Vue List SSR</h1>
 
-    <VueListProvider>
-      <VueNuxtList
-        endpoint="skills"
-        :per-page="5"
-        pagination-mode="pagination"
-        :request-handler="requestHandler"
-        @onResponse="
-          (response) => {
-            console.log('on Response:', response);
-          }
-        "
-      >
-        <template #default="{ items,refresh }">
-          <button @click="refresh">Refresh</button>
-          <VueListLoader />
-          <pre>{{ items }}</pre>
-          <VueListPagination />
-        </template>
-      </VueNuxtList>
-    </VueListProvider>
+    <UContainer>
+      <VueListProvider>
+        <VueNuxtList
+          endpoint="skills"
+          :per-page="5"
+          pagination-mode="pagination"
+          :request-handler="requestHandler"
+          @onResponse="
+            (response) => {
+              console.log('on Response:', response);
+            }
+          "
+        >
+          <template #default>
+            <div class="grid grid-cols-3 h-screen gap-5 p-5">
+              <div class="col-span-2 overflow-y-auto p-1">
+                <VueListInitialLoader />
+                <VueListLoader />
+
+                <VueListError />
+                <VueListError v-slot="{ error }">
+                  <pre>{{ error.name }}</pre>
+                  <pre>{{ error.message }}</pre>
+                </VueListError>
+                <VueListItems>
+                  <template #item="{ item }">
+                    <UCard> {{ item.name }} </UCard>
+                  </template>
+                </VueListItems>
+              </div>
+              <div class="col-span-1 overflow-y-auto p-1">
+                <UAccordion :items="components">
+                  <template #pagination>
+                    <VueListPagination />
+                    <VueListPagination v-slot="data">
+                      <pre class="text-xs">{{ data }}</pre>
+                    </VueListPagination>
+                  </template>
+                  <template #loadmore>
+                    <VueListLoadMore />
+                    <VueListLoadMore v-slot="data">
+                      <pre class="text-xs">{{ data }}</pre>
+                    </VueListLoadMore>
+                  </template>
+                  <template #search>
+                    <VueListSearch />
+                    <VueListSearch v-slot="data">
+                      <pre class="text-xs">{{ data }}</pre>
+                    </VueListSearch>
+                  </template>
+                  <template #summary>
+                    <VueListSummary />
+                    <VueListSummary v-slot="data">
+                      <pre class="text-xs">{{ data }}</pre>
+                    </VueListSummary>
+                  </template>
+                  <template #goto>
+                    <VueListGoTo />
+                    <VueListGoTo v-slot="data">
+                      <pre class="text-xs">{{ data }}</pre>
+                    </VueListGoTo>
+                  </template>
+                  <template #perpage>
+                    <VueListPerPage />
+                    <VueListPerPage v-slot="data">
+                      <pre class="text-xs">{{ data }}</pre>
+                    </VueListPerPage>
+                  </template>
+                  <template #attributes>
+                    <VueListAttributes />
+                    <VueListAttributes v-slot="data">
+                      <pre class="text-xs">{{ data }}</pre>
+                    </VueListAttributes>
+                  </template>
+                  <template #refresh>
+                    <VueListRefresh />
+                  </template>
+                </UAccordion>
+              </div>
+            </div>
+          </template>
+        </VueNuxtList>
+      </VueListProvider>
+    </UContainer>
   </div>
 </template>
 
 <script setup>
+useHead({
+  title: "Vue List SSR",
+});
+
+const components = [
+  {
+    label: "Pagination",
+    slot: "pagination",
+  },
+  {
+    label: "Load More",
+    slot: "loadmore",
+  },
+  {
+    label: "Search",
+    slot: "search",
+  },
+  {
+    label: "Summary",
+    slot: "summary",
+  },
+  {
+    label: "Go To",
+    slot: "goto",
+  },
+  {
+    label: "Per Page",
+    slot: "perpage",
+  },
+  {
+    label: "Attributes",
+    slot: "attributes",
+  },
+  {
+    label: "Refresh",
+    slot: "refresh",
+  },
+];
+
 async function requestHandler(context) {
   let sort;
   if (context.sortBy && context.sortOrder) {
