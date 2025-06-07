@@ -28,17 +28,17 @@ const { scope, expose, localPage, setData, requestData } = useVueList({
   router: useRouter(),
 })
 
-const { data } = await useAsyncData('initFetch', async () => {
-  localPage.value = 1
-  return await requestData()
-})
-
-setData(data.value)
-
 /**
   Expose the state and methods to the parent component.
   This allows parent components to access the state and methods
   without directly manipulating the internal state of the component.
 */
 defineExpose(expose)
+
+const { data } = await useAsyncData('initFetch', async () => {
+  localPage.value = 1
+  return await requestData()
+})
+
+setData(data.value)
 </script>
