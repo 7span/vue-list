@@ -91,7 +91,7 @@
 
 <script setup>
 useHead({
-  title: "Vue List SSR",
+  title: "Nuxt List Playground",
 });
 
 const components = [
